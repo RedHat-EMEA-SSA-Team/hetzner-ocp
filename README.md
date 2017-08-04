@@ -30,10 +30,10 @@ Remember to set some good root password during installation.
 
 ## Initialize tools
 
-Install ansible
+Install ansible and git
 
 ````
-dnf install -y ansible
+dnf install -y ansible git
 ````
 
 Create ssh key (no passphrase)
@@ -42,7 +42,7 @@ Create ssh key (no passphrase)
 ssh-keygen
 ````
 
-Clone configs and playbook
+Clone configs and playbook. You need to add your ssh key to your Gitlab account.
 
 ````
 git clone https://gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
