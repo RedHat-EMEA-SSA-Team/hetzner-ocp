@@ -6,13 +6,10 @@ You need to install Fedora 25 to the server via VNC console from Heztner Robot U
 
 You'll need VNC client to access VNC based installer, like [VNC Viewer](https://www.realvnc.com/en/download/viewer/) 
 
-Activate VNC console
+Activate VNC console, [screenshot](images/01_vnc_console.png)
 
-![](images/01_vnc_console.png)
+Reboot server [screenshot](images/02_reboot.png)
 
-Reboot server
-
-![](images/02_reboot.png)
 
 Minimal install + basic tools is enough
 
@@ -33,10 +30,10 @@ Remember to set some good root password during installation.
 
 ## Initialize tools
 
-Install ansible
+Install ansible and git
 
 ````
-dnf install -y ansible
+dnf install -y ansible git
 ````
 
 Create ssh key (no passphrase)
@@ -45,10 +42,10 @@ Create ssh key (no passphrase)
 ssh-keygen
 ````
 
-Clone configs and playbook
+Clone configs and playbook. You need to add your ssh key to your Gitlab account.
 
 ````
-git clone https://gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
+git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ````
 
 ## Install libvirt
@@ -56,5 +53,5 @@ git clone https://gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ````
 cd hetzner-ocp
 ansible-playbook playbooks/virt.yml
-
+````
 
