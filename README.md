@@ -45,7 +45,7 @@ ssh-keygen
 Clone configs and playbook. You need to add your ssh key to your Gitlab account.
 
 ````
-git clone https://gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
+git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ````
 
 ## Install libvirt
