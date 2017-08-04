@@ -56,5 +56,5 @@ git clone https://gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ````
 cd hetzner-ocp
 ansible-playbook playbooks/virt.yml
-
+````
 
