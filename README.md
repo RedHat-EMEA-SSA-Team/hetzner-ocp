@@ -6,13 +6,10 @@ You need to install Fedora 25 to the server via VNC console from Heztner Robot U
 
 You'll need VNC client to access VNC based installer, like [VNC Viewer](https://www.realvnc.com/en/download/viewer/) 
 
-Activate VNC console
+Activate VNC console, [screenshot](images/01_vnc_console.png)
 
-![](images/01_vnc_console.png)
+Reboot server [screenshot](images/02_reboot.png)
 
-Reboot server
-
-![](images/02_reboot.png)
 
 Minimal install + basic tools is enough
 
