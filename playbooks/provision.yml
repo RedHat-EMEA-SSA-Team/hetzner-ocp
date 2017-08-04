@@ -1,0 +1,47 @@
+- name: Provision quests
+  hosts: localhost
+  vars_files:
+      - vars/guests.yml
+  tasks:
+      - name: start libvirtd
+        service: name=libvirtd state=started enabled=yes
+        register: libvirtd
+
+      - name: wait for libvirtd to get up
+        pause: seconds=10
+        when: libvirtd.changed
+
+      - name: get list of vms
+        virt: command=list_vms
+        register: virt_vms
+
+      - name: create vm
+        command: "virt-install --name {{item.name}}
+                 --connect qemu:///system
+                 --arch x86_64
+                 --ram {{ item.mem }}
+                 --vcpus {{ item.cpu }}
+                 --cpu host
+                 --location {{ item.url }}
+                 --os-type {{ item.os.type }}
+                 --os-variant {{ item.os.variant }}
+                 --network {{item.network}}
+                 --graphics vnc
+                 --{{item.virt_hypervisor}}
+                 --virt-type {{ item.virt_type }}
+                 --disk size={{item.disks.os.size}},{{item.disks.os.options}}
+                 --disk size={{item.disks.data.size}},{{item.disks.data.options}}
+                 --extra-args '{{item.extra_args}}'
+                 --noautoconsole
+                 --noreboot"
+        when: item.name not in virt_vms.list_vms
+        with_items: "{{guests}}"
+
+      - name: get guest info
+        virt: command=info
+        register: virt_info
+
+      - name: make sure all vms are running
+        virt: name={{item.name}} command=start
+        when: virt_info[item.name]['state'] != 'running'
+        with_items: "{{guests}}"

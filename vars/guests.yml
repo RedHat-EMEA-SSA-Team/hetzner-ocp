@@ -1,0 +1,109 @@
+guests:
+    - name: bastion
+      url: http://static.ocp.ninja/rhel73/
+      cpu: 1
+      mem: 1024
+      virt_type: kvm
+      virt_hypervisor: hvm
+      network: bridge=virbr0
+      os:
+          type: linux
+          variant: rhel7.3
+      disks:
+          os:
+            size: 12
+            options: format=qcow2,cache=none,io=native
+          data:
+            size: 1
+            options: format=qcow2,cache=none,io=native
+      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+    - name: master01
+      url: http://static.ocp.ninja/rhel73/
+      cpu: 2
+      mem: 4096
+      virt_type: kvm
+      virt_hypervisor: hvm
+      network: bridge=virbr0
+      os:
+          type: linux
+          variant: rhel7.3
+      disks:
+          os:
+            size: 12
+            options: format=qcow2,cache=none,io=native
+          data:
+            size: 24
+            options: format=qcow2,cache=none,io=native
+      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+    - name: infranode01
+      url: http://static.ocp.ninja/rhel73/
+      cpu: 1
+      mem: 4096
+      virt_type: kvm
+      virt_hypervisor: hvm
+      network: bridge=virbr0
+      os:
+          type: linux
+          variant: rhel7.3
+      disks:
+          os:
+            size: 12
+            options: format=qcow2,cache=none,io=native
+          data:
+            size: 24
+            options: format=qcow2,cache=none,io=native
+      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+    - name: node01
+      url: http://static.ocp.ninja/rhel73/
+      cpu: 1
+      mem: 2096
+      virt_type: kvm
+      virt_hypervisor: hvm
+      network: bridge=virbr0
+      os:
+          type: linux
+          variant: rhel7.3
+      disks:
+          os:
+            size: 12
+            options: format=qcow2,cache=none,io=native
+          data:
+            size: 24
+            options: format=qcow2,cache=none,io=native
+      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+    - name: node02
+      url: http://static.ocp.ninja/rhel73/
+      cpu: 1
+      mem: 2096
+      virt_type: kvm
+      virt_hypervisor: hvm
+      network: bridge=virbr0
+      os:
+          type: linux
+          variant: rhel7.3
+      disks:
+          os:
+            size: 12
+            options: format=qcow2,cache=none,io=native
+          data:
+            size: 24
+            options: format=qcow2,cache=none,io=native
+      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+    - name: node03
+      url: http://static.ocp.ninja/rhel73/
+      cpu: 1
+      mem: 2096
+      virt_type: kvm
+      virt_hypervisor: hvm
+      network: bridge=virbr0
+      os:
+          type: linux
+          variant: rhel7.3
+      disks:
+          os:
+            size: 12
+            options: format=qcow2,cache=none,io=native
+          data:
+            size: 24
+            options: format=qcow2,cache=none,io=native
+      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
