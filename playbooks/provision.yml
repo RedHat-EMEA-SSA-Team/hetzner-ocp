@@ -36,12 +36,29 @@
                  --noreboot"
         when: item.name not in virt_vms.list_vms
         with_items: "{{guests}}"
-
-      - name: get guest info
-        virt: command=info
-        register: virt_info
-
-      - name: make sure all vms are running
-        virt: name={{item.name}} command=start
-        when: virt_info[item.name]['state'] != 'running'
+      - name: Clean up etc hosts
+        lineinfile:
+          path: /etc/hosts
+          state: absent
+          regexp: "{{item.name}}"
+        with_items: "{{guests}}"
+      - name: Initialize etc hosts
+        lineinfile:
+          path: /etc/hosts
+          state: present
+          line: "{{item}}"
+        with_items:
+        - 127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+        - ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
+      - name: Rewrite etc hosts
+        local_action:
+          shell  arp -an | grep "`virsh dumpxml {{item.name}} | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$2); print $2" {{item.name}}" }' >> /etc/hosts
+        with_items: "{{guests}}"
+      - name: Remove old inventory
+        file:
+          path: /tmp/inventory
+          state: absent
+      - name: Create simple ansible inventory
+        local_action:
+          shell echo {{item.name}} >> /tmp/inventory
         with_items: "{{guests}}"
