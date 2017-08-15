@@ -127,6 +127,7 @@ ansible-playbook playbooks/startall.yml
 Copy SSH key to all VMs. Password is p
 
 ````
+export ANSIBLE_HOST_KEY_CHECKING=False
 ansible-playbook -i /tmp/inventory -k playbooks/prepare.yml
 ````
 
