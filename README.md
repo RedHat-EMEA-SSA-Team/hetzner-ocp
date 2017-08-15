@@ -93,13 +93,13 @@ Basically you need to change only num of VMs and/or cpu and mem values.
 
 Provision VMs
 ````
-ansible-playbook provision.yml
+ansible-playbook playbooks/provision.yml
 ````
 
 Copy SSH key to all VMs
 
 ````
-ansible-playbook -i /tmp/inventory -k keycopy.yml
+ansible-playbook -i /tmp/inventory -k playbooks/prepare.yml
 ````
 
 ## Clean up everything
