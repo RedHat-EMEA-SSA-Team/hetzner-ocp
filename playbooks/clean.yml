@@ -4,15 +4,22 @@
   vars_files:
       - ../vars/guests.yml
   tasks:
+  - name: get list of vms
+    virt: command=list_vms
+    register: virt_vms
   - name: Detroy all VMs
     virt:
-      command: detroy
+      command: destroy
       name: "{{item.name}}"
+    when: item.name in virt_vms.list_vms
     with_items: "{{guests}}"
+    ignore_errors: yes
   - name: Undefine all VMs
     virt:
       command: undefine
       name: "{{item.name}}"
+    with_items: "{{guests}}"
+    ignore_errors: yes
   - name: Remove temp files
     file:
       path: /tmp/inventory

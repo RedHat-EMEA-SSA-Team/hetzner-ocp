@@ -36,6 +36,9 @@
                  --noreboot"
         when: item.name not in virt_vms.list_vms
         with_items: "{{guests}}"
+      - name: Wait 20 secs for all VMs to get IP
+        pause:
+          seconds: 20
       - name: Clean up etc hosts
         lineinfile:
           path: /etc/hosts

@@ -4,7 +4,7 @@
   tasks:
   - name: Install packages
     dnf:
-      name: {{item}}
+      name: "{{item}}"
       state: present
     with_items:
     - '@Virtualization'
@@ -18,7 +18,7 @@
       name: libvirtd
       state: started
   - name: Create SSH key for root
-  - user:
+    user:
       name: root
       generate_ssh_key: yes
       ssh_key_bits: 2048
