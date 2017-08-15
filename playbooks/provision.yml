@@ -51,7 +51,7 @@
           state: present
           line: "{{item}}"
         with_items:
-        - 127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+        - 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
         - ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
       - name: Rewrite etc hosts
         local_action:
