@@ -4,7 +4,7 @@
   vars_files:
       - ../vars/guests.yml
   tasks:
-  - name: Stop all
+  - name: Stop all VMs
     virt:
       command: stop
       name: "{{item.name}}"
