@@ -1,0 +1,12 @@
+---
+- name: Stop all VMs
+  hosts: localhost
+  vars_files:
+      - ../vars/guests.yml
+  tasks:
+  - name: Stop all
+    virt:
+      command: stop
+      name: "{{item.name}}"
+    with_items: "{{guests}}"
+    ignore_errors: yes
