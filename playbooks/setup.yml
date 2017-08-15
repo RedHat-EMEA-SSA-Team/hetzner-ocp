@@ -1,5 +1,5 @@
 ---
-- name: Prepare host
+- name: Setup virt env
   hosts: localhost
   tasks:
   - name: Install packages
@@ -8,7 +8,6 @@
       state: present
     with_items:
     - '@Virtualization'
-    - ansible
     - libselinux-python
   - name: Enable libvirt
     service:
