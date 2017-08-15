@@ -96,10 +96,47 @@ Provision VMs
 ansible-playbook playbooks/provision.yml
 ````
 
-Copy SSH key to all VMs
+Provisioning of the hosts take a while and they are in running state until installation is finnished. When guest list is empty, all guest are done and ready to be started.
+
+````
+virsh list
+# installation still running
+ Id    Name                           State
+----------------------------------------------------
+ 34    bastion                        running
+ 35    master01                       running
+ 36    infranode01                    running
+ 37    node01                         running
+ 38    node02                         running
+ 39    node03                         running
+ 
+# When installation is done
+ Id    Name                           State
+----------------------------------------------------
+# Follow installation
+clear
+virsh console bastion
+````
+
+Start VMs when installation is done
+
+````
+ansible-playbook playbooks/startall.yml
+````
+
+Copy SSH key to all VMs. Password is p
 
 ````
 ansible-playbook -i /tmp/inventory -k playbooks/prepare.yml
+````
+
+## Prepare bastion for OCP installation
+You'll need your RHN username, password and subscription pool id (Employee SKU). You can get pool id from https://access.redhat.com/management/
+
+When you have all mentioned above run
+
+````
+ansible-playbook -i /tmp/inventory playbooks/prepare_bastion.yml
 ````
 
 ## Clean up everything
