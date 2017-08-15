@@ -32,8 +32,7 @@
                  --disk size={{item.disks.os.size}},{{item.disks.os.options}}
                  --disk size={{item.disks.data.size}},{{item.disks.data.options}}
                  --extra-args '{{item.extra_args}}'
-                 --noautoconsole
-                 --noreboot"
+                 --noautoconsole"
         when: item.name not in virt_vms.list_vms
         with_items: "{{guests}}"
       - name: Wait 20 secs for all VMs to get IP
@@ -64,4 +63,12 @@
       - name: Create simple ansible inventory
         local_action:
           shell echo {{item.name}} >> /tmp/inventory
+        with_items: "{{guests}}"
+      - name: Waiting for hosts
+        local_action:
+          module: wait_for
+            host={{ item.name }}
+            port=22
+            delay=10
+            timeout=600
         with_items: "{{guests}}"
