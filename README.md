@@ -105,5 +105,5 @@ ansible-playbook -i /tmp/inventory -k playbooks/prepare.yml
 ## Clean up everything
 
 ````
-ansible-playbook clean.yml
+ansible-playbook playbooks/clean.yml
 ````
