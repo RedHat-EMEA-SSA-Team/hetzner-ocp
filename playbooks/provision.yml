@@ -55,7 +55,7 @@
         - ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
       - name: Rewrite etc hosts
         local_action:
-          shell  arp -an | grep "`virsh dumpxml {{item.name}} | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$2); print $2" {{item.name}}" }' >> /etc/hosts
+          shell ip n | grep "`virsh dumpxml {{item.name}} | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" {{item.name}}" }' >> /etc/hosts
         with_items: "{{guests}}"
       - name: Remove old inventory
         file:
