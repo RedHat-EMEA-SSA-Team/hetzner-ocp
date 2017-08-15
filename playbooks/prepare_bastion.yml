@@ -44,3 +44,7 @@
     yum:
       name: *
       state: latest
+  - name: Copy playbooks to bastion
+    synchronize:
+      src: /root/hetzner-ocp
+      dest: /root/
