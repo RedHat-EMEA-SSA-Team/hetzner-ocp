@@ -42,7 +42,7 @@
     - atomic-openshift-utils
   - name: yum update
     yum:
-      name: *
+      name: '*'
       state: latest
   - name: Copy playbooks to bastion
     synchronize:
