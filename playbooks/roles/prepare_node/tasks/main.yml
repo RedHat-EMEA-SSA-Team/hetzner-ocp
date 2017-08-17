@@ -12,42 +12,12 @@
   local_action: stat path=etc-hosts
   register: etc_hosts
 
-# Installer will restart dnsmasq as needed
-- name: Update /etc/hosts
-  copy: src=etc-hosts dest=/etc/hosts
-  when: etc_hosts.stat is defined and etc_hosts.stat.exists
-
-- name: Set hostname
-  command: hostnamectl set-hostname {{ inventory_hostname }}
-  when: inventory_hostname != ansible_fqdn
-
 - name: Register ifcfg files
   shell: ls -1 /etc/sysconfig/network-scripts/ifcfg-*
   register: ifcfg_files
   changed_when: false
   failed_when: false
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=1414332
-- name: Sanitize ifcfg files
-  lineinfile:
-    state=absent
-    dest={{ item }}
-    regexp='^DHCP_HOSTNAME=.*'
-  with_items: "{{ ifcfg_files.stdout_lines }}"
-  when: inventory_hostname != ansible_fqdn
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1419497
-- name: Block public upstream servers
-  lineinfile:
-    dest: /etc/hosts
-    line: "127.0.0.2   {{ item }}"
-  with_items:
-    - docker.io
-    - access.cdn.redhat.com
-    - registry.access.redhat.com
-    - github.com
-    - raw.githubusercontent.com
-  when: disconnected
 
 - name: Configure repositories by using repo files
   copy: src={{ item }} dest=/etc/yum.repos.d/
