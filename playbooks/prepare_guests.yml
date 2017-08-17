@@ -3,13 +3,6 @@
   hosts: bast
   gather_facts: False
   serial: 1
-  vars_prompt:
-  - name: "rhn_username"
-    prompt: "Enter RHN username"
-    private: no
-  - name: "rhn_password"
-    prompt: "Enter RHN password"
-    private: yes
   tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
