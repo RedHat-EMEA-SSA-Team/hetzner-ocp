@@ -1,6 +1,6 @@
 ---
-- name: Register hosts to RHN and subscribe
-  hosts: all
+- name: Register bastion to RHN and subscribe
+  hosts: bast
   gather_facts: False
   serial: 1
   vars_prompt:
@@ -13,14 +13,27 @@
   tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
-  - name: Figure out pool id
+  - name: Get pool id
     shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
-    run_once: true
     register: poolid
   - name: Subscribe hosts
-    command: "subscription-manager attach --pool={{poolid.stdout}}"
+    command: "subscription-manager attach --pool={{ poolid }}"
+  - set_fact:
+      poolid: "{{poolid.stdout}}"
+      pwd: "{{rhn_password}}"
+      user: "{{rhn_username}}"
+- name: Register nodes to RHN and subscribe
+  hosts: nodes
+  gather_facts: False
+  serial: 1
+  tasks:
+  - name: Register hosts
+    command: subscription-manager register --force --username={{ hostvars['bastion']['user'] }} --password={{ hostvars['bastion']['pwd'] }}
+  - name: Subscribe hosts
+    command: "subscription-manager attach --pool={{ hostvars['bastion']['poolid'] }}"
 - name: Manager repos
   hosts: all
+  gather_facts: False
   vars:
     ose_ver: 3.6
   tasks:
@@ -33,6 +46,8 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
+  - { role: docker_setup, device: '/dev/vdb'}
+  - { role: prepare_node, disconnected: false, ntp_server: 0.rhel.pool.ntp.org, use_subs_mgr: true, ose_ver: 3.6}
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast

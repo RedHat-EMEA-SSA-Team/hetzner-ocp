@@ -1,0 +1,32 @@
+- name: Install needed packages
+  package: name={{ item }} state=present
+  with_items:
+    - docker
+    - container-selinux
+    - atomic-openshift-docker-excluder
+
+- name: Detect Docker storage configuration status
+  command: grep -q /dev/mapper/docker /etc/sysconfig/docker-storage
+  register: docker_storage_test
+  changed_when: false
+  failed_when: false
+
+- name: Create Docker storage configuration
+  copy:
+    dest: /etc/sysconfig/docker-storage-setup
+    content: |
+      DEVS={{device}}
+      VG=docker-vg
+
+- name: Apply Docker storage configuration changes
+  command: docker-storage-setup
+  when: docker_storage_test.rc != 0
+
+- name: Copy Docker registry certificate for OpenShift tools
+  copy: src=cert.crt dest=/etc/pki/ca-trust/source/anchors/registry.crt follow=yes
+  register: certificate_update
+  when: openshift_docker_additional_registries is defined
+
+- name: Update CA trust store
+  command: /usr/bin/update-ca-trust
+  when: certificate_update | changed

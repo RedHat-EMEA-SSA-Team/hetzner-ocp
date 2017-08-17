@@ -1,0 +1,195 @@
+- name: Detect Atomic Host
+  set_fact:
+    is_atomic: "{{ ansible_cmdline.root == '/dev/mapper/atomicos-root' }}"
+
+- name: Adjust boot parameters
+  replace: regexp=' rhgb' dest={{ item }}
+  with_items:
+    - /boot/grub2/grub.cfg
+    - /etc/default/grub
+
+- name: Detect custom etc-hosts availability
+  local_action: stat path=etc-hosts
+  register: etc_hosts
+
+# Installer will restart dnsmasq as needed
+- name: Update /etc/hosts
+  copy: src=etc-hosts dest=/etc/hosts
+  when: etc_hosts.stat is defined and etc_hosts.stat.exists
+
+- name: Set hostname
+  command: hostnamectl set-hostname {{ inventory_hostname }}
+  when: inventory_hostname != ansible_fqdn
+
+- name: Register ifcfg files
+  shell: ls -1 /etc/sysconfig/network-scripts/ifcfg-*
+  register: ifcfg_files
+  changed_when: false
+  failed_when: false
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1414332
+- name: Sanitize ifcfg files
+  lineinfile:
+    state=absent
+    dest={{ item }}
+    regexp='^DHCP_HOSTNAME=.*'
+  with_items: "{{ ifcfg_files.stdout_lines }}"
+  when: inventory_hostname != ansible_fqdn
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1419497
+- name: Block public upstream servers
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.2   {{ item }}"
+  with_items:
+    - docker.io
+    - access.cdn.redhat.com
+    - registry.access.redhat.com
+    - github.com
+    - raw.githubusercontent.com
+  when: disconnected
+
+- name: Configure repositories by using repo files
+  copy: src={{ item }} dest=/etc/yum.repos.d/
+  with_fileglob:
+    - ../repo/*repo
+  when: not is_atomic and not use_subs_mgr
+
+- name: Remove unhelpful packages
+  package: name={{ item }} state=absent
+  with_items:
+    - '*firewall*'
+    - 'ntp*'
+    - '*rhn*'
+  when: not is_atomic
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1413535
+- name: Remove obsolete docker-selinux package
+  command: yum -y remove-n docker-selinux warn=no
+  changed_when: false
+  when: not is_atomic
+
+- name: Install prereq packages
+  package: name={{ item }} state=present
+  with_items:
+    - NetworkManager
+    - chrony
+    - kexec-tools
+    - sos
+  when: not is_atomic
+
+- name: Install helpful packages
+  package: name={{ item }} state=present
+  with_items:
+    - NetworkManager-dispatcher-routing-rules
+    - bash-completion
+    - bind-utils
+    - bzip2
+    - deltarpm
+    - git
+    - iotop
+    - man-pages
+    - mlocate
+    - nano
+    - net-tools
+    - openssh-clients
+    - psmisc
+    - screen
+    - strace
+    - tcpdump
+    - telnet
+    - unzip
+    - wget
+    - yum-utils
+  when: not is_atomic
+
+- name: Configure NetworkManager
+  lineinfile:
+    state=absent
+    dest={{ item }}
+    regexp='^NM_CONTROLLED=.*'
+  with_items: "{{ ifcfg_files.stdout_lines }}"
+  register: networkmanager_config
+
+- name: Restart NetworkManager
+  service: name=NetworkManager state=restarted
+  when: networkmanager_config | changed
+
+- name: Enable NetworkManager
+  service: name=NetworkManager enabled=yes state=started
+
+- name: Configure network time server
+  replace:
+    dest: /etc/chrony.conf
+    regexp: '^server .*'
+    replace: 'server {{ ntp_server }} iburst'
+  register: time_config
+
+- name: Restart network time service
+  service: name=chronyd state=restarted
+  when: time_config | changed
+
+- name: Enable network time service
+  service: name=chronyd enabled=yes state=started
+
+- name: Register currently installed kernel versions
+  shell: rpm -q kernel | sort warn=no
+  register: kernels_old
+  changed_when: false
+
+- name: Update all packages
+  package: name=* state=latest
+  when: not is_atomic
+
+- name: Register currently installed kernel versions
+  shell: rpm -q kernel | sort warn=no
+  register: kernels_now
+  changed_when: false
+
+- name: Install SELinux targeted policy
+  package: name=selinux-policy-targeted state=latest
+  register: selinux_install
+
+- name: Enable SELinux targeted policy
+  selinux: policy=targeted state=enforcing
+  register: selinux_state
+
+- name: Reboot to apply changes
+  # https://github.com/ansible/ansible/issues/10616
+  shell: sleep 2 && shutdown -r now "Ansible reboot"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: selinux_install | changed or selinux_state | changed or kernels_old.stdout_lines != kernels_now.stdout_lines
+
+- name: Wait for nodes to reboot
+  local_action:
+    module: wait_for
+      host={{ inventory_hostname }}
+      port=22
+      delay=10
+      timeout=600
+  when: selinux_state | changed or kernels_old.stdout_lines != kernels_now.stdout_lines
+
+- name: Setup package excluder
+hosts: nodes
+become: true
+tasks:
+- name: Install OpenShift package excluder
+  package: name={{ item }} state=present
+  with_items:
+    - atomic-openshift-excluder
+  when: not is_atomic
+
+- name: Disable OpenShift package excluder
+  command: atomic-openshift-excluder unexclude
+  when: not is_atomic
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1427537
+- name: Allow using Atomic Host as NFS server
+hosts: nfs
+become: true
+tasks:
+- name: Allow Atomic Host NFS server
+  copy: content="" dest=/var/lib/nfs/etab force=no
+  when: is_atomic
