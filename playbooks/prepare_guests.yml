@@ -21,9 +21,9 @@
   serial: 1
   tasks:
   - name: Register hosts
-    command: subscription-manager register --force --username={{ hostvars['bastion']['user'] }} --password={{ hostvars['bastion']['pwd'] }}
+    command: subscription-manager register --force --username={{ hostvars['bast']['user'] }} --password={{ hostvars['bast']['pwd'] }}
   - name: Subscribe hosts
-    command: "subscription-manager attach --pool={{ hostvars['bastion']['poolid'] }}"
+    command: "subscription-manager attach --pool={{ hostvars['bast']['poolid'] }}"
 - name: Manager repos
   hosts: all
   gather_facts: False
