@@ -171,10 +171,6 @@
       timeout=600
   when: selinux_state | changed or kernels_old.stdout_lines != kernels_now.stdout_lines
 
-- name: Setup package excluder
-hosts: nodes
-become: true
-tasks:
 - name: Install OpenShift package excluder
   package: name={{ item }} state=present
   with_items:
@@ -184,12 +180,3 @@ tasks:
 - name: Disable OpenShift package excluder
   command: atomic-openshift-excluder unexclude
   when: not is_atomic
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1427537
-- name: Allow using Atomic Host as NFS server
-hosts: nfs
-become: true
-tasks:
-- name: Allow Atomic Host NFS server
-  copy: content="" dest=/var/lib/nfs/etab force=no
-  when: is_atomic
