@@ -15,7 +15,7 @@
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
 
 - name: Prepare bastion for OCP install
-gather_facts: False
+  gather_facts: False
   hosts: all
   vars:
     ose_ver: 3.6
