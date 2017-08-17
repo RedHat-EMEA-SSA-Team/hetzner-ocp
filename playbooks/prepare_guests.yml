@@ -52,6 +52,7 @@
   tasks:
   - name: Disable all repos
     command: subscription-manager repos --disable='*'
+    ignore_errors: true
   - name: Activate OCP repos
     command: "subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-ose-{{ose_ver}}-rpms --enable=rhel-7-fast-datapath-rpms --enable=rhel-7-server-optional-rpms"
 - name: Prepare nodes for OCP install
