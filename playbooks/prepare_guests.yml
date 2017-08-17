@@ -17,7 +17,7 @@
     shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
     register: poolid
   - name: Subscribe hosts
-    command: "subscription-manager attach --pool={{ poolid }}"
+    command: "subscription-manager attach --pool={{ poolid.stdout }}"
   - set_fact:
       poolid: "{{poolid.stdout}}"
       pwd: "{{rhn_password}}"
