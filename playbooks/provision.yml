@@ -62,6 +62,9 @@
         file:
           path: /tmp/inventory
           state: absent
+      - name: Create groups to inventory
+        local_action:
+          shell echo '[bast]' >> /tmp/inventory && echo 'bastion' >> /tmp/inventory && echo '[nodes]' >> /tmp/inventory
       - name: Create simple ansible inventory
         local_action:
           shell echo {{item.name}} >> /tmp/inventory

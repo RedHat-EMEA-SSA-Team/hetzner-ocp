@@ -1,14 +1,4 @@
 ---
-- name: Figure out pool id
-  hosts: bastion
-  gather_facts: False
-  tasks:
-  - name: Figure out pool id
-    shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
-    register: poolid
-  - name: Set pool id as fact
-    set_fact:
-      poolid: "{{poolid.stdout}}"
 - name: Register hosts to RHN and subscribe
   hosts: all
   gather_facts: False
@@ -23,16 +13,33 @@
   tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
+  - name: Figure out pool id
+    shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
+    run_once: true
+    register: poolid
   - name: Subscribe hosts
     command: "subscription-manager attach --pool={{poolid}}"
-  - name: Disable all repos
-    command: subscription-manager repos --disable=*
-  - name: Activate OCP repos
-    command: "subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-ose-3.6-rpms --enable=rhel-7-fast-datapath-rpms --enable=rhel-7-server-optional-rpms"
-- name: Prepare bastion for OCP install
-  gather_facts: False
+- name: Manager repos
   hosts: all
   vars:
     ose_ver: 3.6
+  tasks:
+  - name: Disable all repos
+    command: subscription-manager repos --disable=*
+  - name: Activate OCP repos
+    command: "subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-ose-{{ose_ver}}-rpms --enable=rhel-7-fast-datapath-rpms --enable=rhel-7-server-optional-rpms"
+- name: Prepare nodes for OCP install
+  gather_facts: False
+  hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
+- name: Prepare bastion for OCP install
+  gather_facts: False
+  hosts: bast
+  tasks:
+  - name: Copy playbooks to bastion
+    synchronize:
+      src: /root/hetzner-ocp
+      dest: /root/
+  roles:
+  - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils]}
