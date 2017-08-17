@@ -8,15 +8,18 @@
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
     retries: 3
     delay: 1
+    when: not do_not_subscribe
   - name: Get pool id
     shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
     register: poolid
     retries: 3
     delay: 1
+    when: not do_not_subscribe
   - name: Subscribe hosts
     command: "subscription-manager attach --pool={{ poolid.stdout }}"
     retries: 3
     delay: 1
+    when: not do_not_subscribe
   - set_fact:
       poolid: "{{poolid.stdout}}"
       pwd: "{{rhn_password}}"
@@ -30,10 +33,12 @@
     command: subscription-manager register --force --username={{ hostvars['bastion']['user'] }} --password={{ hostvars['bastion']['pwd'] }}
     retries: 3
     delay: 1
+    when: not do_not_subscribe
   - name: Subscribe hosts
     command: "subscription-manager attach --pool={{ hostvars['bastion']['poolid'] }}"
     retries: 3
     delay: 1
+    when: not do_not_subscribe
 - name: Manager repos
   hosts: all
   gather_facts: False
