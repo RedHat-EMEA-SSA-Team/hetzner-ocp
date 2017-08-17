@@ -3,6 +3,8 @@
   hosts: bast
   gather_facts: False
   serial: 1
+  vars:
+    do_not_subscribe: false
   tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
@@ -55,8 +57,9 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
-  - { role: docker_setup, device: '/dev/vdb'}
   - { role: prepare_node, disconnected: false, ntp_server: 0.rhel.pool.ntp.org, use_subs_mgr: true, ose_ver: 3.6}
+  - { role: docker_setup, device: '/dev/vdb'}
+
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
