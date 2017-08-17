@@ -34,3 +34,9 @@
 - name: Update CA trust store
   command: /usr/bin/update-ca-trust
   when: certificate_update | changed
+
+- name: Enable docker
+  command: systemctl enable docker
+
+- name: Start docker
+  command: systemctl start docker
