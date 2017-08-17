@@ -1,0 +1,17 @@
+---
+- name: Prepare bastion for OCP install
+  hosts: all
+  vars:
+    ose_ver: 3.6
+  vars_prompt:
+    - name: "rhn_username"
+      prompt: "Enter RHN username"
+      private: no
+    - name: "rhn_password"
+      prompt: "Enter RHN password"
+      private: yes
+  tasks:
+
+  roles:
+  - subscribe
+  - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}

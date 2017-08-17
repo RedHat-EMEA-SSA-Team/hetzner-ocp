@@ -1,0 +1,11 @@
+- name: Figure out pool id
+  shell: subscription-manager list --available --matches 'Employee SKU' | grep Pool | awk '{print $3}'
+  register: poolid
+- name: Register hosts
+  command: subscription-manager register --username={{rhn_username}} --password={{rhn_password}}
+- name: Attach to Openshift subscription
+  command: "subscription-manager attach --pool={{poolid.stdout}}"
+- name: Disable all repos
+  command: subscription-manager repos --disable=*
+- name: Activate OCP repos
+  command: "subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-ose-{{ose_ver}}-rpms --enable=rhel-7-fast-datapath-rpms --enable=rhel-7-server-optional-rpms"

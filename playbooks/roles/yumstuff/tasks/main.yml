@@ -1,0 +1,10 @@
+- name: Install packages
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+  - "{{packages}}"
+- name: Yum update
+  yum:
+    name: '*'
+    state: latest
