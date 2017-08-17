@@ -11,14 +11,14 @@
     - name: "rhn_password"
       prompt: "Enter RHN password"
       private: yes
-    - name: "pool_id"
-      prompt: "Subscription pool ID"
-      private: no
   tasks:
+  - name: Figure out pool id
+    shell: subscription-manager list --available --matches 'Employee SKU' | grep Pool | awk '{print $3}'
+    register: poolid
   - name: Register hosts
     command: subscription-manager register --username={{rhn_username}} --password={{rhn_password}}
   - name: Attach to Openshift subscription
-    command: "subscription-manager attach --pool={{pool_id}}"
+    command: "subscription-manager attach --pool={{poolid.stdout}}"
   - name: Disable all repos
     command: subscription-manager repos --disable=*
   - name: Activate OCP repos

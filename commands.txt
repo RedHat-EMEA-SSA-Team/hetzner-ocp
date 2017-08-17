@@ -1,0 +1,3 @@
+Centos
+yum -y install qemu-kvm libvirt virt-install bridge-utils
+sudo yum update -y

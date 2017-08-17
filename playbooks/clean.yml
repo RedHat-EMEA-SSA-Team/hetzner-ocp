@@ -24,3 +24,8 @@
     file:
       path: /tmp/inventory
       state: absent
+  - name: Remove image file
+    file:
+      path: "/var/lib/libvirt/images/{{item.name}}.qcow2"
+      state: absent
+    with_items: "{{guests}}"
