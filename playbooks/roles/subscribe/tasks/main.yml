@@ -1,5 +1,5 @@
 - name: Figure out pool id
-  shell: ""subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
+  shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
   register: poolid
 - name: Attach to Openshift subscription
   command: "subscription-manager attach --pool={{poolid.stdout}}"
