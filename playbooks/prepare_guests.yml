@@ -24,9 +24,11 @@
     when: not do_not_subscribe
   - set_fact:
       poolid: "{{poolid.stdout}}"
+    when: not do_not_subscribe
+  - set_fact:
       pwd: "{{rhn_password}}"
       user: "{{rhn_username}}"
-      no_subscribe: "{{do_not_subscribe}}"
+      do_not_subscribe: "{{do_not_subscribe}}"
 - name: Register nodes to RHN and subscribe
   hosts: nodes
   gather_facts: False
@@ -36,12 +38,12 @@
     command: subscription-manager register --force --username={{ hostvars['bastion']['user'] }} --password={{ hostvars['bastion']['pwd'] }}
     retries: 3
     delay: 1
-    when: not hostvars['bastion']['no_subscribe']
+    when: not hostvars['bastion']['do_not_subscribe']
   - name: Subscribe hosts
     command: "subscription-manager attach --pool={{ hostvars['bastion']['poolid'] }}"
     retries: 3
     delay: 1
-    when: not hostvars['bastion']['no_subscribe']
+    when: not hostvars['bastion']['do_not_subscribe']
 - name: Manager repos
   hosts: all
   gather_facts: False
