@@ -11,7 +11,8 @@
     private: yes
   tasks:
   - name: Register hosts
-    command: subscription-manager register --username={{rhn_username}} --password={{rhn_password}}
+    command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
+
 - name: Prepare bastion for OCP install
   hosts: all
   vars:
