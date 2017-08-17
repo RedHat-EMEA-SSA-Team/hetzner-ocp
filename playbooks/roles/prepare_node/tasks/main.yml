@@ -1,6 +1,6 @@
 - name: Detect Atomic Host
   set_fact:
-    is_atomic: "{{ ansible_cmdline.root == '/dev/mapper/atomicos-root' }}"
+    is_atomic: False
 
 - name: Adjust boot parameters
   replace: regexp=' rhgb' dest={{ item }}
