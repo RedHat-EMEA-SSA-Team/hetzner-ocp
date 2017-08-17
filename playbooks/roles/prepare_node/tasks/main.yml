@@ -56,7 +56,9 @@
   when: not is_atomic and not use_subs_mgr
 
 - name: Remove unhelpful packages
-  package: name={{ item }} state=absent
+  yum:
+    name: {{ item }}
+    state: absent
   with_items:
     - '*firewall*'
     - 'ntp*'
@@ -70,7 +72,9 @@
   when: not is_atomic
 
 - name: Install prereq packages
-  package: name={{ item }} state=present
+  yum:
+    name: {{ item }}
+    state: present
   with_items:
     - NetworkManager
     - chrony
@@ -79,7 +83,9 @@
   when: not is_atomic
 
 - name: Install helpful packages
-  package: name={{ item }} state=present
+  yum:
+    name: {{ item }}
+    state: present
   with_items:
     - NetworkManager-dispatcher-routing-rules
     - bash-completion
@@ -138,7 +144,9 @@
   changed_when: false
 
 - name: Update all packages
-  package: name=* state=latest
+  yum:
+    name: '*'
+    state: latest
   when: not is_atomic
 
 - name: Register currently installed kernel versions
@@ -147,7 +155,9 @@
   changed_when: false
 
 - name: Install SELinux targeted policy
-  package: name=selinux-policy-targeted state=latest
+  yum:
+    name: selinux-policy-targeted
+    state: latest
   register: selinux_install
 
 - name: Enable SELinux targeted policy
@@ -172,7 +182,9 @@
   when: selinux_state | changed or kernels_old.stdout_lines != kernels_now.stdout_lines
 
 - name: Install OpenShift package excluder
-  package: name={{ item }} state=present
+  yum:
+    name: {{ item }}
+    state: present
   with_items:
     - atomic-openshift-excluder
   when: not is_atomic
