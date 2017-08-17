@@ -18,7 +18,7 @@
     run_once: true
     register: poolid
   - name: Subscribe hosts
-    command: "subscription-manager attach --pool={{poolid.ustdout}}"
+    command: "subscription-manager attach --pool={{poolid.stdout}}"
 - name: Manager repos
   hosts: all
   vars:
