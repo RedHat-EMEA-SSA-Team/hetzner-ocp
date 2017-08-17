@@ -20,5 +20,5 @@
   vars:
     ose_ver: 3.6
   roles:
-  - { role: subscribe, ose_ver: "{{ose_ver}}"}
+  - subscribe
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
