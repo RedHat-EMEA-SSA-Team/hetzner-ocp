@@ -57,7 +57,7 @@
 
 - name: Remove unhelpful packages
   yum:
-    name: {{ item }}
+    name: "{{ item }}"
     state: absent
   with_items:
     - '*firewall*'
@@ -73,7 +73,7 @@
 
 - name: Install prereq packages
   yum:
-    name: {{ item }}
+    name: "{{ item }}"
     state: present
   with_items:
     - NetworkManager
@@ -84,7 +84,7 @@
 
 - name: Install helpful packages
   yum:
-    name: {{ item }}
+    name: "{{ item }}"
     state: present
   with_items:
     - NetworkManager-dispatcher-routing-rules
@@ -183,7 +183,7 @@
 
 - name: Install OpenShift package excluder
   yum:
-    name: {{ item }}
+    name: "{{ item }}"
     state: present
   with_items:
     - atomic-openshift-excluder
