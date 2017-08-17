@@ -1,6 +1,7 @@
 ---
 - name: Setup virt env
   hosts: localhost
+  gather_facts: False
   tasks:
   - name: Install packages
     dnf:

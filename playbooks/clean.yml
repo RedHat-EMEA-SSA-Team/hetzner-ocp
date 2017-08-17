@@ -1,6 +1,7 @@
 ---
 - name: Clean up everything
   hosts: localhost
+  gather_facts: False
   vars_files:
       - ../vars/guests.yml
   tasks:

@@ -1,6 +1,7 @@
 ---
 - name: Stop all VMs
   hosts: localhost
+  gather_facts: False
   vars_files:
       - ../vars/guests.yml
   tasks:

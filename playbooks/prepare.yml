@@ -1,5 +1,6 @@
 ---
 - name: Prepare host and guests
+  gather_facts: False
   hosts: all
   tasks:
   - name: Add key to authorized_keys

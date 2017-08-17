@@ -1,6 +1,7 @@
 ---
 - name: Register hosts to RHN
   hosts: all
+  gather_facts: False
   serial: 1
   vars_prompt:
   - name: "rhn_username"
@@ -14,6 +15,7 @@
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
 
 - name: Prepare bastion for OCP install
+gather_facts: False
   hosts: all
   vars:
     ose_ver: 3.6

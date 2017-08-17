@@ -1,6 +1,7 @@
 ---
 - name: Prepare bastion for OCP install
   hosts: bastion
+  gather_facts: False
   serial: 1
   vars:
     ose_ver: 3.6
