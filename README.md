@@ -134,7 +134,7 @@ You'll need your RHN username, password and subscription pool id (Employee SKU).
 When you have all mentioned above run.
 
 ````
-ansible-playbook -i /tmp/inventory playbooks/prepare_guests.yml export --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+ansible-playbook -i /tmp/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ````
 
 ## Clean up everything
