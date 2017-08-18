@@ -4,7 +4,7 @@
 
 You need to install Fedora 25 to the server via VNC console from Heztner Robot UI.
 
-You'll need VNC client to access VNC based installer, like [VNC Viewer](https://www.realvnc.com/en/download/viewer/) 
+You'll need VNC client to access VNC based installer, like [VNC Viewer](https://www.realvnc.com/en/download/viewer/)
 
 Activate VNC console, [screenshot](images/01_vnc_console.png)
 
@@ -16,11 +16,11 @@ Minimal install + basic tools is enough
 I dont have good opinion about how to partition disks...In my tests I created a big root
 ````
 NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-sdb               8:16   0  1.8T  0 disk 
-└─sdb1            8:17   0  1.8T  0 part 
+sdb               8:16   0  1.8T  0 disk
+└─sdb1            8:17   0  1.8T  0 part
   └─fedora-root 253:0    0  3.6T  0 lvm  /
-sda               8:0    0  1.8T  0 disk 
-├─sda2            8:2    0  1.8T  0 part 
+sda               8:0    0  1.8T  0 disk
+├─sda2            8:2    0  1.8T  0 part
 │ ├─fedora-swap 253:1    0 23.7G  0 lvm  [SWAP]
 │ └─fedora-root 253:0    0  3.6T  0 lvm  /
 └─sda1            8:1    0    1G  0 part /boot
@@ -53,6 +53,9 @@ git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ````
 cd hetzner-ocp
 ansible-playbook playbooks/setup.yml
+export RHN_USERNAME=yourid@redhat.com
+export RHN_PWD=yourpwd
+export ANSIBLE_HOST_KEY_CHECKING=False
 ````
 
 ## Provision guest
@@ -109,16 +112,11 @@ virsh list
  37    node01                         running
  38    node02                         running
  39    node03                         running
- 
-# When installation is done
- Id    Name                           State
-----------------------------------------------------
-# Follow installation
-clear
-virsh console bastion
-````
 
-Start VMs when installation is done
+````
+When list of running guests is empty, all guests have been installed.
+
+Start all VMs
 
 ````
 ansible-playbook playbooks/startall.yml
@@ -127,17 +125,16 @@ ansible-playbook playbooks/startall.yml
 Copy SSH key to all VMs. Password is p
 
 ````
-export ANSIBLE_HOST_KEY_CHECKING=False
-ansible-playbook -i /tmp/inventory -k playbooks/prepare.yml
+ansible-playbook -i /tmp/inventory -k playbooks/prepare_ssl.yml
 ````
 
 ## Prepare bastion for OCP installation
 You'll need your RHN username, password and subscription pool id (Employee SKU). You can get pool id from https://access.redhat.com/management/
 
-When you have all mentioned above run
+When you have all mentioned above run.
 
 ````
-ansible-playbook -i /tmp/inventory playbooks/prepare_bastion.yml
+ansible-playbook -i /tmp/inventory playbooks/prepare_guests.yml export --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ````
 
 ## Clean up everything

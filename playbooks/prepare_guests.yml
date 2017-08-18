@@ -71,5 +71,13 @@
     synchronize:
       src: /root/hetzner-ocp
       dest: /root/
+  - name: Copy playbooks to bastion
+    copy:
+      src: "{{item}}"
+      dest: "{{item}}"
+    items:
+    - '/root/.ssh/id_rsa'
+    - '/root/.ssh/id_rsa.pub'
+    - '/root/.ssh/known_hosts'
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils]}
