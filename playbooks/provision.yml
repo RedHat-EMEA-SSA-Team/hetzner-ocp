@@ -69,3 +69,4 @@
         local_action:
           shell echo {{item.name}} >> /tmp/inventory
         with_items: "{{guests}}"
+        when: item.name != 'bastion'
