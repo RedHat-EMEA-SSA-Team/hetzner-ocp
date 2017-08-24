@@ -14,3 +14,8 @@ virt-install --connect qemu:///system --name rhel --virt-type kvm \
     --location http://static.ocp.ninja/rhel73/ \
     --extra-args "ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes" \
     --noautoconsole
+
+    iptables -t nat -I PREROUTING -p tcp -d 46.4.119.94 --dport 80 -j DNAT --to-destination 192.168.122.123:80
+    iptables -t nat -I PREROUTING -p tcp -d 46.4.119.94 --dport 443 -j DNAT --to-destination 192.168.122.123:443
+    iptables -t nat -I PREROUTING -p tcp -d 46.4.119.94 --dport 8443 -j DNAT --to-destination 192.168.122.17:443
+    iptables -I FORWARD -m state -d 192.168.122.0/24 --state NEW,RELATED,ESTABLISHED -j ACCEPT

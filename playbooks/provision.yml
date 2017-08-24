@@ -70,3 +70,23 @@
           shell echo {{item.name}} >> /tmp/inventory
         with_items: "{{guests}}"
         when: item.name != 'bastion'
+      - name: Get master01 ip addr
+        local_action:
+          shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" {{item.name}}" }'
+        register: master_ip_addr
+      - name: Get master01 ip addr
+        local_action:
+          shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" {{item.name}}" }'
+        register: infranode_ip_addr
+      - name: Port forwarding for 8443
+        local_action:
+          "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 80 -j DNAT --to-destination {{infranode_ip_addr}}:80"
+      - name: Port forwarding for 8443
+        local_action:
+          "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 443 -j DNAT --to-destination {{infranode_ip_addr}}:443"
+      - name: Port forwarding for 8443
+        local_action:
+          "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 8443 -j DNAT --to-destination {{master_ip_addr}}:8443"
+      - name: Port forwarding for 8443
+        local_action:
+          "shell iptables -I FORWARD -m state -d 192.168.122.0/24 --state NEW,RELATED,ESTABLISHED -j ACCEPT"
