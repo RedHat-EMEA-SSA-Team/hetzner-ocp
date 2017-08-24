@@ -15,6 +15,9 @@ ansible_become=no
 deployment_type=openshift-enterprise
 containerized=false
 
+# Skip env validation
+openshift_disable_check=disk_availability,memory_availability
+
 # Configure usage of openshift_clock role.
 openshift_clock_enabled=true
 
