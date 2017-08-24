@@ -72,11 +72,11 @@
         when: item.name != 'bastion'
       - name: Get master01 ip addr
         local_action:
-          shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" master01" }'
+          shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
         register: master_ip_addr
       - name: Get infranode ip addr
         local_action:
-          shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" infranode01" }'
+          shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
         register: infranode_ip_addr
       - name: Port forwarding for 8443
         local_action:
