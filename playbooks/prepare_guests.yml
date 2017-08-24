@@ -80,7 +80,7 @@
     - '/root/.ssh/id_rsa.pub'
     - '/root/.ssh/known_hosts'
   roles:
-  - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils]}
+  - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils,atomic-openshift-clients]}
 
 - name: Gather facts from localhost
   hosts: localhost
