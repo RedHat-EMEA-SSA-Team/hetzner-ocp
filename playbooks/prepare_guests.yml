@@ -75,6 +75,7 @@
     copy:
       src: "{{item}}"
       dest: "{{item}}"
+      mode: 0600
     items:
     - '/root/.ssh/id_rsa'
     - '/root/.ssh/id_rsa.pub'
