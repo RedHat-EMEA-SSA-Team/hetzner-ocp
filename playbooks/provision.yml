@@ -1,6 +1,6 @@
 - name: Provision quests
   hosts: localhost
-  gather_facts: False
+  gather_facts: true
   vars_files:
       - ../vars/guests.yml
   tasks:
