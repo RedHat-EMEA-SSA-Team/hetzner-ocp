@@ -1,0 +1,4 @@
+- name: Create Inventory file based on dynamic guests
+  template:
+    src: hosts.j2
+    dest: /etc/ansible/hosts

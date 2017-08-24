@@ -81,7 +81,15 @@
     - '/root/.ssh/known_hosts'
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils]}
+
+- name: Gather facts from localhost
+  hosts: localhost
+  tasks:
+  - debug: msg='Gathering facts'
+
 - name: Create inventory
   hosts: bast
+  vars:
+    ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
   roles:
-  - { role: inventory, host_ip: hostvars['localhost']['ansible_default_ipv4']['address']}
+  - { role: inventory}

@@ -1,0 +1,135 @@
+# Create an OSEv3 group that contains the masters and nodes groups
+# For highly available load balancer a custom setup is needed, see
+# for example https://github.com/myllynen/openshift-ha-load-balancer
+[OSEv3:children]
+masters
+nodes
+etcd
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+ansible_ssh_user=root
+ansible_become=no
+
+# https://github.com/openshift/openshift-ansible/blob/master/DEPLOYMENT_TYPES.md
+deployment_type=openshift-enterprise
+containerized=false
+
+# Configure usage of openshift_clock role.
+openshift_clock_enabled=true
+
+# Set upgrade restart mode for full system restarts
+openshift_rolling_restart_mode=system
+
+# Enable cockpit
+osm_use_cockpit=false
+osm_cockpit_plugins=['cockpit-kubernetes', 'cockpit-pcp', 'setroubleshoot-server']
+
+# Docker / Registry Configuration
+openshift_docker_disable_push_dockerhub=True
+openshift_docker_options="--log-driver=journald --log-level=warn --ipv6=false"
+
+# Native high availability cluster method with optional load balancer.
+#openshift_master_cluster_method=native
+openshift_master_cluster_hostname=master01
+openshift_master_cluster_public_hostname=master.{{ip_addr}}.xip.io
+
+
+# Configure nodeIP in the node config
+# This is needed in cases where node traffic is desired to go over an
+# interface other than the default network interface.
+
+# Configure the multi-tenant SDN plugin (default is 'redhat/openshift-ovs-subnet')
+os_sdn_network_plugin_name=redhat/openshift-ovs-multitenant
+
+# Configure SDN cluster network and kubernetes service CIDR blocks. These
+# network blocks should be private and should not conflict with network blocks
+# in your infrastructure that pods may require access to. Can not be changed
+# after deployment.
+osm_cluster_network_cidr=10.1.0.0/16
+openshift_portal_net=172.30.0.0/16
+osm_host_subnet_length=8
+
+# htpasswd auth
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+
+# LDAP auth
+#openshift_master_identity_providers=[{'name': 'my_ldap_provider', 'challenge': 'true', 'login': 'true', 'kind': 'LDAPPasswordIdentityProvider', 'attributes': {'id': ['dn'], 'email': ['mail'], 'name': ['cn'], 'preferredUsername': ['uid']}, 'bindDN': '', 'bindPassword': '', 'ca': 'my-ldap-ca.crt', 'insecure': 'false', 'url': 'ldap://ldap.example.com:389/ou=users,dc=example,dc=com?uid'}]
+#openshift_master_ldap_ca_file=<path to local ca file to use>
+
+# Enable API service auditing, available as of 3.2
+openshift_master_audit_config={"enabled": true}
+
+# Provide local certificate paths which will be deployed to masters
+#openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "cafile": "/path/to/custom-ca1.crt"}]
+openshift_master_overwrite_named_certificates=true
+#openshift_hosted_router_certificate={"certfile": "/path/to/router.crt", "keyfile": "/path/to/router.key", "cafile": "/path/to/router-ca.crt"}
+
+# Install the openshift examples
+openshift_install_examples=true
+openshift_examples_modify_imagestreams=true
+
+# Configure node kubelet arguments. pods-per-core is valid in OpenShift Origin 1.3 or OpenShift Container Platform 3.3 and later.
+#openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
+openshift_node_kubelet_args={'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
+
+# default subdomain to use for exposed routes
+openshift_master_default_subdomain=apps.{{ip_addr}}.xip.io
+
+# default project node selector
+osm_default_node_selector='purpose=work'
+
+# OpenShift Router Options
+openshift_hosted_router_selector='region=infra'
+
+# Openshift Registry Options
+openshift_hosted_registry_selector='region=infra'
+openshift_hosted_registry_replicas=1
+
+# Registry Storage Options
+
+# Metrics deployment
+openshift_hosted_metrics_deploy=false
+openshift_hosted_metrics_public_url=https://metrics.t-paas.vs.ch/hawkular/metrics
+openshift_metrics_install_metrics=false
+openshift_metrics_hawkular_hostname=metrics.apps.{{ip_addr}}.xip.io
+openshift_metrics_cassandra_replicas=1
+openshift_metrics_cassandra_limits_memory=2Gi
+openshift_metrics_hawkular_replicas=1
+openshift_metrics_duration=5
+
+
+openshift_metrics_cassandra_nodeselector={"region":"infra"}
+openshift_metrics_hawkular_nodeselector={"region":"infra"}
+openshift_metrics_heapster_nodeselector={"region":"infra"}
+
+# Metrics Storage Options
+openshift_metrics_cassandra_storage_type=emptyDir
+
+# Logging deployment
+openshift_hosted_logging_deploy=false
+openshift_logging_install_logging=false
+openshift_logging_kibana_hostname=logging.apps.{{ip_addr}}.xip.io
+openshift_logging_use_ops=false
+openshift_logging_master_url=master01
+openshift_logging_public_master_url=master.{{ip_addr}}.xip.io
+openshift_logging_curator_default_days=7
+openshift_logging_kibana_hostname=logging.apps.{{ip_addr}}.xip.io
+
+openshift_logging_curator_nodeselector={"region":"infra"}
+openshift_logging_es_nodeselector={"region":"infra"}
+openshift_logging_fluentd_nodeselector={"fluentd":"true"}
+openshift_logging_kibana_nodeselector={"region":"infra"}
+
+openshift_generate_no_proxy_hosts=true
+
+[masters]
+master01
+
+[etcd]
+master01
+
+[nodes]
+master01 openshift_schedulable=false
+infranode01 openshift_node_labels="{'region':'infra'}"
+node01 openshift_node_labels="{'purpose':'work'}"
