@@ -17,4 +17,4 @@
     debug:
       msg:
       - "Login to Openshift:"
-      - "oc login -u admin https://{{openshift_master_cluster_hostname}}:8443"
+      - "oc login -u admin https://{{openshift_master_cluster_public_hostname}}:8443"
