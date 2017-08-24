@@ -66,8 +66,7 @@ Check ```vars/guests.yml``` and modify it to correspond your environment. By def
 * master01
 * infranode01
 * node01
-* node02
-* node03
+
 
 Sample guest definition
 
