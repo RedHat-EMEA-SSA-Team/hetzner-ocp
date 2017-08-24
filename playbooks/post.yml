@@ -1,0 +1,20 @@
+---
+- name: Create password for cluster admin
+  hosts: masters
+  vars_prompt:
+  - name: admin_pwd
+    prompt: Admin password
+    private: true
+  tasks:
+  - name: Add user
+    command: "htpasswd -b /etc/origin/master/htpasswd admin {{admin_pwd}}"
+- name: Add cluster-admin privileges
+  hosts: masters[0]
+  tasks:
+  - name: Add privileges
+    command: "oc adm policy add-cluster-role-to-user cluster-admin admin"
+  - name: All done, you can now login
+    debug:
+      msg:
+      - "Login to Openshift:"
+      - "oc login -u admin https://{{openshift_master_cluster_hostname}}:8443"
