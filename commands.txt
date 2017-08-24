@@ -4,15 +4,14 @@ sudo yum update -y
 
 
 virt-install --connect qemu:///system --name rhel --virt-type kvm \
-    --arch x86_64 --vcpus 2 --cpu host --ram 4096 --os-type linux \
+    --arch x86_64 --vcpus 1 --cpu host --ram 1024 --os-type linux \
     --os-variant rhel7.3 \
     --disk pool=default,format=qcow2,cache=none,io=native,size=12 \
     --disk pool=default,format=qcow2,cache=none,io=native,size=24 \
     --network default \
-    --network bridge=brinet0 \
     --graphics vnc --noreboot \
-    --location http://static.ocp.ninja/rhel73/ \
-    --extra-args "ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes" \
+    --location http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73 \
+    --extra-args "ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes" \
     --noautoconsole
 
     iptables -t nat -I PREROUTING -p tcp -d 46.4.119.94 --dport 80 -j DNAT --to-destination 192.168.122.123:80

@@ -1,6 +1,6 @@
 guests:
     - name: bastion
-      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73/
+      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
       cpu: 1
       mem: 1024
       virt_type: kvm
@@ -18,7 +18,7 @@ guests:
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: master01
-      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73/
+      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
       cpu: 2
       mem: 4096
       virt_type: kvm
@@ -36,7 +36,7 @@ guests:
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: infranode01
-      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73/
+      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
       cpu: 1
       mem: 4096
       virt_type: kvm
@@ -54,7 +54,7 @@ guests:
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: node01
-      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73/
+      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
       cpu: 2
       mem: 20096
       virt_type: kvm
