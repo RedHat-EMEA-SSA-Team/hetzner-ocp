@@ -151,7 +151,9 @@ Installation is done with normal OCP installation playbooks. You can start insta
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
 
-When installation is done you can create new admin user with post install playbook.
+When installation is done you can create new admin user and add hostpath persitent storage to registry with post install playbook.
+
+Exit from bastion and execute following on hypervizor.
 
 ```
 ansible-playbook hetzner-ocp/playbooks/post.yml
