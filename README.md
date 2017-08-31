@@ -120,7 +120,7 @@ Start all VMs
 ansible-playbook playbooks/startall.yml
 ```
 
-Copy SSH key to all VMs. Password is p
+Use below commands to copy SSH key to all VMs. Password for all hosts is p.
 
 Before executing this playbook, clean all old ssl indentities from file /root/.ssh/known_hosts.
 
