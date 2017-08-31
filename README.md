@@ -71,7 +71,7 @@ Sample guest definition
 
 ```
     - name: bastion
-      url: http://static.ocp.ninja/rhel73/
+      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73/
       cpu: 1
       mem: 1024
       virt_type: kvm
@@ -87,7 +87,7 @@ Sample guest definition
           data:
             size: 1
             options: format=qcow2,cache=none,io=native
-      extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+      extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
 ```
 
 Basically you need to change only num of VMs and/or cpu and mem values.
@@ -156,6 +156,17 @@ When installation is done you can create new admin user with post install playbo
 ```
 ansible-playbook hetzner-ocp/playbooks/post.yml
 ```
+
+## Add persistent storage with hostpath
+Note: For now this works only if you have single node :)
+Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remembed to change both.
+
+To start hostpath setup execute following on hypervizor
+```
+ansible-playbook -i /tmp/inventory playbooks/hostpath.yml
+```
+
+
 ## Clean up everything
 ansible-playbook playbooks/clean.yml
 ```
