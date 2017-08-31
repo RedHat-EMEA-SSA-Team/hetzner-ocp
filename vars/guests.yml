@@ -29,10 +29,10 @@ guests:
           variant: rhel7.3
       disks:
           os:
-            size: 12
+            size: 40
             options: format=qcow2,cache=none,io=native
           data:
-            size: 24
+            size: 40
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: infranode01
@@ -47,16 +47,16 @@ guests:
           variant: rhel7.3
       disks:
           os:
-            size: 12
+            size: 40
             options: format=qcow2,cache=none,io=native
           data:
-            size: 24
+            size: 40
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: node01
       url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
       cpu: 2
-      mem: 20096
+      mem: 16 384
       virt_type: kvm
       virt_hypervisor: hvm
       network: bridge=virbr0
@@ -65,9 +65,9 @@ guests:
           variant: rhel7.3
       disks:
           os:
-            size: 12
+            size: 40
             options: format=qcow2,cache=none,io=native
           data:
-            size: 24
+            size: 40
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://static.ocp.ninja/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
