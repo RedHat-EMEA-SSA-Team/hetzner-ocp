@@ -1,0 +1,77 @@
+---
+- hosts: localhost
+  vars:
+    size: 200G
+  tasks:
+  - name: Create raw image
+    command: "qemu-img create -f raw /var/lib/libvirt/images/pvdata.img {{size}}"
+  - name: Add new disk to node01 as vdc
+    command: virsh attach-disk node01 --source /var/lib/libvirt/images/pvdata.img --persistent --target vdc
+
+- hosts: node01
+  vars:
+    hostpath: /var/hostpath
+    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
+    pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
+  tasks:
+  - name: Makefs
+    command: mkfs.ext4 /dev/vdc
+  - name: Create mount point
+    file:
+      path: "{{hostpath}}"
+      state: directory
+      owner: nfsnobody
+      group: nfsnobody
+      mode: 0777
+  - name: Mount new disk to mount point
+    lineinfile:
+      path: /etc/fstab
+      state: present
+      line: "/dev/vdc   {{hostpath}}  ext4    defaults    0 0"
+  - name: Refresh mounts
+    command: mount -a
+  - name: Create directories
+    file:
+      path: "{{hostpath}}/pv{{item}}"
+      state: directory
+      owner: nfsnobody
+      group: nfsnobody
+      mode: 0777
+    with_items:
+    - "{{pv_names}}"
+    - "{{hostpath}}"
+  - name: SELinux svirt_sandbox_file_t
+    command: "chcon -Rt svirt_sandbox_file_t {{hostpath}}/pv{{item}}"
+    with_items:
+    - "{{pv_names}}"
+    - "{{hostpath}}"
+- hosts: master01
+  vars:
+    hostpath: /var/hostpath
+    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
+    pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
+  tasks:
+  - name: "Create dir for pv files"
+    file: path=/tmp/pvs state=directory
+  - name: "Create pv files"
+    copy:
+      dest: /tmp/pvs/pv{{item.0}}.yaml
+      content: |
+        apiVersion: v1
+        kind: PersistentVolume
+        metadata:
+          name: pv{{item.0}}
+        spec:
+          capacity:
+            storage: {{item.1}}
+          accessModes:
+            - ReadWriteOnce
+            - ReadWriteMany
+          persistentVolumeReclaimPolicy: Recycle
+          hostPath:
+            path: {{hostpath}}/pv{{item.0}}
+    with_together:
+    - "{{pv_names}}"
+    - "{{pv_sizes}}"
+  - name: "Create pvs"
+    command: "oc create -f /tmp/pvs/"
