@@ -60,7 +60,6 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
-  - { role: prepare_node, disconnected: false, ntp_server: 0.rhel.pool.ntp.org, use_subs_mgr: true, ose_ver: 3.6}
   - { role: docker_setup, device: '/dev/vdb'}
 
 - name: Prepare bastion for OCP install
