@@ -9,19 +9,9 @@
   tasks:
   - name: Add user
     command: "htpasswd -b /etc/origin/master/htpasswd admin {{admin_pwd}}"
-- name: Add cluster-admin privileges
-  hosts: master01
-  gather_facts: false
-  tasks:
   - name: Add privileges
     command: "oc adm policy add-cluster-role-to-user cluster-admin admin"
-  - name: All done, you can now login
-    debug:
-      msg:
-      - "Login to Openshift:"
-      - "oc login -u admin https://{{openshift_master_cluster_public_hostname}}:8443"
-
-- name: Fig all kind of stuff
+- name: Fix all kind of stuff
   hosts: nodes
   gather_facts: false
   tasks:
@@ -33,6 +23,7 @@
       line: 'search cluster.local'
 - name: Create hostpath stuff for registry
   hosts: localhost
+  gather_facts: false
   tasks:
   - name: Create raw image
     command: "qemu-img create -f raw /var/lib/libvirt/images/docker-registry.img 100G"
@@ -64,3 +55,12 @@
     command: "oc adm policy add-scc-to-user hostaccess -z registry"
   - name: Add volumen to regisry dc
     command: "oc volume dc/docker-registry --add -t hostPath --path /var/hostpath/registry -m /registry --name registry-storage --overwrite"
+- name: All done, ready to rock
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: All done, you can now login
+    debug:
+      msg:
+      - "Login to Openshift:"
+      - "oc login -u admin https://master.{{hostvars['localhost']['ansible_default_ipv4']['address']}}.xip.io:8443"
