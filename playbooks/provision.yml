@@ -96,4 +96,4 @@
       - name: Setup directory for NFS
         file:
           path: /exports
-          state: present
+          state: directory
