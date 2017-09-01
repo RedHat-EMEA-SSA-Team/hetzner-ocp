@@ -93,7 +93,7 @@ There are some things that you will probably have to changes
 * Configure LV sizes so that it matches your total disk size. In this example I have 2 x 2Tb disks RAID 1 so total diskspace available is 2Tb (1863 Gb)
 * If you like you can add more volume groups and logical volumes.
 
-When you are happy with file content, save and exit the editor via `:wq` and start instattion with following command
+When you are happy with file content, save and exit the editor via `:wq` and start installation with the following command
 
 ```
 installimage -a -c config.txt
