@@ -5,6 +5,7 @@
 masters
 nodes
 etcd
+nfs
 
 # Set variables common for all OSEv3 hosts
 [OSEv3:vars]
@@ -132,6 +133,9 @@ master01
 
 [etcd]
 master01
+
+[nfs]
+192.168.122.1
 
 [nodes]
 master01 openshift_schedulable=false
