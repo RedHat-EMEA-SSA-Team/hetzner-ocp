@@ -1,0 +1,56 @@
+---
+- hosts: bast
+  vars:
+    nfspath: /exports
+    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
+  tasks:
+  - name: "Setup NFS exports"
+    lineinfile:
+      dest: /etc/exports.d/openshift-ansible.exports
+      state: present
+      line: "{{nfspath}}/pv{{item}} *(rw,root_squash,no_wdelay)"
+    with_items:
+    - "{{pv_names}}"
+  - name: "Create directories"
+    file:
+      path: "{{nfspath}}/pv{{item}}"
+      state: directory
+      owner: nfsnobody
+      group: nfsnobody
+      mode: 0777
+    with_items:
+    - "{{pv_names}}"
+  - name: Refresh nfs exports
+    command: exportfs -ra
+- hosts: master01
+  vars:
+    hostpath: /exports
+    nfshost: bastion
+    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
+    pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
+  tasks:
+  - name: "Create dir for pv files"
+    file: path=/tmp/pvs state=directory
+  - name: "Create pv files"
+    copy:
+      dest: /tmp/pvs/pv{{item.0}}.yaml
+      content: |
+        apiVersion: v1
+        kind: PersistentVolume
+        metadata:
+          name: pv{{item.0}}
+        spec:
+          capacity:
+            storage: {{item.1}}
+          accessModes:
+            - ReadWriteOnce
+            - ReadWriteMany
+          persistentVolumeReclaimPolicy: Recycle
+          nfs:
+            path: {{hostpath}}/pv{{item.0}}
+            server: {{bastion}}
+    with_together:
+    - "{{pv_names}}"
+    - "{{pv_sizes}}"
+  - name: "Create pvs"
+    command: "oc create -f /tmp/pvs/"

@@ -5,6 +5,7 @@
   serial: 1
   vars:
     do_not_subscribe: false
+    no_docker_storage_setup: false
   tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
@@ -60,8 +61,8 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
-  - { role: docker_setup, device: '/dev/vdb'}
-
+  - { role: docker_setup, when: not no_docker_storage_setup, device: '/dev/vdb'}
+when: ansible_os_family == 'Debian'
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
