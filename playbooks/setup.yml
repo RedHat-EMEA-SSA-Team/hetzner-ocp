@@ -10,6 +10,7 @@
     with_items:
     - '@Virtualization'
     - libselinux-python
+    - iptables-service
   - name: Enable libvirt
     service:
       name: libvirtd
