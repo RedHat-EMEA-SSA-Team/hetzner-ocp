@@ -6,7 +6,18 @@ When you get your server you get it without OS and it will be booted to rescue m
 
 When you login to machine it will be running Debian based rescure system and welcome screen will be something like this
 
-NOTE: If your system is not in rescue more, you can activate it from https://robot.your-server.de/server. Select your server and "Rescue" tab. From there select Linux, 64bit and public key if there is one.
+NOTE: If your system is not in rescue mode anymore, you can activate it from https://robot.your-server.de/server. Select your server and "Rescue" tab. From there select Linux, 64bit and public key if there is one.
+
+![](images/set_to_rescue.png)
+
+This will delete whatever you had on your system earlier and will bring the machine into it's rescue mode.
+Please do not your new root password.
+
+![](images/root_password.png)
+
+After resetting your server, you are ready to connect to your system via ssh.
+
+![](images/reset.png)
 
 ```
 -------------------------------------------------------------------
