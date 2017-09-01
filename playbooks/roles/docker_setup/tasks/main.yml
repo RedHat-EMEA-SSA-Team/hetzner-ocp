@@ -15,13 +15,14 @@
 
 - name: Wipe signatures
   command: "wipefs --all --force {{device}}"
+  when: docker_storage_test.rc != 0
 - name: Create Docker storage configuration
   copy:
     dest: /etc/sysconfig/docker-storage-setup
     content: |
       DEVS={{device}}
       VG=docker-vg
-
+  when: docker_storage_test.rc != 0
 - name: Apply Docker storage configuration changes
   command: docker-storage-setup
   when: docker_storage_test.rc != 0
