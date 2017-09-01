@@ -90,7 +90,7 @@
       - name: Change forward rule for guest subnet
         local_action:
           "shell iptables -I FORWARD -m state -d 192.168.122.0/24 --state NEW,RELATED,ESTABLISHED -j ACCEPT"
-      - name: Change forward rule for guest subnet
+      - name: Perist iptables rules
         local_action:
           "shell iptables-save > /etc/sysconfig/iptables"
       - name: Setup directory for NFS
