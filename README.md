@@ -194,9 +194,8 @@ ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
 ```
 
 ## Prepare bastion for OCP installation
-You'll need your RHN username, password and subscription pool id (Employee SKU). You can get pool id from https://access.redhat.com/management/
 
-When you have all mentioned above run.
+Prepare host running below command. Check with `env` command that rhn_password and rhn_username are properly set.
 
 ```
 ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
