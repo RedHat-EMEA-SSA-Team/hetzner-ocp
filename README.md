@@ -126,7 +126,7 @@ Before executing this playbook, clean all old ssl indentities from file /root/.s
 
 ```
 export ANSIBLE_HOST_KEY_CHECKING=False
-ansible-playbook -i /tmp/inventory -k playbooks/prepare_ssl.yml
+ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
 ```
 
 ## Prepare bastion for OCP installation
@@ -135,7 +135,7 @@ You'll need your RHN username, password and subscription pool id (Employee SKU).
 When you have all mentioned above run.
 
 ```
-ansible-playbook -i /tmp/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ```
 
 ## Install OCP
@@ -165,7 +165,7 @@ Check how much disk you have left `df -h`, if you have plenty then you can chang
 
 To start hostpath setup execute following on hypervizor
 ```
-ansible-playbook -i /tmp/inventory playbooks/hostpath.yml
+ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
 
 

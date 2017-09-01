@@ -14,7 +14,7 @@ guests:
             size: 12
             options: format=qcow2,cache=none,io=native
           data:
-            size: 500
+            size: 300
             options: format=qcow2,cache=none,io=native
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: master01
