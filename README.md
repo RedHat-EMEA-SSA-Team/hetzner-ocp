@@ -209,17 +209,30 @@ virsh list
  39    node03                         running
 
 ```
-When list of running guests is empty, all guests have been installed.
 
-Start all VMs
+NOTE: As long as `virsh list` shows VMs in State `running`, the installation has not ended. To monitor the states of the VMs, you could run `watch virsh list`. It will refresh the command every 2 seconds, until you interrupt this endless-loop with `CTRL-C`.
+
+NOTE: this task can take a long time, don't panic, get a cup of coffee!
+
+If you want to "monitor" the progress, you can view the console of any of the VMs via
+```
+virsh console master01
+```
+
+
+When the list of running guest VMs is empty, all systems have been installed.
+
+To proceed, you will have to start them again. To do so, enter the command
 
 ```
 ansible-playbook playbooks/startall.yml
 ```
 
-Use below commands to copy SSH key to all VMs. Password for all hosts is p.
 
-Before executing this playbook, clean all old ssl indentities from file /root/.ssh/known_hosts.
+
+Use below commands to copy SSH key to all VMs. Password for all hosts is `p`.
+
+Before executing this playbook, clean all old ssl indentities from file `/root/.ssh/known_hosts` by removing it.
 
 ```
 export ANSIBLE_HOST_KEY_CHECKING=False
@@ -229,7 +242,7 @@ ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
 ## Prepare bastion for OCP installation
 You'll need your RHN username, password and subscription pool id (Employee SKU). You can get pool id from https://access.redhat.com/management/
 
-When you have all mentioned above run.
+When you have all mentioned above run, be aware this step will again take a long time. Maybe time for another cup of coffee?
 
 ```
 ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
@@ -248,9 +261,9 @@ Installation is done with normal OCP installation playbooks. You can start insta
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
 
-When installation is done you can create new admin user and add hostpath persitent storage to registry with post install playbook.
+When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
 
-Exit from bastion and execute following on hypervizor.
+Exit from bastion and execute following on hypervisor.
 
 ```
 ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
@@ -258,9 +271,9 @@ ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
 
 ## Add persistent storage with hostpath
 Note: For now this works only if you have single node :)
-Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remembed to change both.
+Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remember to change both.
 
-To start hostpath setup execute following on hypervizor
+To start hostpath setup execute following on hypervisor
 ```
 ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
