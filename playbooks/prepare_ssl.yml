@@ -3,6 +3,10 @@
   gather_facts: False
   hosts: all
   tasks:
+  - name: Remove old known_hosts
+    file:
+      path: /root/.ssh/known_hosts
+      state: absent
   - name: Add key to authorized_keys
     authorized_key:
       user: root
