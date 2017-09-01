@@ -124,11 +124,22 @@ Create ssh key (no passphrase)
 ssh-keygen
 ```
 
-Clone configs and playbook. You need to add your ssh key to your Gitlab account.
+To be able to clone the configs and playbook, you need to add the newly created ssh-key to your account at Gitlab.
+
+Login to gitlab and enter your personal profile
+
+![](images/gitlab_settings.png)
+
+enter the `SSH Keys` tab and copy/paste the content of the newly created file `/root/.ssh/id_rsa.pub`
+
+![](images/upload_ssh.png)
+
+You are now ready to clone this project to your CenOS system.
 
 ```
 git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ```
+We are now ready to install `libvirt`as our hypervizor.
 
 ## Install libvirt and setup environment
 
@@ -138,6 +149,8 @@ ansible-playbook playbooks/setup.yml
 export RHN_USERNAME=yourid@redhat.com
 export RHN_PWD=yourpwd
 ```
+
+With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
 
 ## Provision guest
 
