@@ -46,7 +46,7 @@
     delay: 1
     when: not hostvars['bastion']['do_not_subscribe']
 - name: Manager repos
-  hosts: all
+  hosts: bast,nodes
   gather_facts: False
   vars:
     ose_ver: 3.6
@@ -61,7 +61,7 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
-  - { role: docker_setup, when: not no_docker_storage_setup, device: '/dev/vdb'}
+  - { role: docker_setup, when: no_docker_storage_setup == false, device: '/dev/vdb'}
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
