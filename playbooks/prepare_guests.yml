@@ -78,6 +78,19 @@
     - '/root/.ssh/id_rsa'
     - '/root/.ssh/id_rsa.pub'
     - '/root/.ssh/known_hosts'
+  - name: Create exports dir
+    file:
+      path: /exports
+      state: directory
+  - name: Makefs for exports
+    command: mkfs.ext4 /dev/vdb
+  - name: Mount new disk to mount point
+    lineinfile:
+      path: /etc/fstab
+      state: present
+      line: "/dev/vdb   /exports  ext4    defaults    0 0"
+  - name: Refresh mounts
+    command: mount -a
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils,atomic-openshift-clients]}
 

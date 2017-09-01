@@ -60,14 +60,14 @@
         with_items: "{{guests}}"
       - name: Remove old inventory
         file:
-          path: /tmp/inventory
+          path: /root/inventory
           state: absent
       - name: Create groups to inventory
         local_action:
-          shell echo '[local]' >> /tmp/inventory && echo '192.168.122.1' >> /tmp/inventory && echo '[bast]' >> /tmp/inventory && echo 'bastion' >> /tmp/inventory && echo '[nodes]' >> /tmp/inventory
+          shell echo '[bast]' >> /root/inventory && echo 'bastion' >> /root/inventory && echo '[nodes]' >> /root/inventory
       - name: Create simple ansible inventory
         local_action:
-          shell echo {{item.name}} >> /tmp/inventory
+          shell echo {{item.name}} >> /root/inventory
         with_items: "{{guests}}"
         when: item.name != 'bastion'
       - name: Get master01 ip addr
@@ -93,7 +93,3 @@
       - name: Perist iptables rules
         local_action:
           "shell iptables-save > /etc/sysconfig/iptables"
-      - name: Setup directory for NFS
-        file:
-          path: /exports
-          state: directory
