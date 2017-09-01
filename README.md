@@ -66,7 +66,7 @@ Check ```vars/guests.yml``` and modify it to correspond your environment. By def
 * infranode01
 * node01
 
-Architecture, [screenshot](images/architecture.png)
+![](images/architecture.png)
 
 
 Sample guest definition
