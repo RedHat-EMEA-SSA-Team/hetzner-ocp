@@ -13,7 +13,6 @@
     - virt-install
     - bridge-utils
     - libselinux-python
-    - git
     - iptables-services
   - name: Update all packages
     yum:
