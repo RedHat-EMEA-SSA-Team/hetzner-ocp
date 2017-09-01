@@ -30,6 +30,7 @@
       pwd: "{{rhn_password}}"
       user: "{{rhn_username}}"
       do_not_subscribe: "{{do_not_subscribe}}"
+      do_not_subscribe: "{{no_docker_storage_setup}}"
 - name: Register nodes to RHN and subscribe
   hosts: nodes
   gather_facts: False
@@ -61,7 +62,7 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
-  - { role: docker_setup, when: no_docker_storage_setup == false, device: '/dev/vdb'}
+  - { role: docker_setup, when: not no_docker_storage_setup, device: '/dev/vdb'}
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
