@@ -95,7 +95,7 @@ When installation is done you told to reboot...hope you have your root password 
 Install ansible and git
 
 ```
-dnf install -y ansible git
+yum install -y ansible git
 ```
 
 Create ssh key (no passphrase)
