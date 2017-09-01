@@ -57,7 +57,7 @@ From these information, the following ones are import to note:
 * Memory
 * Cores
 
-'installimage' tool is used to install CentOS and this tool takes instructions from txt file.
+`installimage` tool is used to install CentOS and this tool takes instructions from txt file.
 
 Create new config.txt file
 ```
