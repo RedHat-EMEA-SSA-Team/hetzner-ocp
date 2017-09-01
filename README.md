@@ -57,9 +57,9 @@ From these information, the following ones are import to note:
 * Memory
 * Cores
 
-`installimage` tool is used to install CentOS and this tool takes instructions from txt file.
+`installimage` tool is used to install CentOS. It takes instructions from a text file.
 
-Create new config.txt file
+Create new `config.txt` file
 ```
 vi config.txt
 ```
@@ -85,23 +85,30 @@ LV vg0   home   /home   ext4      40G
 IMAGE /root/.oldroot/nfs/install/../images/CentOS-73-64-minimal.tar.gz
 ```
 
-There are some stuff that you need to changes
-* If you have single disk remove DRIVE2 line and SWRAID* lines
-* If you have more than two disks add DRIVE3...
-* If you dont need raid just change SWRAID to 0
-* Valid values for SWRAIDLEVEL are 0, 1 and 10. 1 means mirrored disks
+There are some things that you will probably have to changes
+* If you have a single disk remove line `DRIVE2` and lines `SWRAID*`
+* If you have more than two disks add `DRIVE3`...
+* If you dont need raid just change `SWRAID` to `0`
+* Valid values for `SWRAIDLEVEL` are 0, 1 and 10. 1 means mirrored disks
 * Configure LV sizes so that it matches your total disk size. In this example I have 2 x 2Tb disks RAID 1 so total diskspace available is 2Tb (1863 Gb)
 * If you like you can add more volume groups and logical volumes.
 
-When you are happy with file content, save and exit :wq and start instattion with following command
+When you are happy with file content, save and exit the editor via `:wq` and start instattion with following command
 
 ```
 installimage -a -c config.txt
 ```
 
-If there are error, you will informed and you need to fix them.
+If there are error, you will be informed about then and you need to fix them.
+At completion, the final output should be similar to
 
-When installation is done you told to reboot...hope you have your root password somewhere safe.
+![](images/install_complete.png)
+
+You are now ready to reboot your system into the newly installed OS.
+
+```
+reboot now
+```
 
 ## Initialize tools
 
