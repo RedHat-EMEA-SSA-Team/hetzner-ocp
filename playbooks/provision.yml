@@ -64,7 +64,7 @@
           state: absent
       - name: Create groups to inventory
         local_action:
-          shell echo '[local]' >> /tmp/inventory && echo '192.168.122.1' >> /tmp/inventory echo && '[bast]' >> /tmp/inventory && echo 'bastion' >> /tmp/inventory && echo '[nodes]' >> /tmp/inventory
+          shell echo '[local]' >> /tmp/inventory && echo '192.168.122.1' >> /tmp/inventory && echo '[bast]' >> /tmp/inventory && echo 'bastion' >> /tmp/inventory && echo '[nodes]' >> /tmp/inventory
       - name: Create simple ansible inventory
         local_action:
           shell echo {{item.name}} >> /tmp/inventory
