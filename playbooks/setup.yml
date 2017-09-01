@@ -8,9 +8,17 @@
       name: "{{item}}"
       state: present
     with_items:
-    - '@Virtualization'
+    - qemu-kvm
+    - libvirt
+    - virt-install
+    - bridge-utils
     - libselinux-python
+    - git
     - iptables-service
+  - name: Update all packages
+    yum:
+      name: '*'
+      state: latest
   - name: Enable libvirt
     service:
       name: libvirtd

@@ -57,7 +57,7 @@
     command: "oc volume dc/docker-registry --add -t hostPath --path /var/hostpath/registry -m /registry --name registry-storage --overwrite"
 - name: All done, ready to rock
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
   tasks:
   - name: All done, you can now login
     debug:
