@@ -1,32 +1,92 @@
-# Set up OCP on libvirt on Fedora 25
+# Set up OCP on libvirt on CentOS 7
 
-## Insalling server
+## Installing server
 
-You need to install Fedora 25 to the server via VNC console from Heztner Robot UI.
+When you get your server you get it without OS and it will be booted to rescue mode where you decide how it will be configured.
 
-You'll need VNC client to access VNC based installer, like [VNC Viewer](https://www.realvnc.com/en/download/viewer/)
+When you login to machine it will be running Debian based rescure system and welcome screen will be something like this
 
-Activate VNC console, [screenshot](images/01_vnc_console.png)
-
-Reboot server [screenshot](images/02_reboot.png)
-
-
-Minimal install + basic tools is enough
-
-I dont have good opinion about how to partition disks...In my tests I created a big root
 ```
-NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-sdb               8:16   0  1.8T  0 disk
-└─sdb1            8:17   0  1.8T  0 part
-  └─fedora-root 253:0    0  3.6T  0 lvm  /
-sda               8:0    0  1.8T  0 disk
-├─sda2            8:2    0  1.8T  0 part
-│ ├─fedora-swap 253:1    0 23.7G  0 lvm  [SWAP]
-│ └─fedora-root 253:0    0  3.6T  0 lvm  /
-└─sda1            8:1    0    1G  0 part /boot
+-------------------------------------------------------------------
+
+  Welcome to the Hetzner Rescue System.
+
+  This Rescue System is based on Debian 8.0 (jessie) with a newer
+  kernel. You can install software as in a normal system.
+
+  To install a new operating system from one of our prebuilt
+  images, run 'installimage' and follow the instructions.
+
+  More information at http://wiki.hetzner.de
+
+-------------------------------------------------------------------
+
+Hardware data:
+
+   CPU1: Intel(R) Core(TM) i7 CPU 950 @ 3.07GHz (Cores 8)
+   Memory:  48300 MB
+   Disk /dev/sda: 2000 GB (=> 1863 GiB)
+   Disk /dev/sdb: 2000 GB (=> 1863 GiB)
+   Total capacity 3726 GiB with 2 Disks
+
+Network data:
+   eth0  LINK: yes
+         MAC:  6c:62:6d:d7:55:b9
+         IP:   46.4.119.94
+         IPv6: 2a01:4f8:141:2067::2/64
+         RealTek RTL-8169 Gigabit Ethernet driver
 ```
 
-Remember to set some good root password during installation.
+Import info above are:
+* Number of disks (2 in this case)
+* Memory
+* Cores
+
+installimage tool is used to install CentOS and this tool takes instructions from txt file.
+
+Create new config.txt file
+```
+vi config.txt
+```
+
+Copy below content to that file as an template
+
+```
+DRIVE1 /dev/sda
+DRIVE2 /dev/sdb
+SWRAID 1
+SWRAIDLEVEL 1
+BOOTLOADER grub
+HOSTNAME CentOS-73-64-minimal
+PART /boot ext3     512M
+PART lvm   vg0       all
+
+LV vg0   root   /       ext4    1800G
+LV vg0   swap   swap    swap       5G
+LV vg0   tmp    /tmp    ext4      10G
+LV vg0   home   /home   ext4      40G
+
+
+IMAGE /root/.oldroot/nfs/install/../images/CentOS-73-64-minimal.tar.gz
+```
+
+There are some stuff that you need to changes
+* If you have single disk remove DRIVE2 line and SWRAID* lines
+* If you have more than two disks add DRIVE3...
+* If you dont need raid just change SWRAID to 0
+* Valid values for SWRAIDLEVEL are 0, 1 and 10. 1 means mirrored disks
+* Configure LV sizes so that it matches your total disk size. In this example I have 2 x 2Tb disks RAID 1 so total diskspace available is 2Tb (1863 Gb)
+* If you like you can add more volume groups and logical volumes.
+
+When you are happy with file content, save and exit :wq and start instattion with following command
+
+```
+installimage -a -c config.txt
+```
+
+If there are error, you will informed and you need to fix them.
+
+When installation is done you told to reboot...hope you have your root password somewhere safe.
 
 ## Initialize tools
 
@@ -158,7 +218,7 @@ When installation is done you can create new admin user and add hostpath persite
 Exit from bastion and execute following on hypervizor.
 
 ```
-ansible-playbook hetzner-ocp/playbooks/post.yml
+ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
 ```
 
 ## Add persistent storage with hostpath
