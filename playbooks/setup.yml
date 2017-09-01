@@ -14,7 +14,7 @@
     - bridge-utils
     - libselinux-python
     - git
-    - iptables-service
+    - iptables-services
   - name: Update all packages
     yum:
       name: '*'
