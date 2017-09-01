@@ -48,7 +48,7 @@
           persistentVolumeReclaimPolicy: Recycle
           nfs:
             path: {{hostpath}}/pv{{item.0}}
-            server: {{bastion}}
+            server: {{nfshost}}
     with_together:
     - "{{pv_names}}"
     - "{{pv_sizes}}"
