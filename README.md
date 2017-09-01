@@ -19,6 +19,8 @@ After resetting your server, you are ready to connect to your system via ssh.
 
 ![](images/reset.png)
 
+When you login to your server, the rescue system will display some hardware specifics for you:
+
 ```
 -------------------------------------------------------------------
 
@@ -50,12 +52,12 @@ Network data:
          RealTek RTL-8169 Gigabit Ethernet driver
 ```
 
-Import info above are:
+From these information, the following ones are import to note:
 * Number of disks (2 in this case)
 * Memory
 * Cores
 
-installimage tool is used to install CentOS and this tool takes instructions from txt file.
+'installimage' tool is used to install CentOS and this tool takes instructions from txt file.
 
 Create new config.txt file
 ```
