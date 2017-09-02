@@ -95,21 +95,17 @@ openshift_hosted_registry_replicas=1
 
 # Metrics deployment
 openshift_hosted_metrics_deploy=false
-openshift_hosted_metrics_public_url=https://metrics.t-paas.vs.ch/hawkular/metrics
-openshift_metrics_install_metrics=false
+openshift_hosted_metrics_public_url=https://metrics.apps.{{ip_addr}}.xip.io/hawkular/metrics
 openshift_metrics_hawkular_hostname=metrics.apps.{{ip_addr}}.xip.io
 openshift_metrics_cassandra_replicas=1
 openshift_metrics_cassandra_limits_memory=2Gi
 openshift_metrics_hawkular_replicas=1
 openshift_metrics_duration=5
-
+openshift_metrics_cassandra_storage_type=emptydir
 
 openshift_metrics_cassandra_nodeselector={"region":"infra"}
 openshift_metrics_hawkular_nodeselector={"region":"infra"}
 openshift_metrics_heapster_nodeselector={"region":"infra"}
-
-# Metrics Storage Options
-openshift_metrics_cassandra_storage_type=emptyDir
 
 # Logging deployment
 openshift_hosted_logging_deploy=false
