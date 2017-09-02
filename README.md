@@ -6,7 +6,20 @@ When you get your server you get it without OS and it will be booted to rescue m
 
 When you login to machine it will be running Debian based rescure system and welcome screen will be something like this
 
-NOTE: If your system is not in rescue more, you can activate it from https://robot.your-server.de/server. Select your server and "Rescue" tab. From there select Linux, 64bit and public key if there is one.
+NOTE: If your system is not in rescue mode anymore, you can activate it from https://robot.your-server.de/server. Select your server and "Rescue" tab. From there select Linux, 64bit and public key if there is one.
+
+![](images/set_to_rescue.png)
+
+This will delete whatever you had on your system earlier and will bring the machine into it's rescue mode.
+Please do not your new root password.
+
+![](images/root_password.png)
+
+After resetting your server, you are ready to connect to your system via ssh.
+
+![](images/reset.png)
+
+When you login to your server, the rescue system will display some hardware specifics for you:
 
 ```
 -------------------------------------------------------------------
@@ -39,14 +52,14 @@ Network data:
          RealTek RTL-8169 Gigabit Ethernet driver
 ```
 
-Import info above are:
+From these information, the following ones are import to note:
 * Number of disks (2 in this case)
 * Memory
 * Cores
 
-installimage tool is used to install CentOS and this tool takes instructions from txt file.
+`installimage` tool is used to install CentOS. It takes instructions from a text file.
 
-Create new config.txt file
+Create new `config.txt` file
 ```
 vi config.txt
 ```
@@ -72,23 +85,30 @@ LV vg0   home   /home   ext4      40G
 IMAGE /root/.oldroot/nfs/install/../images/CentOS-73-64-minimal.tar.gz
 ```
 
-There are some stuff that you need to changes
-* If you have single disk remove DRIVE2 line and SWRAID* lines
-* If you have more than two disks add DRIVE3...
-* If you dont need raid just change SWRAID to 0
-* Valid values for SWRAIDLEVEL are 0, 1 and 10. 1 means mirrored disks
+There are some things that you will probably have to changes
+* If you have a single disk remove line `DRIVE2` and lines `SWRAID*`
+* If you have more than two disks add `DRIVE3`...
+* If you dont need raid just change `SWRAID` to `0`
+* Valid values for `SWRAIDLEVEL` are 0, 1 and 10. 1 means mirrored disks
 * Configure LV sizes so that it matches your total disk size. In this example I have 2 x 2Tb disks RAID 1 so total diskspace available is 2Tb (1863 Gb)
 * If you like you can add more volume groups and logical volumes.
 
-When you are happy with file content, save and exit :wq and start instattion with following command
+When you are happy with file content, save and exit the editor via `:wq` and start installation with the following command
 
 ```
 installimage -a -c config.txt
 ```
 
-If there are error, you will informed and you need to fix them.
+If there are error, you will be informed about then and you need to fix them.
+At completion, the final output should be similar to
 
-When installation is done you told to reboot...hope you have your root password somewhere safe.
+![](images/install_complete.png)
+
+You are now ready to reboot your system into the newly installed OS.
+
+```
+reboot now
+```
 
 ## Initialize tools
 
@@ -104,11 +124,22 @@ Create ssh key (no passphrase)
 ssh-keygen
 ```
 
-Clone configs and playbook. You need to add your ssh key to your Gitlab account.
+To be able to clone the configs and playbook, you need to add the newly created ssh-key to your account at Gitlab.
+
+Login to gitlab and enter your personal profile
+
+![](images/gitlab_settings.png)
+
+enter the `SSH Keys` tab and copy/paste the content of the newly created file `/root/.ssh/id_rsa.pub`
+
+![](images/upload_ssh.png)
+
+You are now ready to clone this project to your CenOS system.
 
 ```
 git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ```
+We are now ready to install `libvirt`as our hypervizor.
 
 ## Install libvirt and setup environment
 
@@ -118,6 +149,8 @@ ansible-playbook playbooks/setup.yml
 export RHN_USERNAME=yourid@redhat.com
 export RHN_PWD=yourpwd
 ```
+
+With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
 
 ## Provision guest
 
@@ -176,17 +209,30 @@ virsh list
  39    node03                         running
 
 ```
-When list of running guests is empty, all guests have been installed.
 
-Start all VMs
+NOTE: As long as `virsh list` shows VMs in State `running`, the installation has not ended. To monitor the states of the VMs, you could run `watch virsh list`. It will refresh the command every 2 seconds, until you interrupt this endless-loop with `CTRL-C`.
+
+NOTE: this task can take a long time, don't panic, get a cup of coffee!
+
+If you want to "monitor" the progress, you can view the console of any of the VMs via
+```
+virsh console master01
+```
+
+
+When the list of running guest VMs is empty, all systems have been installed.
+
+To proceed, you will have to start them again. To do so, enter the command
 
 ```
 ansible-playbook playbooks/startall.yml
 ```
 
-Use below commands to copy SSH key to all VMs. Password for all hosts is p.
 
-Before executing this playbook, clean all old ssl indentities from file /root/.ssh/known_hosts.
+
+Use below commands to copy SSH key to all VMs. Password for all hosts is `p`.
+
+Before executing this playbook, clean all old ssl indentities from file `/root/.ssh/known_hosts` by removing it.
 
 ```
 export ANSIBLE_HOST_KEY_CHECKING=False
@@ -196,6 +242,8 @@ ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
 ## Prepare bastion for OCP installation
 
 Prepare host running below command. Check with `env` command that rhn_password and rhn_username are properly set.
+
+When you have all mentioned above run, be aware this step will again take a long time. Maybe time for another cup of coffee?
 
 ```
 ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
@@ -214,9 +262,9 @@ Installation is done with normal OCP installation playbooks. You can start insta
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
 
-When installation is done you can create new admin user and add hostpath persitent storage to registry with post install playbook.
+When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
 
-Exit from bastion and execute following on hypervizor.
+Exit from bastion and execute following on hypervisor.
 
 ```
 ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
@@ -224,9 +272,9 @@ ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
 
 ## Add persistent storage with hostpath
 Note: For now this works only if you have single node :)
-Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remembed to change both.
+Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remember to change both.
 
-To start hostpath setup execute following on hypervizor
+To start hostpath setup execute following on hypervisor
 ```
 ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
