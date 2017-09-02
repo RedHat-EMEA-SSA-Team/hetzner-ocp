@@ -115,13 +115,13 @@ reboot now
 Install ansible and git
 
 ```
-yum install -y ansible git
+[root@CentOS-73-64-minimal ~]# yum install -y ansible git
 ```
 
 Create ssh key (no passphrase)
 
 ```
-ssh-keygen
+[root@CentOS-73-64-minimal ~]# ssh-keygen
 ```
 
 To be able to clone the configs and playbook, you need to add the newly created ssh-key to your account at Gitlab.
@@ -144,10 +144,10 @@ We are now ready to install `libvirt`as our hypervizor.
 ## Install libvirt and setup environment
 
 ```
-cd hetzner-ocp
-ansible-playbook playbooks/setup.yml
-export RHN_USERNAME=yourid@redhat.com
-export RHN_PWD=yourpwd
+[root@CentOS-73-64-minimal ~]# cd hetzner-ocp
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/setup.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
+[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
 ```
 
 With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
@@ -191,13 +191,13 @@ Basically you need to change only num of VMs and/or cpu and mem values.
 
 Provision VMs
 ```
-ansible-playbook playbooks/provision.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/provision.yml
 ```
 
 Provisioning of the hosts take a while and they are in running state until installation is finnished. When guest list is empty, all guest are done and ready to be started.
 
 ```
-virsh list
+[root@CentOS-73-64-minimal hetzner-ocp]# virsh list
 # installation still running
  Id    Name                           State
 ----------------------------------------------------
@@ -216,7 +216,7 @@ NOTE: this task can take a long time, don't panic, get a cup of coffee!
 
 If you want to "monitor" the progress, you can view the console of any of the VMs via
 ```
-virsh console master01
+[root@CentOS-73-64-minimal hetzner-ocp]# virsh console master01
 ```
 
 
@@ -225,7 +225,7 @@ When the list of running guest VMs is empty, all systems have been installed.
 To proceed, you will have to start them again. To do so, enter the command
 
 ```
-ansible-playbook playbooks/startall.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/startall.yml
 ```
 
 
@@ -235,8 +235,8 @@ Use below commands to copy SSH key to all VMs. Password for all hosts is `p`.
 Before executing this playbook, clean all old ssl indentities from file `/root/.ssh/known_hosts` by removing it.
 
 ```
-export ANSIBLE_HOST_KEY_CHECKING=False
-ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
 ```
 
 ## Prepare bastion for OCP installation
@@ -245,20 +245,20 @@ You'll need your RHN username, password and subscription pool id (Employee SKU).
 When you have all mentioned above run, be aware this step will again take a long time. Maybe time for another cup of coffee?
 
 ```
-ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ```
 
 ## Install OCP
 
 Installation of OCP is done on bastion host. So you need to ssh to bastion
 ```
-ssh bastion
+[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
 ```
 
 Installation is done with normal OCP installation playbooks. You can start installation with following command
 
 ```
-ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
 
 When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
@@ -266,7 +266,16 @@ When installation is done you can create new admin user and add hostpath persist
 Exit from bastion and execute following on hypervisor.
 
 ```
-ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
+[root@localhost ~]# ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
+```
+
+## Login to Openshift
+After successful installation of Openshift, you will be able to login via
+
+```
+URL: https://master.<your hypervisors IP>.xip.io:8443
+User: admin
+Password: p
 ```
 
 ## Add persistent storage with hostpath
@@ -275,10 +284,11 @@ Check how much disk you have left `df -h`, if you have plenty then you can chang
 
 To start hostpath setup execute following on hypervisor
 ```
-ansible-playbook -i /root/inventory playbooks/hostpath.yml
+[root@localhost ~]# ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
 
 
 ## Clean up everything
-ansible-playbook playbooks/clean.yml
+```
+[root@localhost ~]# ansible-playbook playbooks/clean.yml
 ```
