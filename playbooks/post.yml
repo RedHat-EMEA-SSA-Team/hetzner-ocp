@@ -41,6 +41,8 @@
       owner: nfsnobody
       group: nfsnobody
       mode: 0777
+  - name: SELinux svirt_sandbox_file_t
+    command: "chcon -Rt svirt_sandbox_file_t /var/hostpath/registry"
   - name: Mount new disk to mount point
     lineinfile:
       path: /etc/fstab
