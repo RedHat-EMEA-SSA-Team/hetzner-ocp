@@ -271,7 +271,7 @@ Exit from bastion and execute following on hypervisor.
 ```
 
 ## Login to Openshift
-After successful installation of Openshift, you will be able to login via. Password is the one the you give entered during post.yml playbook execution.
+After successful installation of Openshift, you will be able to login via. Password is the one the you entered during previous playbook (post.yml) execution.
 
 ```
 URL: https://master.<your hypervisors IP>.xip.io:8443
