@@ -270,7 +270,9 @@ Exit from bastion and execute following on hypervisor.
 ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
 ```
 
-## Add persistent storage with hostpath
+## Add persistent storage with hostpath or NFS
+
+### Hostpath
 Note: For now this works only if you have single node :)
 Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remember to change both.
 
@@ -278,6 +280,14 @@ To start hostpath setup execute following on hypervisor
 ```
 ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
+
+### NFS
+By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on hypervizor
+
+```
+ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/nfs.yml
+```
+
 
 ## Add new user
 Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on hypervisor
