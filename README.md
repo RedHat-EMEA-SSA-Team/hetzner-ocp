@@ -296,6 +296,7 @@ ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/tools/add_user.y
 ```
 
 ## Clean up everything
+
 ```
 ansible-playbook playbooks/clean.yml
 ```
@@ -385,7 +386,8 @@ STDOUT:
   "reason": "Forbidden",
   "details": {},
   "code": 403
-}```
+}
+```
 
 Solution is to uninstall current installation from bastion host prepare guests again and reinstall.
 
@@ -405,6 +407,7 @@ ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "r
 ```
 
 Start installation again
+
 ```
 ssh bastion
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
