@@ -271,13 +271,14 @@ Exit from bastion and execute following on hypervisor.
 ```
 
 ## Login to Openshift
-After successful installation of Openshift, you will be able to login via
+After successful installation of Openshift, you will be able to login via. Password is the one the you give entered during post.yml playbook execution.
 
 ```
 URL: https://master.<your hypervisors IP>.xip.io:8443
 User: admin
 Password: p
 ```
+
 
 ## Add persistent storage with hostpath or NFS
 
@@ -287,26 +288,30 @@ Check how much disk you have left `df -h`, if you have plenty then you can chang
 
 To start hostpath setup execute following on hypervisor
 ```
-[root@localhost ~]# ansible-playbook -i /root/inventory playbooks/hostpath.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
 
 ### NFS
 By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on hypervizor
 
 ```
-ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/nfs.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/nfs.yml
 ```
 
 
 ## Add new user
 Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on hypervisor
+
 ```
-ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/tools/add_user.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/tools/add_user.yml
 ```
 
 ## Clean up everything
+
+Execute following on hypervizor
+
 ```
-[root@localhost ~]# ansible-playbook playbooks/clean.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/clean.yml
 ```
 
 ## Known issues
@@ -329,7 +334,7 @@ error: build error: Failed to push image: Get https://docker-registry.default.sv
 Then you should run this (on hypervizor)
 
 ```
-ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
 ```
 
 ### Docker fails to write data to disk
@@ -339,9 +344,9 @@ Directory permission and selixus magic might not be setup correctly during insta
 You can get logs from docker registry with this command from master01 host
 
 ```
-ssh master01
-oc project default
-oc logs dc/docker-registry
+[root@CentOS-73-64-minimal hetzner-ocp]# ssh master01
+[root@localhost ~]# oc project default
+[root@localhost ~]# oc logs dc/docker-registry
 ```
 
 If you have 'permission denied' on registry logs you need to run following playbook on hypervizor and restart registry pod
@@ -349,14 +354,14 @@ If you have 'permission denied' on registry logs you need to run following playb
 Playbook for fixing permissions
 
 ```
-ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/registry_hostpath.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/registry_hostpath.yml
 ```
 
 Restart docker-registry pod
 
 ```
-ssh master01
-oc delete po -l deploymentconfig=docker-registry
+[root@CentOS-73-64-minimal hetzner-ocp]# ssh master01
+[root@localhost ~]# oc delete po -l deploymentconfig=docker-registry
 ```
 
 ### OCP installation fails due access denied
@@ -402,21 +407,21 @@ Solution is to uninstall current installation from bastion host prepare guests a
 Uninstall current installation
 
 ```
-ssh bastion
-ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/adhoc/uninstall.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
+[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/adhoc/uninstall.yml
 ```
 
 Prepare guests again
 
 ```
-export RHN_USERNAME=yourid@redhat.com
-export RHN_PWD=yourpwd
-ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
+[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ```
 
 Start installation again
 
 ```
-ssh bastion
+[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
