@@ -281,6 +281,7 @@ ansible-playbook -i /root/inventory playbooks/hostpath.yml
 
 
 ## Clean up everything
+```
 ansible-playbook playbooks/clean.yml
 ```
 
@@ -332,4 +333,64 @@ Restart docker-registry pod
 ```
 ssh master01
 oc delete po -l deploymentconfig=docker-registry
+```
+
+### OCP installation fails due access denied
+
+Sometimes OCP installation fails do master access denied problems. In that case you might see error message like following.
+
+```
+FAILED - RETRYING: Verify API Server (1 retries left).
+fatal: [master01]: FAILED! => {
+    "attempts": 120,
+    "changed": false,
+    "cmd": [
+        "curl",
+        "--silent",
+        "--tlsv1.2",
+        "--cacert",
+        "/etc/origin/master/ca-bundle.crt",
+        "https://master01:8443/healthz/ready"
+    ],
+    "delta": "0:00:00.050985",
+    "end": "2017-08-31 12:39:30.218688",
+    "failed": true,
+    "rc": 0,
+    "start": "2017-08-31 12:39:30.167703"
+}
+
+STDOUT:
+
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "User \"system:anonymous\" cannot \"get\" on \"/healthz/ready\"",
+  "reason": "Forbidden",
+  "details": {},
+  "code": 403
+}```
+
+Solution is to uninstall current installation from bastion host prepare guests again and reinstall.
+
+Uninstall current installation
+
+```
+ssh bastion
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/adhoc/uninstall.yml
+```
+
+Prepare guests again
+
+```
+export RHN_USERNAME=yourid@redhat.com
+export RHN_PWD=yourpwd
+ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+```
+
+Start installation again
+```
+ssh bastion
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
