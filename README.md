@@ -283,3 +283,53 @@ ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ## Clean up everything
 ansible-playbook playbooks/clean.yml
 ```
+
+## Known issues
+
+### Docker registry fails to resolv
+
+For some reason each host needs to have `search clusterl.local´ on each nodes /etc/resolv.conf. This entry is set by installer, but resolv.conf if rewritten always on VM restart.
+
+If you need to restart VMs or for some other reason you get this errors message during build.
+
+```
+Pushing image docker-registry.default.svc:5000/test/test:latest ...
+Registry server Address:
+Registry server User Name: serviceaccount
+Registry server Email: serviceaccount@example.org
+Registry server Password: «non-empty»
+error: build error: Failed to push image: Get https://docker-registry.default.svc:5000/v1/_ping: dial tcp: lookup docker-registry.default.svc on 192.168.122.48:53: no such host
+```
+
+Then you should run this (on hypervizor)
+
+```
+ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
+```
+
+### Docker fails to write data to disk
+
+Directory permission and selixus magic might not be setup correctly during installation. Then you will encounter Error 500 during build. If you expience this your should verify error from docker-registry pod.
+
+You can get logs from docker registry with this command from master01 host
+
+```
+ssh master01
+oc project default
+oc logs dc/docker-registry
+```
+
+If you have 'permission denied' on registry logs you need to run following playbook on hypervizor and restart registry pod
+
+Playbook for fixing permissions
+
+```
+ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/registry_hostpath.yml
+```
+
+Restart docker-registry pod
+
+```
+ssh master01
+oc delete po -l deploymentconfig=docker-registry
+```

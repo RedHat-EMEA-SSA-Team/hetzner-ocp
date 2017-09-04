@@ -1,0 +1,13 @@
+- name: Create new user
+  hosts: master01
+  gather_facts: false
+  vars_prompt:
+  - name: username
+    prompt: Username
+    private: true
+  - name: password
+    prompt: Password
+    private: false
+  tasks:
+  - name: Add user
+    command: "htpasswd -b /etc/origin/master/htpasswd {{username}} {{password}}"
