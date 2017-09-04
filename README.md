@@ -279,6 +279,11 @@ To start hostpath setup execute following on hypervisor
 ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
 
+## Add new user
+Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on hypervisor
+```
+ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/tools/add_user.yml
+```
 
 ## Clean up everything
 ```
