@@ -232,7 +232,7 @@ To proceed, you will have to start them again. To do so, enter the command
 
 Use below commands to copy SSH key to all VMs. Password for all hosts is `p`.
 
-Before executing this playbook, clean all old ssl indentities from file `/root/.ssh/known_hosts` by removing it.
+Before executing this playbook, clean all old ssl identities from file `/root/.ssh/known_hosts` by removing it.
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
@@ -256,7 +256,7 @@ Installation of OCP is done on bastion host. So you need to ssh to bastion
 [root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
 ```
 
-Installation is done with normal OCP installation playbooks. You can start installation with following command
+Installation is done with normal OCP installation playbooks. You can start installation on **bastion** with following command
 
 ```
 [root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
@@ -264,7 +264,7 @@ Installation is done with normal OCP installation playbooks. You can start insta
 
 When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
 
-Exit from bastion and execute following on hypervisor.
+Exit from bastion and execute following on **hypervizor**.
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
@@ -286,13 +286,13 @@ Password: p
 Note: For now this works only if you have single node :)
 Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remember to change both.
 
-To start hostpath setup execute following on hypervisor
+To start hostpath setup execute following on **hypervizor**
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/hostpath.yml
 ```
 
 ### NFS
-By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on hypervizor
+By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on **hypervizor**
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/nfs.yml
@@ -300,7 +300,7 @@ By default bastion host is setup for NFS servers. To created correct directories
 
 
 ## Add new user
-Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on hypervisor
+Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on **hypervizor**
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/tools/add_user.yml
@@ -308,7 +308,7 @@ Post install tasks create only admin user. If u need to create additional non-ad
 
 ## Clean up everything
 
-Execute following on hypervizor
+Execute following on **hypervizor**
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/clean.yml
@@ -318,7 +318,7 @@ Execute following on hypervizor
 
 ### Docker registry fails to resolv
 
-For some reason each host needs to have `search clusterl.local´ on each nodes /etc/resolv.conf. This entry is set by installer, but resolv.conf if rewritten always on VM restart.
+For some reason each host needs to have `search cluster.local` on each nodes /etc/resolv.conf. This entry is set by installer, but resolv.conf if rewritten always on VM restart.
 
 If you need to restart VMs or for some other reason you get this errors message during build.
 
@@ -331,7 +331,7 @@ Registry server Password: «non-empty»
 error: build error: Failed to push image: Get https://docker-registry.default.svc:5000/v1/_ping: dial tcp: lookup docker-registry.default.svc on 192.168.122.48:53: no such host
 ```
 
-Then you should run this (on hypervizor)
+Then you should run this (on **hypervizor**)
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
@@ -339,7 +339,7 @@ Then you should run this (on hypervizor)
 
 ### Docker fails to write data to disk
 
-Directory permission and selixus magic might not be setup correctly during installation. Then you will encounter Error 500 during build. If you expience this your should verify error from docker-registry pod.
+Directory permission and SELinux magic might not be setup correctly during installation. If that happens you will encounter Error 500 during build. If you experience that error, should verify error from docker-registry pod.
 
 You can get logs from docker registry with this command from master01 host
 
@@ -349,7 +349,7 @@ You can get logs from docker registry with this command from master01 host
 [root@localhost ~]# oc logs dc/docker-registry
 ```
 
-If you have 'permission denied' on registry logs you need to run following playbook on hypervizor and restart registry pod
+If you have 'permission denied' on registry logs you need to run following playbook on **hypervizor** and restart registry pod
 
 Playbook for fixing permissions
 
@@ -402,7 +402,7 @@ STDOUT:
 }
 ```
 
-Solution is to uninstall current installation from bastion host prepare guests again and reinstall.
+Solution is to uninstall current installation from **bastion** host prepare guests again and reinstall.
 
 Uninstall current installation
 
