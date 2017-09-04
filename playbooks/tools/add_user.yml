@@ -4,10 +4,10 @@
   vars_prompt:
   - name: username
     prompt: Username
-    private: true
+    private: false
   - name: password
     prompt: Password
-    private: false
+    private: true
   tasks:
   - name: Add user
     command: "htpasswd -b /etc/origin/master/htpasswd {{username}} {{password}}"
