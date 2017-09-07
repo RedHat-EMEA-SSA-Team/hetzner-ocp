@@ -5,6 +5,10 @@
   vars_files:
       - ../vars/guests.yml
   tasks:
+  - name: Remove old known_hosts
+    file:
+      path: /root/.ssh/known_hosts
+      state: absent
   - name: get list of vms
     virt: command=list_vms
     register: virt_vms
