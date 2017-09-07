@@ -7,25 +7,15 @@
     - container-selinux
     - atomic-openshift-docker-excluder
 
-- name: Detect Docker storage configuration status
-  command: grep -q /dev/mapper/docker /etc/sysconfig/docker-storage
-  register: docker_storage_test
-  changed_when: false
-  failed_when: false
-
-- name: Wipe signatures
-  command: "wipefs --all --force {{device}}"
-  when: docker_storage_test.rc != 0
 - name: Create Docker storage configuration
   copy:
     dest: /etc/sysconfig/docker-storage-setup
     content: |
+      STORAGE_DRIVER=overlay2
       DEVS={{device}}
-      VG=docker-vg
-  when: docker_storage_test.rc != 0
-- name: Apply Docker storage configuration changes
-  command: docker-storage-setup
-  when: docker_storage_test.rc != 0
+      CONTAINER_ROOT_LV_NAME=dockerlv
+      CONTAINER_ROOT_LV_MOUNT_PATH=/var/lib/docker
+      VG=ocp
 
 - name: Copy Docker registry certificate for OpenShift tools
   copy: src=cert.crt dest=/etc/pki/ca-trust/source/anchors/registry.crt follow=yes

@@ -98,7 +98,19 @@
   hosts: localhost
   tasks:
   - debug: msg='Gathering facts'
-
+- name: Update 7.4 to latest
+  hosts: nodes
+  gather_facts: false
+  tasks:
+  - name: Update packages
+    command: yum update -y
+  - name:
+    shell: reboot
+  - name:
+    local_action:
+      wait_for host={{ ansible_ssh_host | default(inventory_hostname) }}
+      state=started port=22 delay=30 
+      timeout=300 connect_timeout=15
 - name: Create inventory
   hosts: bast
   vars:
