@@ -337,6 +337,22 @@ Then you should run this (on **hypervizor**)
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
 ```
 
+NOTE: This fix is lost if VM is restarted. To make persistent change, you need to do following on all nodes.
+
+1. ssh to host
+2. vi /etc/NetworkManager/dispatcher.d/99-origin-dns.sh
+3. Add below line after line 113
+
+```
+echo "search cluster.local" >> ${NEW_RESOLV_CONF}
+```
+Save and exit and then restart NetworkManager with following command
+
+```
+systemctl restart NetworkManager
+```
+
+
 ### Docker fails to write data to disk
 
 Directory permission and SELinux magic might not be setup correctly during installation. If that happens you will encounter Error 500 during build. If you experience that error, should verify error from docker-registry pod.
