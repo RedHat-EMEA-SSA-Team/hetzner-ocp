@@ -60,7 +60,6 @@
   hosts: nodes
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
-  - { role: docker_setup, device: '/dev/vdb'}
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
@@ -104,16 +103,26 @@
   tasks:
   - name: Update packages
     command: yum update -y
-  - name:
-    shell: reboot
-  - name:
+  - name: Shutdown
+    shell: sleep 2 && shutdown -r now "Reboot triggered by Ansible"
+    async: 1
+    poll: 0
+    ignore_errors: true
+  - name: Wait for host to come back up
     local_action:
-      wait_for host={{ ansible_ssh_host | default(inventory_hostname) }}
-      state=started port=22 delay=30 
-      timeout=300 connect_timeout=15
+      module: wait_for
+      host: "{{ inventory_hostname }}"
+      port: 22
+      delay: 5
+      timeout: 300
 - name: Create inventory
   hosts: bast
   vars:
     ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
   roles:
   - { role: inventory}
+- name: Install docker
+  gather_facts: False
+  hosts: nodes
+  roles:
+  - { role: docker_setup, device: '/dev/vdb'}
