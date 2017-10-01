@@ -1,3 +1,16 @@
+# Disclainer
+This environment has been created for the sole purpose of providing an easy to deployment and consume Red Hat OpenShift v3.x environment *as a sandpit*.
+
+This install will create a 'Minimal Viable Setup', which anyone can extend to
+their needs and purpose.
+
+Use at your own please and risk!
+
+# Contribution
+If you want to provide additional feature, please feel free to contribute via
+pull requests or any other means.
+We are happy to track and discuss ideas, topics and requests via 'Issues'.
+
 # Set up OCP on libvirt on CentOS 7
 
 ## Installing server
