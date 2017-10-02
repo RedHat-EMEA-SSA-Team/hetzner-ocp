@@ -1,6 +1,23 @@
-# Set up OCP on libvirt on CentOS 7
+# Disclainer
+This environment has been created for the sole purpose of providing an easy to deployment and consume Red Hat OpenShift v3.x environment *as a sandpit*.
 
-## Installing server
+This install will create a 'Minimal Viable Setup', which anyone can extend to
+their needs and purpose.
+
+Use at your own please and risk!
+
+# Contribution
+If you want to provide additional feature, please feel free to contribute via
+pull requests or any other means.
+We are happy to track and discuss ideas, topics and requests via 'Issues'.
+
+# Install Instructions
+When following these instructional steps, you will end with a setup similar to
+
+![](images/architecture.png)
+
+## Installing The Root-Server
+NOTE: Our instructions are based on the Root-Server as provided by https://www.hetzner.com/ , please feel free to adapt it to the needs of your prefered hosting provider. We are happy to get pull requests for an updated documentation, which makes consuming this setup easy also for other hosting provider.
 
 When you get your server you get it without OS and it will be booted to rescue mode where you decide how it will be configured.
 
