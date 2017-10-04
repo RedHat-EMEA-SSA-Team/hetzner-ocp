@@ -22,10 +22,13 @@
     - "{{pv_names}}"
   - name: Refresh nfs exports
     command: exportfs -ra
+  - name: Save bastion ip for later use
+    set_fact:
+      bastion_ip: "{{hostvars.bastion.ansible_eth0.ipv4.address}}"
 - hosts: master01
   vars:
     hostpath: /exports
-    nfshost: 192.168.122.1
+    nfshost: "{{ hostvars['bastion']['bastion_ip'] }}"
     pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
     pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
   tasks:
