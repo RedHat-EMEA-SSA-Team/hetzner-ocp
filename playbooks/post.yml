@@ -34,13 +34,6 @@
   tasks:
   - name: Makefs
     command: mkfs.ext4 /dev/vdc
-  - name: Create mount point
-    file:
-      path: "/var/hostpath/registry"
-      state: directory
-      owner: nfsnobody
-      group: nfsnobody
-      mode: 0777
   - name: Mount new disk to mount point
     lineinfile:
       path: /etc/fstab
@@ -48,6 +41,13 @@
       line: "/dev/vdc  /var/hostpath/registry  ext4    defaults    0 0"
   - name: Refresh mounts
     command: mount -a
+  - name: Create mount point
+    file:
+      path: "/var/hostpath/registry"
+      state: directory
+      owner: nfsnobody
+      group: nfsnobody
+      mode: 0777
   - name: SELinux svirt_sandbox_file_t
     command: "chcon -Rt svirt_sandbox_file_t /var/hostpath/registry"
 - name: Add hostpath volumen to registry
