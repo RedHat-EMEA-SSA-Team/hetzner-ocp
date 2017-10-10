@@ -92,13 +92,27 @@
           "shell iptables -I FORWARD -m state -d 192.168.122.0/24 --state NEW,RELATED,ESTABLISHED -j ACCEPT"
       - name: Port 80 postroute masq
         local_action:
-          "shell iptables -t nat -I POSTROUTING -d {{infranode_ip_addr.stdout}} --dport 80 -j MASQUERADE
+          "shell iptables -t nat -I POSTROUTING  -p tcp -d {{infranode_ip_addr.stdout}} --dport 80 -j MASQUERADE
       - name: Port 443 postroute masq
         local_action:
-          "shell iptables -t nat -I POSTROUTING -d {{infranode_ip_addr.stdout}} --dport 443 -j MASQUERADE
+          "shell iptables -t nat -I POSTROUTING  -p tcp -d {{infranode_ip_addr.stdout}} --dport 443 -j MASQUERADE
       - name: Port 8443 postroute masq
         local_action:
-          "shell iptables -t nat -I POSTROUTING -d {{master_ip_addr.stdout}} --dport 8443 -j MASQUERADE
+          "shell iptables -t nat -I POSTROUTING  -p tcp -d {{master_ip_addr.stdout}} --dport 8443 -j MASQUERADE
       - name: Perist iptables rules
         local_action:
           "shell iptables-save > /etc/sysconfig/iptables"
+      - name: Ensure rpcbind not running
+        service:
+          name: "{{item}}"
+          state: stopped
+        with_items:
+        - rpcbind.socket
+        - rpcbind.service
+      - name: Disable rpcbind
+        service:
+          name: "{{item}}"
+          enabled: no
+        with_items:
+        - rpcbind.socket
+        - rpcbind.service
