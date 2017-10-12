@@ -14,6 +14,7 @@
     - bridge-utils
     - libselinux-python
     - iptables-services
+    - guestfish
   - name: Update all packages
     yum:
       name: '*'
