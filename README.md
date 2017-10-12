@@ -197,7 +197,6 @@ Sample guest definition
 
 ```
     - name: bastion
-      url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73/
       cpu: 1
       mem: 1024
       virt_type: kvm
@@ -205,7 +204,7 @@ Sample guest definition
       network: bridge=virbr0
       os:
           type: linux
-          variant: rhel7.3
+          variant: rhel7.4
       disks:
           os:
             size: 12
@@ -213,70 +212,51 @@ Sample guest definition
           data:
             size: 1
             options: format=qcow2,cache=none,io=native
-      extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
+      systemd.show_status=yes
+```
+
+Here is a sample of a minimal guest definition
+```
+guests:
+- name: bastion
+  cpu: 1
+  mem: 1024
+- name: master01
+  cpu: 1
+  mem: 8096
+- name: infranode01
+  cpu: 1
+  mem: 8096
+- name: node01
+  cpu: 1
+  mem: 8096
 ```
 
 Basically you need to change only num of VMs and/or cpu and mem values.
 
-Provision VMs
+Provision VMs and prepare them for OCP. Password for all hosts is `p`.
+
+
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/provision.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/prepare.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ```
 
-Provisioning of the hosts take a while and they are in running state until installation is finnished. When guest list is empty, all guest are done and ready to be started.
+Provisioning of the hosts take a while and they are in running state until provisioning and preparations is finnished. Maybe time for another cup of coffee?
+
+When playbook is finished successfully you should have 4 VMs running.
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# virsh list
-# installation still running
  Id    Name                           State
 ----------------------------------------------------
  34    bastion                        running
  35    master01                       running
  36    infranode01                    running
  37    node01                         running
- 38    node02                         running
- 39    node03                         running
 
 ```
 
-NOTE: As long as `virsh list` shows VMs in State `running`, the installation has not ended. To monitor the states of the VMs, you could run `watch virsh list`. It will refresh the command every 2 seconds, until you interrupt this endless-loop with `CTRL-C`.
-
-NOTE: this task can take a long time, don't panic, get a cup of coffee!
-
-If you want to "monitor" the progress, you can view the console of any of the VMs via
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# virsh console master01
-```
-
-
-When the list of running guest VMs is empty, all systems have been installed.
-
-To proceed, you will have to start them again. To do so, enter the command
-
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/startall.yml
-```
-
-
-
-Use below commands to copy SSH key to all VMs. Password for all hosts is `p`.
-
-Before executing this playbook, clean all old ssl identities from file `/root/.ssh/known_hosts` by removing it.
-
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/prepare_ssl.yml
-```
-
-## Prepare bastion for OCP installation
-
-Prepare host running below command. Check with `env` command that rhn_password and rhn_username are properly set.
-
-When you have all mentioned above run, be aware this step will again take a long time. Maybe time for another cup of coffee?
-
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
-```
 
 ## Install OCP
 

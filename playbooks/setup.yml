@@ -1,5 +1,6 @@
 ---
 - name: Setup and prepare nodes.
+  hosts: all
 - include: prepare_libvirt.yml
 - include: provision.yml
 - include: prepare_ssl.yml
