@@ -89,7 +89,7 @@ DRIVE2 /dev/sdb
 SWRAID 1
 SWRAIDLEVEL 1
 BOOTLOADER grub
-HOSTNAME CentOS-73-64-minimal
+HOSTNAME CentOS-74-64-minimal
 PART /boot ext3     512M
 PART lvm   vg0       all
 
@@ -99,7 +99,7 @@ LV vg0   tmp    /tmp    ext4      10G
 LV vg0   home   /home   ext4      40G
 
 
-IMAGE /root/.oldroot/nfs/install/../images/CentOS-73-64-minimal.tar.gz
+IMAGE /root/.oldroot/nfs/install/../images/CentOS-74-64-minimal.tar.gz
 ```
 
 There are some things that you will probably have to changes
