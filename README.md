@@ -132,7 +132,7 @@ reboot now
 Install ansible and git
 
 ```
-[root@CentOS-73-64-minimal ~]# yum install -y ansible git
+[root@CentOS-73-64-minimal ~]# yum install -y ansible git wget
 ```
 
 Create ssh key (no passphrase)
@@ -151,7 +151,7 @@ enter the `SSH Keys` tab and copy/paste the content of the newly created file `/
 
 ![](images/upload_ssh.png)
 
-You are now ready to clone this project to your CenOS system.
+You are now ready to clone this project to your CentOS system.
 
 ```
 git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
@@ -165,6 +165,18 @@ We are now ready to install `libvirt`as our hypervizor.
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/setup.yml
 [root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
 [root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
+```
+
+## Download RHEL 7.4 cloud image from access.redhat.com
+
+1. Go to RHEL downloads page https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.4/x86_64/product-software
+2. Copy download link from image Red Hat Enterprise Linux 7.4 KVM Guest Image to your clipboard
+
+ ![](images/cloud-image-download.png)
+
+Downlaod image
+```
+wget -O /root/rhel-server-7.4-x86_64-kvm.qcow2 PASTE_URL_HERE
 ```
 
 With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
