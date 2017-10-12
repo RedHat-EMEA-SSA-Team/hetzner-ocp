@@ -30,15 +30,14 @@
                  --ram {{ item.mem }}
                  --vcpus {{ item.cpu }}
                  --cpu host
-                 --os-type {{ item.os.type }}
-                 --os-variant {{ item.os.variant }}
-                 --network {{item.network}}
-                 --graphics vnc
-                 --{{item.virt_hypervisor}}
-                 --virt-type {{ item.virt_type }}
+                 --os-type {{ item.os.type | default(linux) }}
+                 --os-variant {{ item.os.variant | default(rhel7.4)}}
+                 --network {{item.network | default(bridge=virbr0)}}
+                 --{{item.virt_hypervisor | default(hvm)}}
+                 --virt-type {{ item.virt_type | default(kvm)}}
                  --disk path=/var/lib/libvirt/images/{{item.name}}.qcow2,device=disk,format=qcow2
-                 --disk size={{item.disks.var.size}},{{item.disks.var.options}}
-                 --disk size={{item.disks.data.size}},{{item.disks.data.options}}
+                 --disk size={{item.disks.var.size | default(40)}},{{item.disks.var.options | default(format=qcow2,cache=none,io=native)}}
+                 --disk size={{item.disks.data.size | default(100)}},{{item.disks.data.options | default(format=qcow2,cache=none,io=native)}}
                  --noautoconsole
                  --autostart"
         when: item.name not in virt_vms.list_vms

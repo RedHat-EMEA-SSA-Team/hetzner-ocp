@@ -1,65 +1,45 @@
 ---
-- name: Register bastion to RHN and subscribe
+- name: Figure out pool id from bastion subscription
   hosts: bast
   gather_facts: False
   serial: 1
-  vars:
-    do_not_subscribe: false
   tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
     retries: 3
     delay: 1
-    when: not do_not_subscribe
   - name: Get pool id
     shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
     register: poolid
     retries: 3
     delay: 1
-    when: not do_not_subscribe
-  - name: Subscribe hosts
-    command: "subscription-manager attach --pool={{ poolid.stdout }}"
-    retries: 3
-    delay: 1
-    when: not do_not_subscribe
   - set_fact:
       poolid: "{{poolid.stdout}}"
     when: not do_not_subscribe
   - set_fact:
       pwd: "{{rhn_password}}"
       user: "{{rhn_username}}"
-      do_not_subscribe: "{{do_not_subscribe}}"
 - name: Register nodes to RHN and subscribe
-  hosts: nodes
+  hosts: all
   gather_facts: False
-  serial: 1
   tasks:
-  - name: Register hosts
-    command: subscription-manager register --force --username={{ hostvars['bastion']['user'] }} --password={{ hostvars['bastion']['pwd'] }}
-    retries: 3
-    delay: 1
-    when: not hostvars['bastion']['do_not_subscribe']
-  - name: Subscribe hosts
-    command: "subscription-manager attach --pool={{ hostvars['bastion']['poolid'] }}"
-    retries: 3
-    delay: 1
-    when: not hostvars['bastion']['do_not_subscribe']
-- name: Manager repos
-  hosts: bast,nodes
-  gather_facts: False
-  vars:
-    ose_ver: 3.6
-  tasks:
+  - name: Check Red Hat subscription
+    redhat_subscription:
+      state: present
+      username: "{{ hostvars['bastion']['user'] }}"
+      password: "{{ hostvars['bastion']['pwd'] }}"
+      pool: "{{ hostvars['bastion']['poolid'] }}"
+    register: subscribe
   - name: Disable all repos
-    command: subscription-manager repos --disable='*'
-    ignore_errors: true
-  - name: Activate OCP repos
+    shell: |
+      subscription-manager repos --disable=*
+    when: subscribe.changed
+  - name: Enable correct repos
     command: "subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-ose-{{ose_ver}}-rpms --enable=rhel-7-fast-datapath-rpms --enable=rhel-7-server-optional-rpms"
-- name: Prepare nodes for OCP install
-  gather_facts: False
-  hosts: nodes
+    when: subscribe.changed
   roles:
   - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
+
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
@@ -91,7 +71,7 @@
   - name: Refresh mounts
     command: mount -a
   roles:
-  - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct,atomic-openshift-utils,atomic-openshift-clients]}
+  - { role: yumstuff, packages: [atomic-openshift-utils,atomic-openshift-clients]}
 
 - name: Gather facts from localhost
   hosts: localhost
