@@ -15,7 +15,11 @@
       - name: get list of vms
         virt: command=list_vms
         register: virt_vms
-
+      - name: Prepare cloud images
+        command: virt-customize -a /root/rhel-server-7.4-x86_64-kvm.qcow2 --root-password password:p --uninstall cloud-init
+      - name: Create images for guests
+        command: "qemu-img create -f /root/rhel-server-7.4-x86_64-kvm.qcow2 /var/lib/libvirt/{{item.name}}.qcow2 {{item.disks.os.size}}G"
+        with_items: "{{guests}}"
       - name: create vm
         command: "virt-install --name {{item.name}}
                  --connect qemu:///system
@@ -23,14 +27,13 @@
                  --ram {{ item.mem }}
                  --vcpus {{ item.cpu }}
                  --cpu host
-                 --location {{ item.url }}
                  --os-type {{ item.os.type }}
                  --os-variant {{ item.os.variant }}
                  --network {{item.network}}
                  --graphics vnc
                  --{{item.virt_hypervisor}}
                  --virt-type {{ item.virt_type }}
-                 --disk size={{item.disks.os.size}},{{item.disks.os.options}}
+                 --disk path=/var/lib/libvirt/images/{{item.name}}.qcow2,device=disk,format=qcow2
                  --disk size={{item.disks.data.size}},{{item.disks.data.options}}
                  --extra-args '{{item.extra_args}}'
                  --noautoconsole
@@ -116,3 +119,11 @@
         with_items:
         - rpcbind.socket
         - rpcbind.service
+      - name: Wait for host to come back up
+        local_action:
+          module: wait_for
+          host: "{{ item.name }}"
+          port: 22
+          delay: 5
+          timeout: 300
+        with_items: "{{guests}}"
