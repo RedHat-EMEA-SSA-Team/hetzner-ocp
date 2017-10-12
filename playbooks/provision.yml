@@ -18,11 +18,14 @@
       - name: Prepare cloud images
         command: virt-customize -a /root/rhel-server-7.4-x86_64-kvm.qcow2 --root-password password:p --uninstall cloud-init
       - name: Create images for guests
-        command: "cp /root/rhel-server-7.4-x86_64-kvm.qcow2 /var/lib/libvirt/images/{{item.name}}.qcow2"
+        copy:
+          src: /root/rhel-server-7.4-x86_64-kvm.qcow2
+          dest: /var/lib/libvirt/images/{{item.name}}.qcow2"
         with_items: "{{guests}}"
       - name: create vm
         command: "virt-install --name {{item.name}}
                  --connect qemu:///system
+                 --import
                  --arch x86_64
                  --ram {{ item.mem }}
                  --vcpus {{ item.cpu }}
