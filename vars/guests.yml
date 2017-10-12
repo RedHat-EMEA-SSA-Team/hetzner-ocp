@@ -10,7 +10,7 @@ guests:
           type: linux
           variant: rhel7.3
       disks:
-          os:
+          var:
             size: 12
             options: format=qcow2,cache=none,io=native
           data:
@@ -19,7 +19,7 @@ guests:
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: master01
       url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
-      cpu: 2
+      cpu: 1
       mem: 8096
       virt_type: kvm
       virt_hypervisor: hvm
@@ -28,7 +28,7 @@ guests:
           type: linux
           variant: rhel7.3
       disks:
-          os:
+          var:
             size: 40
             options: format=qcow2,cache=none,io=native
           data:
@@ -37,7 +37,7 @@ guests:
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: infranode01
       url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
-      cpu: 2
+      cpu: 1
       mem: 8096
       virt_type: kvm
       virt_hypervisor: hvm
@@ -46,7 +46,7 @@ guests:
           type: linux
           variant: rhel7.3
       disks:
-          os:
+          var:
             size: 40
             options: format=qcow2,cache=none,io=native
           data:
@@ -55,8 +55,8 @@ guests:
       extra_args: ip=dhcp inst.ks=http://hetzner-static.s3-website-eu-west-1.amazonaws.com/ks/rhel-73-ocp.ks console=tty0 console=ttyS0,115200 quiet systemd.show_status=yes
     - name: node01
       url: http://hetzner-static.s3-website-eu-west-1.amazonaws.com/rhel73
-      cpu: 2
-      mem: 26624
+      cpu: 1
+      mem: 8096
       virt_type: kvm
       virt_hypervisor: hvm
       network: bridge=virbr0
@@ -64,7 +64,7 @@ guests:
           type: linux
           variant: rhel7.3
       disks:
-          os:
+          var:
             size: 40
             options: format=qcow2,cache=none,io=native
           data:

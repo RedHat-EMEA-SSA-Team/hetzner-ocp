@@ -34,6 +34,7 @@
                  --{{item.virt_hypervisor}}
                  --virt-type {{ item.virt_type }}
                  --disk path=/var/lib/libvirt/images/{{item.name}}.qcow2,device=disk,format=qcow2
+                 --disk size={{item.disks.var.size}},{{item.disks.var.options}}
                  --disk size={{item.disks.data.size}},{{item.disks.data.options}}
                  --extra-args '{{item.extra_args}}'
                  --noautoconsole
