@@ -32,7 +32,7 @@
     command: virsh pool-destroy images
     when: libvirtd.changed
   - name: Undefine images pool
-    command: virsh pool-undefine default
+    command: virsh pool-undefine images
     when: libvirtd.changed
     ignore_errors: true
   - name: Create new default pool
