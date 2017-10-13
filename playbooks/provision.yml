@@ -20,7 +20,7 @@
       - name: Create images for guests
         copy:
           src: /root/rhel-server-7.4-x86_64-kvm.qcow2
-          dest: /var/lib/libvirt/images/{{item.name}}.qcow2"
+          dest: /var/lib/libvirt/images/{{item.name}}.qcow2
         with_items: "{{guests}}"
       - name: create vm
         command: "virt-install --name {{item.name}}
