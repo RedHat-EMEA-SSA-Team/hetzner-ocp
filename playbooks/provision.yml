@@ -4,6 +4,16 @@
   vars_files:
   - vars/guests.yml
   tasks:
+      - name: Add bastion to dynamic host
+        add_host:
+          name: bastion
+          group: bast
+      - name: Add other hosts to nodes group
+        add_host:
+          name: "{{item.name}}"
+          group: nodes
+        when: item.name != 'bastion'
+        with_items: "{{guests}}"
       - name: start libvirtd
         service: name=libvirtd state=started enabled=yes
         register: libvirtd
@@ -124,19 +134,7 @@
 - name: Prepare guest disks
   gather_facts: no
   hosts: all
-  vars_files:
-  - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Makefs for /var
     command: mkfs.ext4 /dev/vdb
   - name: Moung var disks on all hosts
