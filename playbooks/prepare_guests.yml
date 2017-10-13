@@ -52,9 +52,9 @@
   - name: Moung var disks on all hosts
     mount:
       path: /var
-    src: /dev/sdb
-    fstype: ext4
-    state: present
+      src: /dev/sdb
+      fstype: ext4
+      state: present
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
