@@ -2,11 +2,17 @@
 - name: Clean subscription from hosts
   hosts: all
   gather_facts: False
+  vars_files:
+      - ../vars/guests.yml
   tasks:
+  - name: Add host to inventory
+    add_host:
+      name: "{{item.name}}"
+    with_items: "{{guests}}"
   - name: Unregister systems
     command: subscription-manager unregister
     ignore_errors: yes
-    
+
 - name: Clean up everything
   hosts: localhost
   gather_facts: False
