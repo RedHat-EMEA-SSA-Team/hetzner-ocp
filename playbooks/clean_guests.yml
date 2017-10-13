@@ -29,14 +29,13 @@
     file:
       path: /tmp/inventory
       state: absent
-  - name: Remove image file
+  - name: Remove image files
     command: "rm -Rf /var/lib/libvirt/images/{{item.name}}*.qcow2"
     with_items: "{{guests}}"
   - name: Revert iptables changes
+    shell: |
+      iptables-restore < /etc/sysconfig/iptables.org
+  - name: Remove generated iptables file
     file:
-      src: /etc/sysconfig/iptables.org
-      dest: /etc/sysconfig/iptables
-  - name: Restart iptables
-    service:
-      state: restarted
-      name: iptables
+      path: /etc/sysconfig/iptables
+      state: absent

@@ -28,16 +28,6 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Remove old known_hosts
     file:
       path: /root/.ssh/known_hosts
