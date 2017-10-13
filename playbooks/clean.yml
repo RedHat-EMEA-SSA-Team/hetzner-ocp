@@ -9,8 +9,9 @@
     add_host:
       name: "{{item.name}}"
     with_items: "{{guests}}"
+    when: item.name != 'bastion'
 - name: Clean subscription from hosts
-  hosts: localhost
+  hosts: all
   gather_facts: False
   tasks:
   - name: Unregister systems

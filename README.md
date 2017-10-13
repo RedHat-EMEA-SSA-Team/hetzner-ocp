@@ -178,7 +178,7 @@ With our hypervizor installed and ready, we can now proceed with the creation of
 
 ## Define, provision and prepare guest
 
-Check ```vars/guests.yml``` and modify it to correspond your environment. By default following VMs are installed:
+Check ```playbook/vars/guests.yml``` and modify it to correspond your environment. By default following VMs are installed:
 
 * bastion
 * master01
@@ -212,7 +212,7 @@ Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 ```
 [root@CentOS-73-64-minimal ~]# cd hetzner-ocp
 [root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/setup.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -k playbooks/setup.yml
 ```
 
 Provisioning of the hosts take a while and they are in running state until provisioning and preparations is finnished. Maybe time for another cup of coffee?
