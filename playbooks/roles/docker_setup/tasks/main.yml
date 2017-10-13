@@ -13,13 +13,11 @@
   changed_when: false
   failed_when: false
 
-- name: Wipe signatures
-  command: "wipefs --all --force {{device}}"
-  when: docker_storage_test.rc != 0
 - name: Create Docker storage configuration
   copy:
     dest: /etc/sysconfig/docker-storage-setup
     content: |
+      WIPE_SIGNATURES=true
       STORAGE_DRIVER=overlay2
       DEVS={{device}}
       CONTAINER_ROOT_LV_NAME=dockerlv
