@@ -142,4 +142,4 @@
       path: /var
       src: /dev/vdb
       fstype: ext4
-      state: present
+      state: mounted

@@ -99,7 +99,7 @@
       path: /var
       src: /dev/vdc
       fstype: ext4
-      state: present
+      state: mounted
 - name: Gather facts from localhost
   hosts: localhost
   tasks:
