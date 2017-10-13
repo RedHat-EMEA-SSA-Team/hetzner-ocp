@@ -71,6 +71,9 @@
         local_action:
           shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
         register: infranode_ip_addr
+      - name: Create backup from iptables rules
+        local_action:
+          "shell iptables-save > /etc/sysconfig/iptables.org"
       - name: Port forwarding for 80
         local_action:
           "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 80 -j DNAT --to-destination {{infranode_ip_addr.stdout}}:80"

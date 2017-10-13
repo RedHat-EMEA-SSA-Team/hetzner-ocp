@@ -30,7 +30,13 @@
       path: /tmp/inventory
       state: absent
   - name: Remove image file
-    file:
-      path: "/var/lib/libvirt/images/{{item.name}}*.qcow2"
-      state: absent
+    command: "rm -Rf /var/lib/libvirt/images/{{item.name}}*.qcow2"
     with_items: "{{guests}}"
+  - name: Revert iptables changes
+    file:
+      src: /etc/sysconfig/iptables.org
+      dest: /etc/sysconfig/iptables
+  - name: Restart iptables
+    service:
+      state: restarted
+      name: iptables

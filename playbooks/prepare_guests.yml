@@ -88,7 +88,7 @@
   - name: Moung var disks on all hosts
     mount:
       path: /var
-      src: /dev/sdb
+      src: /dev/vdb
       fstype: ext4
       state: present
 - name: Prepare bastion for OCP install
@@ -199,7 +199,7 @@
   gather_facts: False
   hosts: nodes
   vars_files:
-  - vars/guests.yml  
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
