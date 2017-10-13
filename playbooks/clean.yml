@@ -1,4 +1,12 @@
 ---
+- name: Clean subscription from hosts
+  hosts: all
+  gather_facts: False
+  tasks:
+  - name: Unregister systems
+    command: subscription-manager unregister
+    ignore_errors: yes
+    
 - name: Clean up everything
   hosts: localhost
   gather_facts: False

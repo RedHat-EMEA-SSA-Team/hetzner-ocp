@@ -63,18 +63,6 @@
         local_action:
           shell ip n | grep "`virsh dumpxml {{item.name}} | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" {{item.name}}" }' >> /etc/hosts
         with_items: "{{guests}}"
-      - name: Remove old inventory
-        file:
-          path: /root/inventory
-          state: absent
-      - name: Create groups to inventory
-        local_action:
-          shell echo '[bast]' >> /root/inventory && echo 'bastion' >> /root/inventory && echo '[nodes]' >> /root/inventory
-      - name: Create simple ansible inventory
-        local_action:
-          shell echo {{item.name}} >> /root/inventory
-        with_items: "{{guests}}"
-        when: item.name != 'bastion'
       - name: Get master01 ip addr
         local_action:
           shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'

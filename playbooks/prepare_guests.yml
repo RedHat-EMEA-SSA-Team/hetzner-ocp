@@ -9,10 +9,13 @@
     retries: 3
     delay: 1
   - name: Get pool id
-    shell: "subscription-manager list --available --matches 'Employee SKU' --pool-only | tail -n 1"
+    shell: "subscription-manager list --available --matches '*Openshift*' --pool-only | tail -n 1"
     register: poolid
     retries: 3
     delay: 1
+  - debug:
+      msg: |
+        "Managed to find pool id {{poolid}}"
   - set_fact:
       poolid: "{{poolid.stdout}}"
   - set_fact:
