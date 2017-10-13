@@ -64,6 +64,8 @@
     yum:
       name: "{{item}}"
       state: latest
+    retries: 5
+    delay: 5
     with_items: "{{packages}}"
 
 - name: Prepare bastion for OCP install
@@ -74,6 +76,8 @@
     yum:
       name: "{{item}}"
       state: latest
+    retries: 5
+    delay: 5
     with_items: "{{packages_bastion}}"
   - name: Copy playbooks to bastion
     synchronize:
