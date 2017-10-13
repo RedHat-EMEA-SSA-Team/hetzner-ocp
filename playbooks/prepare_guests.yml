@@ -51,10 +51,14 @@
   - name: Disable all repos
     shell: |
       subscription-manager repos --disable=*
+    retries: 5
+    delay: 5
     when: subscribe.changed
   - name: Enable correct repos
     command: "subscription-manager repos --enable={{item}}"
     when: subscribe.changed
+    retries: 5
+    delay: 5
     with_items: "{{repos}}"
   - name: Ensure that required packages are present on target hosts
     yum:
