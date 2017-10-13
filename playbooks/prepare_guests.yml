@@ -1,8 +1,7 @@
 ---
-- name: Figure out pool id from bastion subscription
-  hosts: bast
-  gather_facts: False
-  serial: 1
+- name: Prepare guest disks
+  gather_facts: no
+  hosts: all
   vars_files:
   - vars/guests.yml
   tasks:
@@ -16,6 +15,20 @@
       group: nodes
     when: item.name != 'bastion'
     with_items: "{{guests}}"
+  - name: Makefs for /var
+    command: mkfs.ext4 /dev/vdb
+  - name: Moung var disks on all hosts
+    mount:
+      path: /var
+      src: /dev/vdb
+      fstype: ext4
+      state: mounted
+
+- name: Figure out pool id from bastion subscription
+  hosts: bast
+  gather_facts: False
+  serial: 1
+  tasks:
   - name: Register hosts
     command: subscription-manager register --force --username={{ hostvars['localhost']['user'] }} --password={{ hostvars['localhost']['pwd'] }}
     retries: 5

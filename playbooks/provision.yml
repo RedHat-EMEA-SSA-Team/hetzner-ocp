@@ -131,15 +131,3 @@
           delay: 5
           timeout: 300
         with_items: "{{guests}}"
-- name: Prepare guest disks
-  gather_facts: no
-  hosts: all
-  tasks:
-  - name: Makefs for /var
-    command: mkfs.ext4 /dev/vdb
-  - name: Moung var disks on all hosts
-    mount:
-      path: /var
-      src: /dev/vdb
-      fstype: ext4
-      state: mounted
