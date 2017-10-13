@@ -68,7 +68,7 @@
   - vars/guests.yml
   tasks:
   - name: Makefs for /var
-    command: mkfs.ext4 /dev/vdc
+    command: mkfs.ext4 /dev/vdb
   - name: Moung var disks on all hosts
     mount:
       path: /var
