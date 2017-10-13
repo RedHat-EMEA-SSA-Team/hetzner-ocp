@@ -211,10 +211,8 @@ Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 
 ```
 [root@CentOS-73-64-minimal ~]# cd hetzner-ocp
-[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
-[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
 [root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/setup.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/setup.yml
 ```
 
 Provisioning of the hosts take a while and they are in running state until provisioning and preparations is finnished. Maybe time for another cup of coffee?
