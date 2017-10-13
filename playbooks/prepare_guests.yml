@@ -61,20 +61,7 @@
       name: "{{item}}"
       state: latest
     with_items: "{{packages}}"
-- name: Prepare guest disks
-  gather_facts: no
-  hosts: all
-  vars_files:
-  - vars/guests.yml
-  tasks:
-  - name: Makefs for /var
-    command: mkfs.ext4 /dev/vdb
-  - name: Moung var disks on all hosts
-    mount:
-      path: /var
-      src: /dev/vdb
-      fstype: ext4
-      state: present
+
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
