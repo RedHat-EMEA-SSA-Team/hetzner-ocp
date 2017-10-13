@@ -211,6 +211,7 @@ Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 
 ```
 [root@CentOS-73-64-minimal ~]# cd hetzner-ocp
+[root@CentOS-73-64-minimal hetzner-ocp]# export LIBGUESTFS_BACKEND=direct
 [root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -k playbooks/setup.yml
 ```
