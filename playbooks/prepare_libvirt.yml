@@ -23,7 +23,24 @@
     service:
       name: libvirtd
       enabled: true
+    register: libvirtd
   - name: Start libvirtd
     service:
       name: libvirtd
       state: started
+  - name: Destroy old pool, images
+    command: virsh pool-destroy images
+    when: libvirtd.changed
+  - name: Undefine images pool
+    command: virsh pool-undefine default
+    when: libvirtd.changed
+    ignore_errors: true
+  - name: Create new default pool
+    command: virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
+    when: libvirtd.changed
+  - name: Set autostart on pool default
+    command: virsh pool-autostart default
+    when: libvirtd.changed
+  - name: Start default pool
+    command: virsh pool-start default
+    when: libvirtd.changed
