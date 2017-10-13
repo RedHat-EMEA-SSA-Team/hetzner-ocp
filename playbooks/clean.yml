@@ -50,9 +50,10 @@
     command: "rm -Rf /var/lib/libvirt/images/{{item.name}}*.qcow2"
     with_items: "{{guests}}"
   - name: Revert iptables changes
-    shell: |
-      iptables-restore < /etc/sysconfig/iptables.org
-  - name: Remove generated iptables file
-    file:
-      path: /etc/sysconfig/iptables
-      state: absent
+    copy:
+      src: /etc/sysconfig/iptables.org
+      dest: /etc/sysconfig/iptables
+  - name: Restart iptables
+    service:
+      name: iptables
+      state: restarted

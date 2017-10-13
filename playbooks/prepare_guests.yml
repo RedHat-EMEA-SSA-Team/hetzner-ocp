@@ -18,13 +18,13 @@
     with_items: "{{guests}}"
   - name: Register hosts
     command: subscription-manager register --force --username={{ hostvars['localhost']['user'] }} --password={{ hostvars['localhost']['pwd'] }}
-    retries: 3
-    delay: 1
+    retries: 5
+    delay: 5
   - name: Get pool id
     shell: "subscription-manager list --available --matches '*Openshift*' --pool-only | tail -n 1"
     register: poolid
-    retries: 3
-    delay: 1
+    retries: 5
+    delay: 5
   - debug:
       msg: |
         "Managed to find pool id {{poolid.stdout}}"
@@ -37,16 +37,6 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Check Red Hat subscription
     redhat_subscription:
       state: present
@@ -54,6 +44,8 @@
       password: "{{ hostvars['localhost']['pwd'] }}"
       pool: "{{ hostvars['bastion']['poolid'] }}"
     register: subscribe
+    retries: 5
+    delay: 5
   - debug:
       msg: "{{subscribe}}"
   - name: Disable all repos
@@ -75,16 +67,6 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Moung var disks on all hosts
     mount:
       path: /var
@@ -94,19 +76,7 @@
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
-  vars_files:
-  - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Ensure that required packages are present on bastion host
     yum:
       name: "{{item}}"
@@ -147,19 +117,7 @@
 - name: Update 7.4 to latest
   hosts: nodes
   gather_facts: false
-  vars_files:
-  - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Update packages
     yum:
       name: '*'
@@ -178,19 +136,7 @@
       timeout: 300
 - name: Create inventory
   hosts: bast
-  vars_files:
-  - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   vars:
     ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
   roles:
@@ -198,18 +144,6 @@
 - name: Install docker
   gather_facts: False
   hosts: nodes
-  vars_files:
-  - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   roles:
   - { role: docker_setup, device: '/dev/vdc'}
