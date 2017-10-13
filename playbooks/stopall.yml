@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: False
   vars_files:
-      - ../vars/guests.yml
+      - vars/guests.yml
   tasks:
   - name: Stop all VMs
     virt:

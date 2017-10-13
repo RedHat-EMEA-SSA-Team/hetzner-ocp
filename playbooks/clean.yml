@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: False
   vars_files:
-  - ../vars/guests.yml
+  - vars/guests.yml
   tasks:
   - name: Add host to inventory
     add_host:
@@ -20,7 +20,7 @@
   hosts: localhost
   gather_facts: False
   vars_files:
-      - ../vars/guests.yml
+      - vars/guests.yml
   tasks:
   - name: Remove old known_hosts
     file:
