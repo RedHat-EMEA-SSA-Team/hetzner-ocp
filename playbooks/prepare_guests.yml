@@ -1,5 +1,5 @@
 ---
-- name: Prepare guest disks
+- name: Create inventory
   gather_facts: no
   hosts: all
   vars_files:
@@ -15,14 +15,6 @@
       group: nodes
     when: item.name != 'bastion'
     with_items: "{{guests}}"
-  - name: Makefs for /var
-    command: mkfs.ext4 /dev/vdb
-  - name: Moung var disks on all hosts
-    mount:
-      path: /var
-      src: /dev/vdb
-      fstype: ext4
-      state: mounted
 
 - name: Figure out pool id from bastion subscription
   hosts: bast
