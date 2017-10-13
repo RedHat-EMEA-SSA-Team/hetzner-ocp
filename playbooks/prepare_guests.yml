@@ -61,7 +61,7 @@
     synchronize:
       src: /root/hetzner-ocp
       dest: /root/
-  - name: Copy playbooks to bastion
+  - name: Copy SSH keys from host to bastion
     copy:
       src: "{{item}}"
       dest: "{{item}}"
