@@ -156,16 +156,8 @@ You are now ready to clone this project to your CentOS system.
 ```
 git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
 ```
-We are now ready to install `libvirt`as our hypervizor.
+We are now ready to install `libvirt`as our hypervizor, provision VMs and prepare those for OCP.
 
-## Install libvirt and setup environment
-
-```
-[root@CentOS-73-64-minimal ~]# cd hetzner-ocp
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/setup.yml
-[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
-[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
-```
 
 ## Download RHEL 7.4 cloud image from access.redhat.com
 
@@ -181,7 +173,7 @@ wget -O /root/rhel-server-7.4-x86_64-kvm.qcow2 PASTE_URL_HERE
 
 With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
 
-## Provision guest
+## Define, provision and prepare guest
 
 Check ```vars/guests.yml``` and modify it to correspond your environment. By default following VMs are installed:
 
@@ -238,6 +230,9 @@ Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 
 
 ```
+[root@CentOS-73-64-minimal ~]# cd hetzner-ocp
+[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
+[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
 [root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory -k playbooks/setup.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
 ```

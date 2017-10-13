@@ -1,6 +1,17 @@
 ---
 - name: Setup and prepare nodes.
   hosts: all
+  tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
 - include: prepare_libvirt.yml
 - include: provision.yml
 - include: prepare_ssl.yml
