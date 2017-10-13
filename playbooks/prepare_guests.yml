@@ -42,13 +42,21 @@
     command: "subscription-manager repos --enable={{item}}"
     when: subscribe.changed
     with_items: "{{repos}}"
-  roles:
-  - { role: yumstuff, packages: packages}
+  - name: Ensure that required packages are present on target hosts
+    yum:
+      name: "{{item}}"
+      state: latest
+    with_items: "{{packages}}"
 
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
   tasks:
+  - name: Ensure that required packages are present on bastion host
+    yum:
+      name: "{{item}}"
+      state: latest
+    with_items: "{{packages_bastion}}"
   - name: Copy playbooks to bastion
     synchronize:
       src: /root/hetzner-ocp
@@ -75,8 +83,7 @@
       line: "/dev/vdb   /exports  ext4    defaults    0 0"
   - name: Refresh mounts
     command: mount -a
-  roles:
-  - { role: yumstuff, packages: packages_bastion}
+
 
 - name: Gather facts from localhost
   hosts: localhost
@@ -87,7 +94,9 @@
   gather_facts: false
   tasks:
   - name: Update packages
-    command: yum update -y
+    yum:
+      name: '*'
+      state: latest
   - name: Shutdown
     shell: sleep 2 && shutdown -r now "Reboot triggered by Ansible"
     async: 1
