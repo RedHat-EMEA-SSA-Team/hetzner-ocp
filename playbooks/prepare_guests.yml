@@ -48,6 +48,7 @@
       username: "{{ hostvars['localhost']['user'] }}"
       password: "{{ hostvars['localhost']['pwd'] }}"
       pool: "{{ hostvars['bastion']['poolid'] }}"
+      force_register: yes
     register: subscribe
     retries: 5
     delay: 5
@@ -102,11 +103,11 @@
       path: /exports
       state: directory
   - name: Makefs for exports
-    command: mkfs.ext4 /dev/vdc
+    command: mkfs.ext4 /dev/vdb
   - name: Mount new disk to mount point
     mount:
-      path: /var
-      src: /dev/vdc
+      path: /exports
+      src: /dev/vdb
       fstype: ext4
       state: mounted
 - name: Gather facts from localhost
@@ -145,4 +146,4 @@
   hosts: nodes
   tasks:
   roles:
-  - { role: docker_setup, device: '/dev/vdc'}
+  - { role: docker_setup, device: '/dev/vdb'}
