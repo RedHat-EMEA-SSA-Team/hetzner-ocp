@@ -2,7 +2,7 @@
   hosts: localhost
   gather_facts: true
   vars_files:
-      - ../vars/guests.yml
+  - vars/guests.yml
   tasks:
       - name: start libvirtd
         service: name=libvirtd state=started enabled=yes
