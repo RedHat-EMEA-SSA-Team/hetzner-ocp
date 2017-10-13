@@ -39,10 +39,11 @@
       subscription-manager repos --disable=*
     when: subscribe.changed
   - name: Enable correct repos
-    command: "subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-ose-3.6-rpms --enable=rhel-7-fast-datapath-rpms --enable=rhel-7-server-optional-rpms"
+    command: "subscription-manager repos --enable={{item}}"
     when: subscribe.changed
+    with_items: "{{repos}}"
   roles:
-  - { role: yumstuff, packages: [wget,git,net-tools,bind-utils,iptables-services,bash-completion,nfs-utils,kexec-tools,sos,psacct]}
+  - { role: yumstuff, packages: packages}
 
 - name: Prepare bastion for OCP install
   gather_facts: False
@@ -75,7 +76,7 @@
   - name: Refresh mounts
     command: mount -a
   roles:
-  - { role: yumstuff, packages: [atomic-openshift-utils,atomic-openshift-clients]}
+  - { role: yumstuff, packages: packages_bastion}
 
 - name: Gather facts from localhost
   hosts: localhost

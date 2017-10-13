@@ -1,0 +1,20 @@
+packages:
+- wget
+- git
+- net-tools
+- bind-utils
+- iptables-services
+- bash-completion
+- nfs-utils
+- kexec-tools
+- sos
+- psacct
+packages_bastion:
+- atomic-openshift-utils
+- atomic-openshift-clients
+repos:
+- rhel-7-server-rpms
+- rhel-7-server-extras-rpms
+- rhel-7-server-ose-3.6-rpms
+- rhel-7-fast-datapath-rpms
+- rhel-7-server-optional-rpms
