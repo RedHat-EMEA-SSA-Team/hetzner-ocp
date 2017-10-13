@@ -3,6 +3,8 @@
   hosts: bast
   gather_facts: False
   serial: 1
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
@@ -32,6 +34,8 @@
 - name: Register nodes to RHN and subscribe
   hosts: all
   gather_facts: true
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
@@ -68,6 +72,8 @@
 - name: Prepare guest disks
   gather_facts: no
   hosts: all
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
@@ -88,6 +94,8 @@
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
@@ -139,6 +147,8 @@
 - name: Update 7.4 to latest
   hosts: nodes
   gather_facts: false
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
@@ -168,6 +178,8 @@
       timeout: 300
 - name: Create inventory
   hosts: bast
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
@@ -186,6 +198,8 @@
 - name: Install docker
   gather_facts: False
   hosts: nodes
+  vars_files:
+  - vars/guests.yml  
   tasks:
   - name: Add bastion to dynamic host
     add_host:
