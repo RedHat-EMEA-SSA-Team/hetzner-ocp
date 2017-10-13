@@ -35,7 +35,7 @@
                  --network {{item.network | default('bridge=virbr0')}}
                  --{{item.virt_hypervisor | default('hvm')}}
                  --virt-type {{ item.virt_type | default('kvm')}}
-                 --disk size=10,path=/var/lib/libvirt/images/{{item.name}}.qcow2,device=disk,format=qcow2
+                 --disk path=/var/lib/libvirt/images/{{item.name}}.qcow2,device=disk,format=qcow2
                  --disk size={{item.disks.var.size | default('40')}},{{item.disks.var.options | default('format=qcow2,cache=none,io=native')}}
                  --disk size={{item.disks.data.size | default('60')}},{{item.disks.data.options | default('format=qcow2,cache=none,io=native')}}
                  --noautoconsole
