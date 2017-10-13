@@ -184,29 +184,6 @@ Check ```vars/guests.yml``` and modify it to correspond your environment. By def
 
 ![](images/architecture.png)
 
-
-Sample guest definition
-
-```
-    - name: bastion
-      cpu: 1
-      mem: 1024
-      virt_type: kvm
-      virt_hypervisor: hvm
-      network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          os:
-            size: 12
-            options: format=qcow2,cache=none,io=native
-          data:
-            size: 1
-            options: format=qcow2,cache=none,io=native
-      systemd.show_status=yes
-```
-
 Here is a sample of a minimal guest definition
 ```
 guests:
@@ -224,7 +201,7 @@ guests:
   mem: 8096
 ```
 
-Basically you need to change only num of VMs and/or cpu and mem values.
+Basically you need to change only num of VMs and/or cpu and mem values. If
 
 Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 
@@ -445,3 +422,35 @@ Start installation again
 [root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
 ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 ```
+
+## Customizing guest VMs
+
+By defaults guest VMs are provisioned using defaults. If you need to modify guest options to  better suit your needs, it can be done by modifying `playbooks/vars/guests.yml`
+
+Firts copy guests-full sample over default guests.yml
+```
+cd /root/hetzner-ocp
+cp playbooks/vars/guests-full.yml playbooks/vars/guests.yml
+```
+Make modifications and start installtion process. Installer will automatically use file named `guests.yml`. Remember to clean old installation with `ansible-playbook playbooks/clean.yml`
+
+Here is a sample of VM spesification with all bells and whisles.
+
+```
+- name: bastion
+  cpu: 1
+  mem: 1024
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os:
+    type: linux
+    variant: rhel7.3
+  disks:
+    var:
+      size: 12
+      options: format=qcow2,cache=none,io=native
+    data:
+      size: 1
+      options: format=qcow2,cache=none,io=native
+``` 
