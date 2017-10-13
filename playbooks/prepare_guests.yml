@@ -45,7 +45,16 @@
       name: "{{item}}"
       state: latest
     with_items: "{{packages}}"
-
+- name: Prepare guest disks
+  gather_facts: no
+  hosts: all
+  tasks:
+  - name: Moung var disks on all hosts
+    mount:
+      path: /var
+    src: /dev/sdb
+    fstype: ext4
+    state: present
 - name: Prepare bastion for OCP install
   gather_facts: False
   hosts: bast
@@ -73,7 +82,7 @@
       path: /exports
       state: directory
   - name: Makefs for exports
-    command: mkfs.ext4 /dev/vdb
+    command: mkfs.ext4 /dev/vdc
   - name: Mount new disk to mount point
     lineinfile:
       path: /etc/fstab
@@ -117,4 +126,4 @@
   gather_facts: False
   hosts: nodes
   roles:
-  - { role: docker_setup, device: '/dev/vdb'}
+  - { role: docker_setup, device: '/dev/vdc'}
