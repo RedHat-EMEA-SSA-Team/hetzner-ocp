@@ -1,15 +1,18 @@
 # Disclainer
-This environment has been created for the sole purpose of providing an easy to deployment and consume Red Hat OpenShift v3.x environment *as a sandpit*.
+This environment has been created for the sole purpose of providing an easy to deployment and consume Red Hat OpenShift Container Platform v3.x environment *as a sandpit*.
 
 This install will create a 'Minimal Viable Setup', which anyone can extend to
 their needs and purpose.
 
 Use at your own please and risk!
 
+Openshift Container Platform needs valid Red Hat subscription for Red Hat OpenShift Container Platform! And access to access.redhat.com web site is required to download RHEL 7.x cloud images.
+
 # Contribution
 If you want to provide additional feature, please feel free to contribute via
 pull requests or any other means.
 We are happy to track and discuss ideas, topics and requests via 'Issues'.
+
 
 # Install Instructions
 When following these instructional steps, you will end with a setup similar to
@@ -453,4 +456,4 @@ Here is a sample of VM spesification with all bells and whisles.
     data:
       size: 1
       options: format=qcow2,cache=none,io=native
-``` 
+```

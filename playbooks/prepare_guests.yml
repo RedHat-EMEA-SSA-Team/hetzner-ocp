@@ -5,7 +5,7 @@
   serial: 1
   tasks:
   - name: Register hosts
-    command: subscription-manager register --force --username={{rhn_username}} --password={{rhn_password}}
+    command: subscription-manager register --force --username={{ hostvars['localhost']['user'] }} --password={{ hostvars['localhost']['pwd'] }}
     retries: 3
     delay: 1
   - name: Get pool id
@@ -18,9 +18,7 @@
         "Managed to find pool id {{poolid.stdout}}"
   - set_fact:
       poolid: "{{poolid.stdout}}"
-  - set_fact:
-      pwd: "{{rhn_password}}"
-      user: "{{rhn_username}}"
+
 - name: Register nodes to RHN and subscribe
   hosts: all
   gather_facts: true
@@ -28,8 +26,8 @@
   - name: Check Red Hat subscription
     redhat_subscription:
       state: present
-      username: "{{ hostvars['bastion']['user'] }}"
-      password: "{{ hostvars['bastion']['pwd'] }}"
+      username: "{{ hostvars['localhost']['user'] }}"
+      password: "{{ hostvars['localhost']['pwd'] }}"
       pool: "{{ hostvars['bastion']['poolid'] }}"
     register: subscribe
   - debug:
