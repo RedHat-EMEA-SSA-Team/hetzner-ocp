@@ -42,6 +42,9 @@
       name: "{{item.name}}"
     with_items: "{{guests}}"
     ignore_errors: yes
+  - name: Wait 10 secs for all VMs to be destroyed
+    pause:
+      seconds: 10
   - name: Remove temp files
     file:
       path: /tmp/inventory

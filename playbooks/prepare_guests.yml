@@ -104,14 +104,11 @@
   - name: Makefs for exports
     command: mkfs.ext4 /dev/vdc
   - name: Mount new disk to mount point
-    lineinfile:
-      path: /etc/fstab
+    mount:
+      path: /var
+      src: /dev/vdc
+      fstype: ext4
       state: present
-      line: "/dev/vdb   /exports  ext4    defaults    0 0"
-  - name: Refresh mounts
-    command: mount -a
-
-
 - name: Gather facts from localhost
   hosts: localhost
   tasks:
