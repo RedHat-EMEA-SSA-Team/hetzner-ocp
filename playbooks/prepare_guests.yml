@@ -15,7 +15,7 @@
     delay: 1
   - debug:
       msg: |
-        "Managed to find pool id {{poolid}}"
+        "Managed to find pool id {{poolid.stdout}}"
   - set_fact:
       poolid: "{{poolid.stdout}}"
   - set_fact:
@@ -23,7 +23,7 @@
       user: "{{rhn_username}}"
 - name: Register nodes to RHN and subscribe
   hosts: all
-  gather_facts: False
+  gather_facts: true
   tasks:
   - name: Check Red Hat subscription
     redhat_subscription:
@@ -32,6 +32,8 @@
       password: "{{ hostvars['bastion']['pwd'] }}"
       pool: "{{ hostvars['bastion']['poolid'] }}"
     register: subscribe
+  - debug:
+      msg: "{{subscribe}}"
   - name: Disable all repos
     shell: |
       subscription-manager repos --disable=*
