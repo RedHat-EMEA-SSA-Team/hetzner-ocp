@@ -2,6 +2,8 @@
 - name: Setup and prepare nodes.
   hosts: all
   gather_facts: no
+  vars_files:
+  - vars/guests.yml
   tasks:
   - name: Add bastion to dynamic host
     add_host:
