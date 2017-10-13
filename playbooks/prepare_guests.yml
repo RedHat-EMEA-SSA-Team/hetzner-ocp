@@ -4,6 +4,16 @@
   gather_facts: False
   serial: 1
   tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   - name: Register hosts
     command: subscription-manager register --force --username={{ hostvars['localhost']['user'] }} --password={{ hostvars['localhost']['pwd'] }}
     retries: 3
@@ -23,6 +33,16 @@
   hosts: all
   gather_facts: true
   tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   - name: Check Red Hat subscription
     redhat_subscription:
       state: present
@@ -49,6 +69,16 @@
   gather_facts: no
   hosts: all
   tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   - name: Moung var disks on all hosts
     mount:
       path: /var
@@ -59,6 +89,16 @@
   gather_facts: False
   hosts: bast
   tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   - name: Ensure that required packages are present on bastion host
     yum:
       name: "{{item}}"
@@ -100,6 +140,16 @@
   hosts: nodes
   gather_facts: false
   tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   - name: Update packages
     yum:
       name: '*'
@@ -118,6 +168,17 @@
       timeout: 300
 - name: Create inventory
   hosts: bast
+  tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   vars:
     ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
   roles:
@@ -125,5 +186,16 @@
 - name: Install docker
   gather_facts: False
   hosts: nodes
+  tasks:
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+    add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
   roles:
   - { role: docker_setup, device: '/dev/vdc'}
