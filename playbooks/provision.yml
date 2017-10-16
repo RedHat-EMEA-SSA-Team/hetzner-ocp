@@ -43,7 +43,7 @@
   tasks:
   - name: Wait 10 secs for all VMs to get IP
     pause:
-      seconds: 20
+      seconds: 10
   - name: Clean up etc hosts
     lineinfile:
       path: /etc/hosts
