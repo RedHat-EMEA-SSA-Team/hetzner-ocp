@@ -1,4 +1,4 @@
-{{ ansible_managed }}
+#{{ ansible_managed }}
 #cloud-config
 
 users:
@@ -6,8 +6,8 @@ users:
 
 chpasswd:
   list: |
-     root: "{{default_password}}"
-     cloud-user: "{{default_password}}"
+     root: {{default_password}}
+     cloud-user: {{default_password}}
   expire: False
 
 timezone: Europe/Helsinki

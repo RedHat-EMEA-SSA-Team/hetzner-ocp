@@ -65,7 +65,7 @@
            --cpu host
            --os-type {{item.os_type}}
            --os-variant {{item.os_variant}}
-           --network {{bridge=virbr0}}
+           --network {{item.network}}
            --{{item.virt_hypervisor}}
            --virt-type {{item.virt_type}}
            --disk /dev/{{volume_group}}/{{item.name}}-a,device=disk,format=raw
