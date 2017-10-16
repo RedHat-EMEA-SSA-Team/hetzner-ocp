@@ -41,9 +41,9 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Wait 10 secs for all VMs to get IP
+  - name: Wait 20 secs for all VMs to get IP
     pause:
-      seconds: 10
+      seconds: 20
   - name: Clean up etc hosts
     lineinfile:
       path: /etc/hosts
