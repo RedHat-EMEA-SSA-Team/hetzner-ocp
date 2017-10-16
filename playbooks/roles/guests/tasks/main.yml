@@ -63,7 +63,6 @@
 - name: create vm
   command: "virt-install --name {{item.name}}
            --connect qemu:///system
-           --import
            --arch x86_64
            --ram {{item.mem}}
            --vcpus {{item.cpu}}
