@@ -41,7 +41,7 @@
   tasks:
   - name: Wait 10 secs for all VMs to get IP
     pause:
-      seconds: 10
+      seconds: 20
   - name: Clean up etc hosts
     lineinfile:
       path: /etc/hosts
@@ -64,10 +64,18 @@
     local_action:
       shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
     register: master_ip_addr
+  - name:
+    debug:
+      msg: |
+        "master ip: {{master_ip_addr.stdout}}"
   - name: Get infranode ip addr
     local_action:
       shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
     register: infranode_ip_addr
+  - name:
+    debug:
+      msg: |
+        "master ip: {{infranode_ip_addr.stdout}}"
   - name: Create backup from iptables rules
     local_action:
       "shell iptables-save > /etc/sysconfig/iptables.org"
