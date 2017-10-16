@@ -3,7 +3,7 @@
     command: list_vms
   register: virt_vms
 - name: Ensure RHEL image is in correct place
-  file:
+  copy:
     src: "/root/{{rhel_image}}"
     dest: "/var/lib/libvirt/images/{{rhel_image}}"
 - name: create dirs for userdata
