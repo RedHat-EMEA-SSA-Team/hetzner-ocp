@@ -1,6 +1,8 @@
 ---
 - name: Prepare public key auth
   gather_facts: False
+  ansible_ssh_user: cloud-user
+  ansible_become: yes
   hosts: all
   tasks:
   - name: Remove old known_hosts
@@ -15,8 +17,6 @@
   - name: Run ssh-keyscan to add keys to known_hosts
     local_action: shell ssh-keyscan {{ inventory_hostname }} >> {{user_ssh_dir}}/known_hosts
   - name: Copy etc hosts file to all hosts
-    ansible_ssh_user: cloud-user
-    ansible_become: yes
     copy:
       src: /etc/hosts
       dest: /etc/hosts
