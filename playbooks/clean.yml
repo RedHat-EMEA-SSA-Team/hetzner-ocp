@@ -5,18 +5,13 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Add host to inventory
-    add_host:
-      name: "{{item.name}}"
-    with_items: "{{guests}}"
   - name: Clean subscription from hosts
     hosts: all
     gather_facts: False
-    tasks:
-    - name: Remove old known_hosts
-      file:
-        path: /root/.ssh/known_hosts
-        state: absent
+  - name: Remove old known_hosts
+    file:
+      path: /root/.ssh/known_hosts
+      state: absent
 
   - name: stop virtual machines
     ignore_errors: yes
