@@ -23,7 +23,7 @@
     owner: root
     group: root
     mode: '0600'
-  with_dict: "{{ guests }}"
+  with_items: "{{ guests }}"
 
 - name: create meta-data files
   template:
@@ -32,7 +32,7 @@
     owner: root
     group: root
     mode: '0600'
-  with_dict: "{{ guests }}"
+  with_items: "{{ guests }}"
 - name: create cloud-init CDs for VMs
   command: /usr/bin/genisoimage -o "/var/lib/libvirt/images/cloud-init-{{item.name}}.iso" -V cidata -r -J meta-data user-data
   args:
