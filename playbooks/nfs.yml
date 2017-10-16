@@ -1,5 +1,6 @@
 ---
 - hosts: bast
+  remote_user: cloud-user
   vars:
     nfspath: /exports
     pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
@@ -26,6 +27,7 @@
     set_fact:
       bastion_ip: "{{hostvars.bastion.ansible_eth0.ipv4.address}}"
 - hosts: master01
+  remote_user: cloud-user
   vars:
     hostpath: /exports
     nfshost: "{{ hostvars['bastion']['bastion_ip'] }}"

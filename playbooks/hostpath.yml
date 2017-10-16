@@ -9,6 +9,7 @@
     command: virsh attach-disk node01 --source /var/lib/libvirt/images/pvdata.img --persistent --target vdc
 
 - hosts: node01
+  remote_user: cloud-user
   vars:
     hostpath: /var/hostpath
     pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
