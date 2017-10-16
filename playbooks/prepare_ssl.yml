@@ -5,9 +5,8 @@
   become: true
   tasks:
   - name: Remove old known_hosts
-    file:
-      path: "{{user_ssh_dir}}/known_hosts"
-      state: absent
+    local_action:
+      shell rm -Rf "{{user_ssh_dir}}/known_hosts"
   - name: Add key to authorized_keys
     authorized_key:
       user: "{{remote_user}}"
