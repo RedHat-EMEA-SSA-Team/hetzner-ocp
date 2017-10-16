@@ -2,7 +2,7 @@
 - name: Prepare public key auth
   gather_facts: False
   ansible_ssh_user: cloud-user
-  ansible_become: yes
+  become: true
   hosts: all
   tasks:
   - name: Remove old known_hosts
