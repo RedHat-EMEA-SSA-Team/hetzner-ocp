@@ -5,9 +5,6 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Clean subscription from hosts
-    hosts: all
-    gather_facts: False
   - name: Remove old known_hosts
     file:
       path: /root/.ssh/known_hosts
