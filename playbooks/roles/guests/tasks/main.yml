@@ -23,7 +23,9 @@
     owner: root
     group: root
     mode: '0600'
+  when: item.name not in virt_vms.list_vms
   with_items: "{{ guests }}"
+
 
 - name: create meta-data files
   template:
@@ -32,12 +34,14 @@
     owner: root
     group: root
     mode: '0600'
+  when: item.name not in virt_vms.list_vms
   with_items: "{{ guests }}"
 - name: create cloud-init CDs for VMs
   command: /usr/bin/genisoimage -o "/var/lib/libvirt/images/cloud-init-{{item.name}}.iso" -V cidata -r -J meta-data user-data
   args:
     chdir: "/tmp/{{item.name}}"
     creates: "/var/lib/libvirt/images/cloud-init-{{item.name}}.iso"
+  when: item.name not in virt_vms.list_vms
   with_items: "{{guests}}"
 - name: ensure logical volumes for virtual os disks
   lvol:
@@ -54,6 +58,7 @@
 
 - name: install rhel for VMs
   command: qemu-img convert -O raw "/var/lib/libvirt/images/{{rhel_image}}" "/dev/vg0/{{item.name}}-a"
+  when: item.name not in virt_vms.list_vms
   with_items: "{{guests}}"
 - name: create vm
   command: "virt-install --name {{item.name}}
@@ -73,6 +78,7 @@
            --disk /var/lib/libvirt/images/cloud-init-{{item.name}}.iso,device=cdrom
            --noautoconsole
            --autostart"
+  when: item.name not in virt_vms.list_vms
   with_items: "{{guests}}"
 - name: start virtual machines
   virt:
