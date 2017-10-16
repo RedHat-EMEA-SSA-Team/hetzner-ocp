@@ -1,6 +1,10 @@
 - name: get list of vms
       virt: command=list_vms
       register: virt_vms
+- name: Ensure RHEL image is in correct place
+  file:
+    src: "/root/{{rhel_image}}"
+    dest: "/var/lib/libvirt/images/{{rhel_image}}"
 - name: create dirs for userdata
   file:
     path: "/tmp/{{item.name}}"
@@ -36,35 +40,36 @@
   with_items: "{{guests}}"
 - name: ensure logical volumes for virtual os disks
   lvol:
-    vg: vg0
+    vg: "{{volume_group}}"
     lv: "{{item.name}}-a"
-    size: {{}}
+    size: {{item.disk_os_size}}
   with_items: "{{guests}}"
 - name: ensure logical volumes for virtual docker disks
   lvol:
-    vg: vg0
-    lv: rhel-b
-    size: 20g
+    vg: "{{volume_group}}"
+    lv: "{{item.name}}-b"
+    size: {{item.disk_data_size}}
+  with_items: "{{guests}}"
 
 - name: install rhel for VMs
-  command: qemu-img convert -O raw "/var/lib/libvirt/images/rhel" "/dev/vg0/rhel-a"
-
-
+  command: qemu-img convert -O raw "/var/lib/libvirt/images/{{rhel_image}}" "/dev/vg0/{{item.name}}-a"
+  with_items: "{{guests}}"
 - name: create vm
-  command: "virt-install --name rhel
+  command: "virt-install --name {{item.name}}
            --connect qemu:///system
            --import
            --arch x86_64
-           --ram 8096
-           --vcpus 4
+           --ram {{item.mem}}
+           --vcpus {{item.cpu}}
            --cpu host
-           --os-type linux
-           --os-variant rhel7.4
-           --network bridge=virbr0
-           --hvm
-           --kvm
-           --disk /dev/vg0/rhel-a,device=disk,format=raw
-           --disk /dev/vg0/rhel-b,device=disk,format=raw
-           --disk /var/lib/libvirt/images/cloud-init-rhel.iso,device=cdrom
+           --os-type {{item.os_type}}
+           --os-variant {{item.os_variant}}
+           --network
+           --{{virt_hypervisor}}
+           --virt-type {{item.virt_type}}
+           --disk /dev/{{volume_group}}/{{item.name}}-a,device=disk,format=raw
+           --disk /dev/{{volume_group}}/{{item.name}}-b,device=disk,format=raw
+           --disk /var/lib/libvirt/images/cloud-init-{{item.name}}.iso,device=cdrom
            --noautoconsole
            --autostart"
+  with_items: "{{guests}}"

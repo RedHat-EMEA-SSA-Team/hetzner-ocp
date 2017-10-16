@@ -96,7 +96,7 @@ HOSTNAME CentOS-74-64-minimal
 PART /boot ext3     512M
 PART lvm   vg0       all
 
-LV vg0   root   /       ext4    1800G
+LV vg0   root   /       ext4     500G
 LV vg0   swap   swap    swap       5G
 LV vg0   tmp    /tmp    ext4      10G
 LV vg0   home   /home   ext4      40G
@@ -171,7 +171,7 @@ We are now ready to install `libvirt`as our hypervizor, provision VMs and prepar
 
 Downlaod image
 ```
-wget -O /root/rhel-server-7.4-x86_64-kvm.qcow2 PASTE_URL_HERE
+wget -O /root/rhel-kvm.qcow2 PASTE_URL_HERE
 ```
 
 With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
