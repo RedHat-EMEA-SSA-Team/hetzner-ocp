@@ -1,8 +1,11 @@
-#{{ ansible_managed }}
+# {{ ansible_managed }}
 #cloud-config
 
 users:
-  - default
+  - name: cloud-user
+    ssh-authorized-keys:
+      - {{ lookup('file', '/home/cloud-user/.ssh/id_rsa.pub') }}
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
 
 chpasswd:
   list: |
