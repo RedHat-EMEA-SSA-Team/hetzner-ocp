@@ -1,8 +1,6 @@
 ---
 - name: Prepare public key auth
   gather_facts: False
-  ansible_ssh_user: cloud-user
-  become: true
   hosts: all
   tasks:
   - name: Remove old known_hosts
@@ -16,7 +14,11 @@
       key: "{{ lookup('file', user_ssh_dir+'/id_rsa.pub') }}"
   - name: Run ssh-keyscan to add keys to known_hosts
     local_action: shell ssh-keyscan {{ inventory_hostname }} >> {{user_ssh_dir}}/known_hosts
-  - name: Copy etc hosts file to all hosts
+
+- name: Copy etc/hosts to all guests
+  hosts: all
+  become: true
+- name: Copy etc hosts file to all hosts
     copy:
       src: /etc/hosts
       dest: /etc/hosts
