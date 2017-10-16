@@ -21,6 +21,6 @@
   become: true
   tasks:
   - name: Copy etc hosts file to all hosts
-  copy:
-    src: /etc/hosts
-    dest: /etc/hosts
+    copy:
+      src: /etc/hosts
+      dest: /etc/hosts
