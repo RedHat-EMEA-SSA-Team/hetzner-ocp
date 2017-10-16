@@ -211,9 +211,8 @@ Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 
 ```
 [root@CentOS-73-64-minimal ~]# cd hetzner-ocp
-[root@CentOS-73-64-minimal hetzner-ocp]# export LIBGUESTFS_BACKEND=direct
 [root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -k playbooks/setup.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/setup.yml
 ```
 
 Provisioning of the hosts take a while and they are in running state until provisioning and preparations is finnished. Maybe time for another cup of coffee?

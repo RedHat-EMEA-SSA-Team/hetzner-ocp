@@ -66,11 +66,16 @@
            --os-type {{item.os_type}}
            --os-variant {{item.os_variant}}
            --network
-           --{{virt_hypervisor}}
+           --{{item.virt_hypervisor}}
            --virt-type {{item.virt_type}}
            --disk /dev/{{volume_group}}/{{item.name}}-a,device=disk,format=raw
            --disk /dev/{{volume_group}}/{{item.name}}-b,device=disk,format=raw
            --disk /var/lib/libvirt/images/cloud-init-{{item.name}}.iso,device=cdrom
            --noautoconsole
            --autostart"
+  with_items: "{{guests}}"
+- name: start virtual machines
+  virt:
+    name: "{{ item.name }}"
+    state: running
   with_items: "{{guests}}"
