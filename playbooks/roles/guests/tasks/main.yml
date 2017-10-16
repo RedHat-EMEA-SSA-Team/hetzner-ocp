@@ -43,13 +43,13 @@
   lvol:
     vg: "{{volume_group}}"
     lv: "{{item.name}}-a"
-    size: {{item.disk_os_size}}
+    size: "{{item.disk_os_size}}"
   with_items: "{{guests}}"
 - name: ensure logical volumes for virtual docker disks
   lvol:
     vg: "{{volume_group}}"
     lv: "{{item.name}}-b"
-    size: {{item.disk_data_size}}
+    size: "{{item.disk_data_size}}"
   with_items: "{{guests}}"
 
 - name: install rhel for VMs
