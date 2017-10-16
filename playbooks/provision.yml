@@ -124,6 +124,6 @@
       module: wait_for
       host: "{{ item.name }}"
       port: 22
-      delay: 5
+      delay: 1
       timeout: 300
     with_items: "{{guests}}"
