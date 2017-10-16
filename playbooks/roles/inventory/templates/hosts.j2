@@ -9,7 +9,7 @@ nfs
 
 # Set variables common for all OSEv3 hosts
 [OSEv3:vars]
-ansible_ssh_user=cloud-user
+ansible_ssh_user={{remote_user}}
 ansible_become=yes
 
 # https://github.com/openshift/openshift-ansible/blob/master/DEPLOYMENT_TYPES.md
