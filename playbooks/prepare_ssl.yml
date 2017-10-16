@@ -5,13 +5,13 @@
   tasks:
   - name: Remove old known_hosts
     file:
-      path: /root/.ssh/known_hosts
+      path: /home/cloud-user/.ssh/known_hosts
       state: absent
   - name: Add key to authorized_keys
     authorized_key:
       user: root
       state: present
-      key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+      key: "{{ lookup('file', '/home/cloud-user/.ssh/id_rsa.pub') }}"
   - name: Run ssh-keyscan to add keys to known_hosts
     local_action: shell ssh-keyscan {{ inventory_hostname }} >> ~/.ssh/known_hosts
   - name: Copy etc hosts file to all hosts
