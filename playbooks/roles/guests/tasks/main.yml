@@ -1,6 +1,6 @@
 - name: get list of vms
-      virt: command=list_vms
-      register: virt_vms
+    virt: command=list_vms
+  register: virt_vms
 - name: Ensure RHEL image is in correct place
   file:
     src: "/root/{{rhel_image}}"
