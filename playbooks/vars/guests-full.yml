@@ -1,65 +1,41 @@
 guests:
-    - name: bastion
-      cpu: 1
-      mem: 1024
-      virt_type: kvm
-      virt_hypervisor: hvm
-      network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          var:
-            size: 12
-            options: format=qcow2,cache=none,io=native
-          data:
-            size: 300
-            options: format=qcow2,cache=none,io=native
-    - name: master01
-      cpu: 1
-      mem: 8096
-      virt_type: kvm
-      virt_hypervisor: hvm
-      network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          var:
-            size: 40
-            options: format=qcow2,cache=none,io=native
-          data:
-            size: 40
-            options: format=qcow2,cache=none,io=native
-    - name: infranode01
-      cpu: 1
-      mem: 8096
-      virt_type: kvm
-      virt_hypervisor: hvm
-      network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          var:
-            size: 40
-            options: format=qcow2,cache=none,io=native
-          data:
-            size: 100
-            options: format=qcow2,cache=none,io=native
-    - name: node01
-      cpu: 1
-      mem: 8096
-      virt_type: kvm
-      virt_hypervisor: hvm
-      network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          var:
-            size: 40
-            options: format=qcow2,cache=none,io=native
-          data:
-            size: 100
-            options: format=qcow2,cache=none,io=native
+- name: bastion
+  cpu: 1
+  mem: 1024
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40
+  disk_data_size: 200
+- name: master01
+  cpu: 1
+  mem: 8096
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40
+  disk_data_size: 100
+- name: infranode01
+  cpu: 1
+  mem: 8096
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40
+  disk_data_size: 100
+- name: node01
+  cpu: 1
+  mem: 8096
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40
+  disk_data_size: 100

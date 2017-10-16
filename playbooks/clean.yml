@@ -9,54 +9,53 @@
     add_host:
       name: "{{item.name}}"
     with_items: "{{guests}}"
-- name: Clean subscription from hosts
-  hosts: all
-  gather_facts: False
-  tasks:
-  - name: Unregister systems
-    command: subscription-manager unregister
+  - name: Clean subscription from hosts
+    hosts: all
+    gather_facts: False
+    tasks:
+    - name: Remove old known_hosts
+      file:
+        path: /root/.ssh/known_hosts
+        state: absent
+
+  - name: stop virtual machines
     ignore_errors: yes
-- name: Clean up everything
-  hosts: localhost
-  gather_facts: False
-  vars_files:
-      - vars/guests.yml
-  tasks:
-  - name: Remove old known_hosts
-    file:
-      path: /root/.ssh/known_hosts
-      state: absent
-  - name: get list of vms
-    virt: command=list_vms
-    register: virt_vms
-  - name: Detroy all VMs
     virt:
-      command: destroy
-      name: "{{item.name}}"
-    when: item.name in virt_vms.list_vms
-    with_items: "{{guests}}"
+      name: "{{ item.name }}"
+      state: destroyed
+    with_items: "{{ guests }}"
+
+  - name: undefine virtual machines
     ignore_errors: yes
-  - name: Undefine all VMs
     virt:
+      name: "{{ item.name }}"
       command: undefine
-      name: "{{item.name}}"
-    with_items: "{{guests}}"
-    ignore_errors: yes
-  - name: Wait 10 secs for all VMs to be destroyed
-    pause:
-      seconds: 10
-  - name: Remove temp files
+    with_items: "{{ guests }}"
+
+  - name: delete cloud-init CDs for VMs
     file:
-      path: /tmp/inventory
+      path: "/var/lib/libvirt/images/cloud-init-{{ item.name }}.iso"
       state: absent
-  - name: Remove image files
-    command: "rm -Rf /var/lib/libvirt/images/{{item.name}}*.qcow2"
-    with_items: "{{guests}}"
-  - name: Revert iptables changes
-    copy:
-      src: /etc/sysconfig/iptables.org
-      dest: /etc/sysconfig/iptables
-  - name: Restart iptables
-    service:
-      name: iptables
-      state: restarted
+    with_items: "{{ guests }}"
+
+  - name: delete dirs for userdata
+    file:
+      path: "/tmp/{{ item.name }}"
+      state: absent
+    with_items: "{{ guests }}"
+
+  - name: delete logical volumes for virtual os disks
+    lvol:
+      vg: "{{ volume_group }}"
+      lv: "{{ item.name}}-a"
+      state: absent
+      force: yes
+    with_items: "{{ guests }}"
+
+  - name: delete logical volumes for virtual docker disks
+    lvol:
+      vg: "{{ volume_group }}"
+      lv: "{{ item.name }}-b"
+      state: absent
+      force: yes
+    with_items: "{{ guests }}"

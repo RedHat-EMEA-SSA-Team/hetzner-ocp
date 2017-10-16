@@ -5,49 +5,37 @@ guests:
       virt_type: kvm
       virt_hypervisor: hvm
       network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          data:
-            size: 300
-            options: format=qcow2,cache=none,io=native
+      os_type: linux
+      os_variant: rhel7.4
+      disk_os_size: 40
+      disk_data_size: 200
     - name: master01
       cpu: 1
       mem: 8096
       virt_type: kvm
       virt_hypervisor: hvm
       network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          data:
-            size: 40
-            options: format=qcow2,cache=none,io=native
+      os_type: linux
+      os_variant: rhel7.4
+      disk_os_size: 40
+      disk_data_size: 100
     - name: infranode01
       cpu: 1
       mem: 8096
       virt_type: kvm
       virt_hypervisor: hvm
       network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          data:
-            size: 100
-            options: format=qcow2,cache=none,io=native
+      os_type: linux
+      os_variant: rhel7.4
+      disk_os_size: 40
+      disk_data_size: 100
     - name: node01
       cpu: 1
       mem: 8096
       virt_type: kvm
       virt_hypervisor: hvm
       network: bridge=virbr0
-      os:
-          type: linux
-          variant: rhel7.4
-      disks:
-          data:
-            size: 100
-            options: format=qcow2,cache=none,io=native
+      os_type: linux
+      os_variant: rhel7.4
+      disk_os_size: 40
+      disk_data_size: 100

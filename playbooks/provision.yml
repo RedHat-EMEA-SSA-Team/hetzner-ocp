@@ -1,132 +1,118 @@
-- name: Provision quests
+- name: Create inventory from guest VM data
   hosts: localhost
-  gather_facts: true
+  gather_facts: false
   vars_files:
   - vars/guests.yml
   tasks:
-      - name: Add bastion to dynamic host
-        add_host:
-          name: bastion
-          group: bast
-      - name: Add other hosts to nodes group
-        add_host:
-          name: "{{item.name}}"
-          group: nodes
-        when: item.name != 'bastion'
-        with_items: "{{guests}}"
-      - name: start libvirtd
-        service: name=libvirtd state=started enabled=yes
-        register: libvirtd
+  - name: Add bastion to dynamic host
+    add_host:
+      name: bastion
+      group: bast
+  - name: Add other hosts to nodes group
+      add_host:
+      name: "{{item.name}}"
+      group: nodes
+    when: item.name != 'bastion'
+    with_items: "{{guests}}"
+- name: Start and ensure libvirtd is running
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: start libvirtd
+    service: name=libvirtd state=started enabled=yes
+    register: libvirtd
+  - name: wait for libvirtd to get up
+    pause: seconds=5
+    when: libvirtd.changed
 
-      - name: wait for libvirtd to get up
-        pause: seconds=10
-        when: libvirtd.changed
+- name: Create and start guest VMs
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+  - vars/guests.yml
+  roles:
+  - guests
 
-      - name: get list of vms
-        virt: command=list_vms
-        register: virt_vms
-      - name: Prepare cloud images
-        command: virt-customize -a /root/rhel-server-7.4-x86_64-kvm.qcow2 --root-password password:p --uninstall cloud-init
-      - name: Create images for guests
-        copy:
-          src: /root/rhel-server-7.4-x86_64-kvm.qcow2
-          dest: /var/lib/libvirt/images/{{item.name}}.qcow2
-        with_items: "{{guests}}"
-        when: item.name not in virt_vms.list_vms
-      - name: create vm
-        command: "virt-install --name {{item.name}}
-                 --connect qemu:///system
-                 --import
-                 --arch x86_64
-                 --ram {{ item.mem }}
-                 --vcpus {{ item.cpu }}
-                 --cpu host
-                 --os-type {{ item.os.type | default('linux') }}
-                 --os-variant {{ item.os.variant | default('rhel7.4')}}
-                 --network {{item.network | default('bridge=virbr0')}}
-                 --{{item.virt_hypervisor | default('hvm')}}
-                 --virt-type {{ item.virt_type | default('kvm')}}
-                 --disk path=/var/lib/libvirt/images/{{item.name}}.qcow2,device=disk,format=qcow2
-                 --disk size={{item.disks.data.size | default('60')}},{{item.disks.data.options | default('format=qcow2,cache=none,io=native')}}
-                 --noautoconsole
-                 --autostart"
-        when: item.name not in virt_vms.list_vms
-        with_items: "{{guests}}"
-      - name: Wait 20 secs for all VMs to get IP
-        pause:
-          seconds: 20
-      - name: Clean up etc hosts
-        lineinfile:
-          path: /etc/hosts
-          state: absent
-          regexp: "{{item.name}}"
-        with_items: "{{guests}}"
-      - name: Initialize etc hosts
-        lineinfile:
-          path: /etc/hosts
-          state: present
-          line: "{{item}}"
-        with_items:
-        - 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-        - ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
-      - name: Rewrite etc hosts
-        local_action:
-          shell ip n | grep "`virsh dumpxml {{item.name}} | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" {{item.name}}" }' >> /etc/hosts
-        with_items: "{{guests}}"
-      - name: Get master01 ip addr
-        local_action:
-          shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
-        register: master_ip_addr
-      - name: Get infranode ip addr
-        local_action:
-          shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
-        register: infranode_ip_addr
-      - name: Create backup from iptables rules
-        local_action:
-          "shell iptables-save > /etc/sysconfig/iptables.org"
-      - name: Port forwarding for 80
-        local_action:
-          "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 80 -j DNAT --to-destination {{infranode_ip_addr.stdout}}:80"
-      - name: Port forwarding for 443
-        local_action:
-          "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 443 -j DNAT --to-destination {{infranode_ip_addr.stdout}}:443"
-      - name: Port forwarding for 8443
-        local_action:
-          "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 8443 -j DNAT --to-destination {{master_ip_addr.stdout}}:8443"
-      - name: Change forward rule for guest subnet
-        local_action:
-          "shell iptables -I FORWARD -m state -d 192.168.122.0/24 --state NEW,RELATED,ESTABLISHED -j ACCEPT"
-      - name: Port 80 postroute masq
-        local_action:
-          "shell iptables -t nat -I POSTROUTING  -p tcp -d {{infranode_ip_addr.stdout}} --dport 80 -j MASQUERADE"
-      - name: Port 443 postroute masq
-        local_action:
-          "shell iptables -t nat -I POSTROUTING  -p tcp -d {{infranode_ip_addr.stdout}} --dport 443 -j MASQUERADE"
-      - name: Port 8443 postroute masq
-        local_action:
-          "shell iptables -t nat -I POSTROUTING  -p tcp -d {{master_ip_addr.stdout}} --dport 8443 -j MASQUERADE"
-      - name: Perist iptables rules
-        local_action:
-          "shell iptables-save > /etc/sysconfig/iptables"
-      - name: Ensure rpcbind not running
-        service:
-          name: "{{item}}"
-          state: stopped
-        with_items:
-        - rpcbind.socket
-        - rpcbind.service
-      - name: Disable rpcbind
-        service:
-          name: "{{item}}"
-          enabled: no
-        with_items:
-        - rpcbind.socket
-        - rpcbind.service
-      - name: Wait for host to come back up
-        local_action:
-          module: wait_for
-          host: "{{ item.name }}"
-          port: 22
-          delay: 5
-          timeout: 300
-        with_items: "{{guests}}"
+- name: Create and start guest VMs
+  hosts: localhost
+  vars_files:
+  - vars/guests.yml
+  tasks:
+  - name: Wait 10 secs for all VMs to get IP
+    pause:
+      seconds: 10
+  - name: Clean up etc hosts
+    lineinfile:
+      path: /etc/hosts
+      state: absent
+      regexp: "{{item.name}}"
+    with_items: "{{guests}}"
+  - name: Initialize etc hosts
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      line: "{{item}}"
+    with_items:
+    - 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+    - ::1 localhost localhost.localdomain localhost6 localhost6.localdomain6
+  - name: Rewrite etc hosts
+    local_action:
+      shell ip n | grep "`virsh dumpxml {{item.name}} | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1" {{item.name}}" }' >> /etc/hosts
+    with_items: "{{guests}}"
+  - name: Get master01 ip addr
+    local_action:
+      shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
+    register: master_ip_addr
+  - name: Get infranode ip addr
+    local_action:
+      shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
+    register: infranode_ip_addr
+  - name: Create backup from iptables rules
+    local_action:
+      "shell iptables-save > /etc/sysconfig/iptables.org"
+  - name: Port forwarding for 80
+    local_action:
+      "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 80 -j DNAT --to-destination {{infranode_ip_addr.stdout}}:80"
+  - name: Port forwarding for 443
+    local_action:
+      "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 443 -j DNAT --to-destination {{infranode_ip_addr.stdout}}:443"
+  - name: Port forwarding for 8443
+    local_action:
+      "shell iptables -t nat -I PREROUTING -p tcp -d {{hostvars['localhost']['ansible_default_ipv4']['address']}} --dport 8443 -j DNAT --to-destination {{master_ip_addr.stdout}}:8443"
+  - name: Change forward rule for guest subnet
+    local_action:
+      "shell iptables -I FORWARD -m state -d 192.168.122.0/24 --state NEW,RELATED,ESTABLISHED -j ACCEPT"
+  - name: Port 80 postroute masq
+    local_action:
+      "shell iptables -t nat -I POSTROUTING  -p tcp -d {{infranode_ip_addr.stdout}} --dport 80 -j MASQUERADE"
+  - name: Port 443 postroute masq
+    local_action:
+      "shell iptables -t nat -I POSTROUTING  -p tcp -d {{infranode_ip_addr.stdout}} --dport 443 -j MASQUERADE"
+  - name: Port 8443 postroute masq
+    local_action:
+      "shell iptables -t nat -I POSTROUTING  -p tcp -d {{master_ip_addr.stdout}} --dport 8443 -j MASQUERADE"
+  - name: Perist iptables rules
+    local_action:
+      "shell iptables-save > /etc/sysconfig/iptables"
+  - name: Ensure rpcbind not running
+    service:
+      name: "{{item}}"
+      state: stopped
+    with_items:
+    - rpcbind.socket
+    - rpcbind.service
+  - name: Disable rpcbind
+    service:
+      name: "{{item}}"
+      enabled: no
+    with_items:
+    - rpcbind.socket
+    - rpcbind.service
+  - name: Wait for host to come back up
+    local_action:
+      module: wait_for
+      host: "{{ item.name }}"
+      port: 22
+      delay: 5
+      timeout: 300
+    with_items: "{{guests}}"

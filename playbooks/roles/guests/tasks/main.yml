@@ -1,0 +1,70 @@
+- name: get list of vms
+      virt: command=list_vms
+      register: virt_vms
+- name: create dirs for userdata
+  file:
+    path: "/tmp/{{item.name}}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  when: item.name not in virt_vms.list_vms
+  with_items: "{{guests}}"
+
+- name: create user-data files
+  template:
+    src: user-data.j2
+    dest: "/tmp/{{item.name}}/user-data"
+    owner: root
+    group: root
+    mode: '0600'
+  with_dict: "{{ guests }}"
+
+- name: create meta-data files
+  template:
+    src: meta-data.j2
+    dest: "/tmp/{{ item.name }}/meta-data"
+    owner: root
+    group: root
+    mode: '0600'
+  with_dict: "{{ guests }}"
+- name: create cloud-init CDs for VMs
+  command: /usr/bin/genisoimage -o "/var/lib/libvirt/images/cloud-init-{{item.name}}.iso" -V cidata -r -J meta-data user-data
+  args:
+    chdir: "/tmp/{{item.name}}"
+    creates: "/var/lib/libvirt/images/cloud-init-{{item.name}}.iso"
+  with_items: "{{guests}}"
+- name: ensure logical volumes for virtual os disks
+  lvol:
+    vg: vg0
+    lv: "{{item.name}}-a"
+    size: {{}}
+  with_items: "{{guests}}"
+- name: ensure logical volumes for virtual docker disks
+  lvol:
+    vg: vg0
+    lv: rhel-b
+    size: 20g
+
+- name: install rhel for VMs
+  command: qemu-img convert -O raw "/var/lib/libvirt/images/rhel" "/dev/vg0/rhel-a"
+
+
+- name: create vm
+  command: "virt-install --name rhel
+           --connect qemu:///system
+           --import
+           --arch x86_64
+           --ram 8096
+           --vcpus 4
+           --cpu host
+           --os-type linux
+           --os-variant rhel7.4
+           --network bridge=virbr0
+           --hvm
+           --kvm
+           --disk /dev/vg0/rhel-a,device=disk,format=raw
+           --disk /dev/vg0/rhel-b,device=disk,format=raw
+           --disk /var/lib/libvirt/images/cloud-init-rhel.iso,device=cdrom
+           --noautoconsole
+           --autostart"

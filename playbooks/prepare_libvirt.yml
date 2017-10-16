@@ -8,13 +8,16 @@
       name: "{{item}}"
       state: present
     with_items:
-    - qemu-kvm
-    - libvirt
-    - virt-install
     - bridge-utils
-    - libselinux-python
-    - iptables-services
-    - guestfish
+    - qemu-kvm
+    - qemu-img
+    - libvirt
+    - libvirt-python
+    - libvirt-client
+    - virt-install
+    - libguestfs-tools
+    - libguestfs-bash-completion
+    - genisoimage
   - name: Update all packages
     yum:
       name: '*'
@@ -31,6 +34,7 @@
   - name: Destroy old pool, images
     command: virsh pool-destroy images
     when: libvirtd.changed
+    ignore_errors: true
   - name: Undefine images pool
     command: virsh pool-undefine images
     when: libvirtd.changed

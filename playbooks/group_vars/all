@@ -18,3 +18,6 @@ repos:
 - rhel-7-server-ose-3.6-rpms
 - rhel-7-fast-datapath-rpms
 - rhel-7-server-optional-rpms
+rhel_image: rhel-kvm.qcow2
+volume_group: vg0
+default_password: p
