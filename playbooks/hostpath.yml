@@ -84,8 +84,6 @@
     - "{{hostpath_pv_names}}"
     - "{{hostpath_pv_sizes}}"
     register: pv_files
-  - debug:
-      msg: "{{pv_files}}"
   - name: "Create PVs"
     command: "oc create -f /tmp/pvs/"
     when: pv_files.changed
