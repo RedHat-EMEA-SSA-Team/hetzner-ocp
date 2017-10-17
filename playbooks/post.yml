@@ -1,6 +1,7 @@
 ---
 - name: Create in-memory inventory
   gather_facts: no
+  hosts: localhost
   vars_files:
   - vars/guests.yml
   roles:

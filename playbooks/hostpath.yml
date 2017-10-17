@@ -1,13 +1,15 @@
 ---
 - name: Create in-memory inventory
   gather_facts: no
+  hosts: localhost
   vars_files:
   - vars/guests.yml
   roles:
   - inmemory_inventory
 
-- hosts: localhost
-
+- name: Create disk for hostpath
+  hosts: localhost
+  gather_facts: no
   tasks:
   - name: Create raw image
     command: "qemu-img create -f raw /var/lib/libvirt/images/pvdata.img {{hostpath_size}}"
@@ -17,14 +19,15 @@
   - name: Add new disk to node01 as vdc
     command: virsh attach-disk node01 --source /var/lib/libvirt/images/pvdata.img --persistent --target vdc
     when: hostpath_disk.changed
-- hosts: node01
-  remote_user: cloud-user
 
+- name: Create pv directories
+  hosts: node01
+  gather_facts: no
   tasks:
   - name: Create file system for hostpath mount
   - filesystem:
-    fstype: xfs
-    dev: /dev/vdc
+      fstype: xfs
+      dev: /dev/vdc
   - name: Create mount point
     file:
       path: "{{hostpath_dir}}"

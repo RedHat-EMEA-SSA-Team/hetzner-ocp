@@ -10,3 +10,5 @@
     group: nodes
     ansible_ssh_user: cloud-user
     ansible_become: yes
+  when: item.name != 'bastion'
+  with_items: "{{guests}}"
