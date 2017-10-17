@@ -25,7 +25,7 @@
   gather_facts: no
   tasks:
   - name: Create file system for hostpath mount
-  - filesystem:
+    filesystem:
       fstype: xfs
       dev: /dev/vdc
   - name: Create mount point
