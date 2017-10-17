@@ -1,7 +1,6 @@
 #cloud-config
 ssh_authorized_keys:
 - {{ lookup('file', '/root/.ssh/id_rsa.pub') }}
-
 chpasswd:
   list: |
      root:{{default_password}}
