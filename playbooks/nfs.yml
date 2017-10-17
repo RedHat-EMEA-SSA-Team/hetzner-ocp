@@ -1,49 +1,55 @@
 ---
-- hosts: bast
-  remote_user: cloud-user
-  vars:
-    nfspath: /exports
-    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
+- name: Create in-memory inventory
+  gather_facts: no
+  hosts: localhost
+  vars_files:
+  - vars/guests.yml
+  roles:
+  - inmemory_inventory
+
+- name: Create PV directories for NFS
+  hosts: bastion
+  gather_facts: no
   tasks:
   - name: "Setup NFS exports"
     lineinfile:
       dest: /etc/exports.d/openshift-ansible.exports
       state: present
-      line: "{{nfspath}}/pv{{item}} *(rw,root_squash,no_wdelay)"
+      line: "{{nfs_dir}}/pv{{item}} *(rw,root_squash,no_wdelay)"
     with_items:
-    - "{{pv_names}}"
+    - "{{nfs_pv_names}}"
   - name: "Create directories"
     file:
-      path: "{{nfspath}}/pv{{item}}"
+      path: "{{nfs_dir}}/pv{{item}}"
       state: directory
       owner: nfsnobody
       group: nfsnobody
       mode: 0777
     with_items:
-    - "{{pv_names}}"
+    - "{{nfs_pv_names}}"
   - name: Refresh nfs exports
     command: exportfs -ra
   - name: Save bastion ip for later use
     set_fact:
       bastion_ip: "{{hostvars.bastion.ansible_eth0.ipv4.address}}"
-- hosts: master01
-  remote_user: cloud-user
+- name: Create PV objects for NFS
+  hosts: master01
+  gather_facts: yes
   vars:
-    hostpath: /exports
     nfshost: "{{ hostvars['bastion']['bastion_ip'] }}"
-    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
-    pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
   tasks:
   - name: "Create dir for pv files"
-    file: path=/tmp/pvs state=directory
+    file:
+      path: /tmp/pvs-nfs
+      state: directory
   - name: "Create pv files"
     copy:
-      dest: /tmp/pvs/pv{{item.0}}.yaml
+      dest: /tmp/pvs-nfs/pv{{item.0}}-nfs.yaml
       content: |
         apiVersion: v1
         kind: PersistentVolume
         metadata:
-          name: pv{{item.0}}
+          name: pv{{item.0}}-nfs
         spec:
           capacity:
             storage: {{item.1}}
@@ -52,10 +58,12 @@
             - ReadWriteMany
           persistentVolumeReclaimPolicy: Recycle
           nfs:
-            path: {{hostpath}}/pv{{item.0}}
+            path: {{nfs_dir}}/pv{{item.0}}
             server: {{nfshost}}
     with_together:
-    - "{{pv_names}}"
-    - "{{pv_sizes}}"
-  - name: "Create pvs"
-    command: "oc create -f /tmp/pvs/"
+    - "{{nfs_pv_names}}"
+    - "{{nfs_pv_names}}"
+    register: pv_files
+  - name: "Create PVs"
+    command: "oc create -f /tmp/pvs-nfs/"
+    when: pv_files.changed
