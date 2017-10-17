@@ -51,6 +51,7 @@
     with_items:
     - "{{hostpath_pv_names}}"
     - "{{hostpath_dir}}"
+
   - name: SELinux svirt_sandbox_file_t
     command: "chcon -Rt svirt_sandbox_file_t {{hostpath_dir}}/pv{{item}}"
     with_items:
@@ -59,7 +60,9 @@
 - hosts: master01
   tasks:
   - name: "Create dir for pv files"
-    file: path=/tmp/pvs state=directory
+    file:
+      path: /tmp/pvs
+      state: directory
   - name: "Create pv files"
     copy:
       dest: /tmp/pvs/pv{{item.0}}.yaml
@@ -80,5 +83,12 @@
     with_together:
     - "{{hostpath_pv_names}}"
     - "{{hostpath_pv_sizes}}"
+    register: pv_files
+  - debug:
+      msg: "{{pv_files}}"  
   - name: "Create pvs"
     command: "oc create -f /tmp/pvs/"
+  - name: "Clean up to support re-run"
+    file:
+      path: /tmp/pvs
+      state: absent
