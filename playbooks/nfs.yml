@@ -9,7 +9,7 @@
 
 - name: Create PV directories for NFS
   hosts: bastion
-  gather_facts: no
+  gather_facts: yes
   tasks:
   - name: "Setup NFS exports"
     lineinfile:
@@ -32,6 +32,7 @@
   - name: Save bastion ip for later use
     set_fact:
       bastion_ip: "{{hostvars.bastion.ansible_eth0.ipv4.address}}"
+
 - name: Create PV objects for NFS
   hosts: master01
   gather_facts: yes
