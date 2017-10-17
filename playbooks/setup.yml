@@ -18,13 +18,8 @@
       name: root
       generate_ssh_key: yes
       ssh_key_bits: 2048
-      ssh_key_file: .ssh/id_rsa
-  - name: Create SSH key for cloud-user
-    user:
-      name: cloud-user
-      generate_ssh_key: yes
-      ssh_key_bits: 2048
-      ssh_key_file: .ssh/id_rsa
+      ssh_key_file: /root/.ssh/id_rsa
+
 - name: Setup and prepare nodes.
   hosts: all
   gather_facts: no

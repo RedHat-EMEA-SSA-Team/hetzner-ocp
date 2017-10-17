@@ -1,16 +1,13 @@
 # {{ ansible_managed }}
-#cloud-config
-
-users:
-  - name: cloud-user
-    ssh-authorized-keys:
-      - {{ lookup('file', '/home/cloud-user/.ssh/id_rsa.pub') }}
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+# cloud-config
+ssh_pwauth: true
+ssh_authorized_keys:
+- {{ lookup('file', '~/.ssh/id_rsa.pub') }}
 
 chpasswd:
   list: |
-     root: {{default_password}}
-     cloud-user: {{default_password}}
+     root:{{default_password}}
+     cloud-user:{{default_password}}
   expire: False
 
 timezone: Europe/Helsinki

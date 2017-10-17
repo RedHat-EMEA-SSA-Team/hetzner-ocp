@@ -23,7 +23,6 @@
 - name: Figure out pool id from bastion subscription
   hosts: bast
   gather_facts: False
-  remote_user: cloud-user
   serial: 1
   tasks:
   - name: Register hosts
@@ -44,7 +43,6 @@
 - name: Register nodes to RHN and subscribe
   hosts: all
   gather_facts: true
-  remote_user: cloud-user
   vars_files:
   - vars/guests.yml
   tasks:
@@ -82,7 +80,6 @@
 
 - name: Prepare bastion for OCP install
   gather_facts: False
-  remote_user: cloud-user
   hosts: bast
   tasks:
   - name: Ensure that required packages are present on bastion host
@@ -119,12 +116,11 @@
       state: mounted
 - name: Gather facts from localhost
   hosts: localhost
-  remote_user: cloud-user
   tasks:
   - debug: msg='Gathering facts'
 - name: Update 7.4 to latest
   hosts: nodes
-  remote_user: cloud-user
+  remote_user: "{{remote_user}}"
   gather_facts: false
   tasks:
   - name: Update packages
@@ -145,7 +141,6 @@
       timeout: 300
 - name: Create inventory
   hosts: bast
-  remote_user: cloud-user
   tasks:
   vars:
     ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"

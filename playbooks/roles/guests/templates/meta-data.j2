@@ -1,5 +1,3 @@
 # {{ ansible_managed }}
 instance-id: {{item.name}}
 local-hostname: {{item.name}}
-public-keys:
-- {{ lookup('file', '/home/cloud-user/.ssh/id_rsa.pub') }}

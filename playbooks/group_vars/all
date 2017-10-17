@@ -21,5 +21,4 @@ repos:
 rhel_image: rhel-kvm.qcow2
 volume_group: vg0
 default_password: p
-user_ssh_dir: /home/cloud-user/.ssh
 remote_user: cloud-user
