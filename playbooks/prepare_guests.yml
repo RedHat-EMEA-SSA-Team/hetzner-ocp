@@ -95,31 +95,34 @@
       dest: /root/
   - name: Copy SSH keys from host to bastion
     copy:
-      src: "{{item}}"
-      dest: "{{item}}"
+      src: "{{item.src}}"
+      dest: "{{item.dest}}"
       mode: 0600
-    items:
-    - '/root/.ssh/id_rsa'
-    - '/root/.ssh/id_rsa.pub'
-    - '/root/.ssh/known_hosts'
+      owner: cloud-user
+    with_together:
+    - {src: '/root/.ssh/id_rsa', dest: '/home/cloud-user/.ssh/id_rsa'}
+    - {src: '/root/.ssh/id_rsa.pub', dest: '/home/cloud-user/.ssh/id_rsa.pub'}
+    - {src: '/root/.ssh/known_hosts', dest: '/home/cloud-user/.ssh/known_hosts'}
   - name: Create exports dir
     file:
       path: /exports
       state: directory
   - name: Makefs for exports
-    command: mkfs.ext4 /dev/vdb
+    filesystem:
+      fstype: xfs
+      dev: /dev/vdb
   - name: Mount new disk to mount point
     mount:
       path: /exports
       src: /dev/vdb
-      fstype: ext4
+      fstype: xfs
       state: mounted
 - name: Gather facts from localhost
   hosts: localhost
   tasks:
   - debug: msg='Gathering facts'
 - name: Update 7.4 to latest
-  hosts: nodes
+  hosts: all
   remote_user: "{{remote_user}}"
   gather_facts: false
   tasks:
@@ -128,7 +131,7 @@
       name: '*'
       state: latest
   - name: Shutdown
-    shell: sleep 2 && shutdown -r now "Reboot triggered by Ansible"
+    shell: sleep 2 && reboot
     async: 1
     poll: 0
     ignore_errors: true

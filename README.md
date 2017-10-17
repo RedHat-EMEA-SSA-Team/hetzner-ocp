@@ -96,7 +96,7 @@ HOSTNAME CentOS-74-64-minimal
 PART /boot ext3     512M
 PART lvm   vg0       all
 
-LV vg0   root   /       ext4     500G
+LV vg0   root   /       ext4     200G
 LV vg0   swap   swap    swap       5G
 LV vg0   tmp    /tmp    ext4      10G
 LV vg0   home   /home   ext4      40G

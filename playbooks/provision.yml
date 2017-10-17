@@ -119,7 +119,7 @@
     with_items:
     - rpcbind.socket
     - rpcbind.service
-  - name: Wait for host to come back up
+  - name: Check that all guest are up and running before continuing.
     local_action:
       module: wait_for
       host: "{{ item.name }}"
