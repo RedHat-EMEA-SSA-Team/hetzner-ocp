@@ -85,10 +85,7 @@
     - "{{hostpath_pv_sizes}}"
     register: pv_files
   - debug:
-      msg: "{{pv_files}}"  
-  - name: "Create pvs"
+      msg: "{{pv_files}}"
+  - name: "Create PVs"
     command: "oc create -f /tmp/pvs/"
-  - name: "Clean up to support re-run"
-    file:
-      path: /tmp/pvs
-      state: absent
+    when: pv_files.changed
