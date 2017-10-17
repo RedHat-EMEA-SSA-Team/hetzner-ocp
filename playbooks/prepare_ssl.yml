@@ -1,5 +1,5 @@
 ---
-- name: Prepare public key auth
+- name: Clean up old SSH data
   gather_facts: no
   hosts: localhost
   become: true
@@ -8,10 +8,13 @@
     file:
       path: /root/.ssh/known_hosts
       state: absent
-      shell rm -Rf /root/.ssh/known_hosts
 
+- name: Gather known hosts info
+  gather_facts: no
+  hosts: all
+  tasks:
   - name: Run ssh-keyscan to add keys to known_hosts
-    local_action: shell ssh-keyscan {{ inventory_hostname }} >> /root/.ssh/known_hosts
+    local_action: "shell ssh-keyscan {{ inventory_hostname }} >> /root/.ssh/known_hosts"
 
 - name: Copy etc/hosts to all guests
   hosts: all
