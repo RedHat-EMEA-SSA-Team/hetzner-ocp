@@ -53,7 +53,7 @@
           name: pv{{item.0}}-nfs
         spec:
           capacity:
-            storage: {{item.1}}
+            storage: {{item.1}}Gi
           accessModes:
             - ReadWriteOnce
             - ReadWriteMany
