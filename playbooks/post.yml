@@ -35,12 +35,12 @@
   gather_facts: false
   tasks:
   - name: Create raw image
-    command: "qemu-img create -f raw /var/lib/libvirt/images/docker-registry-2.img 100G"
+    command: "qemu-img create -f raw /var/lib/libvirt/images/docker-registry.img 100G"
     args:
-      creates: "/var/lib/libvirt/images/docker-registry-2.img"
+      creates: "/var/lib/libvirt/images/docker-registry.img"
     register: docker_registry_disk
   - name: Add new disk to infranode01 as vdc
-    command: virsh attach-disk infranode01 --source /var/lib/libvirt/images/docker-registry-2.img --persistent --target vdc
+    command: virsh attach-disk infranode01 --source /var/lib/libvirt/images/docker-registry.img --persistent --target vdc
     when: docker_registry_disk.changed
 - name: Prepare infranode for hostpath
   hosts: infranode01
