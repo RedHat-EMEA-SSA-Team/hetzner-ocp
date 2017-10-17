@@ -9,7 +9,7 @@
       shell rm -Rf /root/.ssh/known_hosts
 
   - name: Run ssh-keyscan to add keys to known_hosts
-    local_action: shell ssh-keyscan {{ inventory_hostname }} >> {{user_ssh_dir}}/known_hosts
+    local_action: shell ssh-keyscan {{ inventory_hostname }} >> /root/.ssh/known_hosts
 
 - name: Copy etc/hosts to all guests
   hosts: all
