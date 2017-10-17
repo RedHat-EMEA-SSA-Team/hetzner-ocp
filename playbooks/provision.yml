@@ -1,22 +1,10 @@
 ---
-- name: Create inventory from guest VM data
+- name: Create in-memory inventory
+  gather_facts: no
   hosts: localhost
-  gather_facts: false
   vars_files:
   - vars/guests.yml
-  tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-      ansible_ssh_user: cloud-user
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-      ansible_ssh_user: cloud-user
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
+
 - name: Start and ensure libvirtd is running
   hosts: localhost
   gather_facts: false

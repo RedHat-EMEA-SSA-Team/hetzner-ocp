@@ -1,24 +1,9 @@
 ---
-- name: Create inventory
+- name: Create in-memory inventory
   gather_facts: no
   hosts: localhost
   vars_files:
   - vars/guests.yml
-  tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-      ansible_ssh_user: cloud-user
-      ansible_become: yes
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-      ansible_ssh_user: cloud-user
-      ansible_become: yes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
 
 - name: Figure out pool id from bastion subscription
   hosts: bast
@@ -99,7 +84,7 @@
       dest: "{{item.dest}}"
       mode: 0600
       owner: cloud-user
-    with_together:
+    with_items:
     - {src: '/root/.ssh/id_rsa', dest: '/home/cloud-user/.ssh/id_rsa'}
     - {src: '/root/.ssh/id_rsa.pub', dest: '/home/cloud-user/.ssh/id_rsa.pub'}
     - {src: '/root/.ssh/known_hosts', dest: '/home/cloud-user/.ssh/known_hosts'}

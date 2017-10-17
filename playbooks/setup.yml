@@ -20,22 +20,17 @@
       ssh_key_bits: 2048
       ssh_key_file: /root/.ssh/id_rsa
 
+- name: Create in-memory inventory
+  gather_facts: no
+  hosts: localhost
+  vars_files:
+  - vars/guests.yml
+
 - name: Setup and prepare nodes.
   hosts: all
   gather_facts: no
   vars_files:
   - vars/guests.yml
-  tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
 - include: prepare_libvirt.yml
 - include: provision.yml
 - include: prepare_ssl.yml
