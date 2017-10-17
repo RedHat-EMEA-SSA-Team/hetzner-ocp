@@ -1,11 +1,13 @@
 ---
 - name: Prepare public key auth
-  gather_facts: False
-  hosts: all
+  gather_facts: no
+  hosts: localhost
   become: true
   tasks:
   - name: Remove old known_hosts
-    local_action:
+    file:
+      path: /root/.ssh/known_hosts
+      state: absent
       shell rm -Rf /root/.ssh/known_hosts
 
   - name: Run ssh-keyscan to add keys to known_hosts
@@ -14,6 +16,7 @@
 - name: Copy etc/hosts to all guests
   hosts: all
   become: true
+  gather_facts: no
   tasks:
   - name: Copy etc hosts file to all hosts
     copy:
