@@ -4,6 +4,9 @@
   gather_facts: False
   vars_files:
   - vars/guests.yml
+  roles:
+  - inmemory_inventory
+  
   tasks:
   - name: Remove old known_hosts
     file:

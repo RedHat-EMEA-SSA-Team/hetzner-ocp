@@ -4,6 +4,8 @@
   hosts: localhost
   vars_files:
   - vars/guests.yml
+  roles:
+  - inmemory_inventory
 
 - name: Figure out pool id from bastion subscription
   hosts: bast

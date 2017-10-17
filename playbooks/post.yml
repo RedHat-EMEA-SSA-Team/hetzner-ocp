@@ -6,6 +6,7 @@
   - vars/guests.yml
   roles:
   - inmemory_inventory
+  
 - name: Create password for cluster admin
   hosts: master01
   gather_facts: false

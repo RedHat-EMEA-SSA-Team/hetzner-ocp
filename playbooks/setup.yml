@@ -25,6 +25,8 @@
   hosts: localhost
   vars_files:
   - vars/guests.yml
+  roles:
+  - inmemory_inventory
 
 - name: Setup and prepare nodes.
   hosts: all
