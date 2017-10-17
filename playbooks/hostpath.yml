@@ -15,7 +15,7 @@
     command: "qemu-img create -f raw /var/lib/libvirt/images/pvdata.img {{hostpath_size}}"
     args:
       creates: "/var/lib/libvirt/images/pvdata.img"
-      register: hostpath_disk
+    register: hostpath_disk
   - name: Add new disk to node01 as vdc
     command: virsh attach-disk node01 --source /var/lib/libvirt/images/pvdata.img --persistent --target vdc
     when: hostpath_disk.changed
