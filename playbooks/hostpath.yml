@@ -1,56 +1,59 @@
 ---
+- name: Create in-memory inventory
+  gather_facts: no
+  vars_files:
+  - vars/guests.yml
+  roles:
+  - inmemory_inventory
+
 - hosts: localhost
-  vars:
-    size: 200G
+
   tasks:
   - name: Create raw image
-    command: "qemu-img create -f raw /var/lib/libvirt/images/pvdata.img {{size}}"
+    command: "qemu-img create -f raw /var/lib/libvirt/images/pvdata.img {{hostpath_size}}"
+    args:
+      creates: "/var/lib/libvirt/images/pvdata.img"
+      register: hostpath_disk
   - name: Add new disk to node01 as vdc
     command: virsh attach-disk node01 --source /var/lib/libvirt/images/pvdata.img --persistent --target vdc
-
+    when: hostpath_disk.changed
 - hosts: node01
   remote_user: cloud-user
-  vars:
-    hostpath: /var/hostpath
-    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
-    pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
+
   tasks:
-  - name: Makefs
-    command: mkfs.ext4 /dev/vdc
+  - name: Create file system for hostpath mount
+  - filesystem:
+    fstype: xfs
+    dev: /dev/vdc
   - name: Create mount point
     file:
-      path: "{{hostpath}}"
+      path: "{{hostpath_dir}}"
       state: directory
       owner: nfsnobody
       group: nfsnobody
       mode: 0777
   - name: Mount new disk to mount point
-    lineinfile:
-      path: /etc/fstab
-      state: present
-      line: "/dev/vdc   {{hostpath}}  ext4    defaults    0 0"
-  - name: Refresh mounts
-    command: mount -a
+    mount:
+      path: "{{hostpath_dir}}"
+      src: /dev/vdc
+      fstype: xfs
+      state: mounted
   - name: Create directories
     file:
-      path: "{{hostpath}}/pv{{item}}"
+      path: "{{hostpath_dir}}/pv{{item}}"
       state: directory
       owner: nfsnobody
       group: nfsnobody
       mode: 0777
     with_items:
-    - "{{pv_names}}"
-    - "{{hostpath}}"
+    - "{{hostpath_pv_names}}"
+    - "{{hostpath_dir}}"
   - name: SELinux svirt_sandbox_file_t
-    command: "chcon -Rt svirt_sandbox_file_t {{hostpath}}/pv{{item}}"
+    command: "chcon -Rt svirt_sandbox_file_t {{hostpath_dir}}/pv{{item}}"
     with_items:
-    - "{{pv_names}}"
-    - "{{hostpath}}"
+    - "{{hostpath_pv_names}}"
+    - "{{hostpath_dir}}"
 - hosts: master01
-  vars:
-    hostpath: /var/hostpath
-    pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
-    pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
   tasks:
   - name: "Create dir for pv files"
     file: path=/tmp/pvs state=directory
@@ -70,9 +73,9 @@
             - ReadWriteMany
           persistentVolumeReclaimPolicy: Recycle
           hostPath:
-            path: {{hostpath}}/pv{{item.0}}
+            path: {{hostpath_dir}}/pv{{item.0}}
     with_together:
-    - "{{pv_names}}"
-    - "{{pv_sizes}}"
+    - "{{hostpath_pv_names}}"
+    - "{{hostpath_pv_sizes}}"
   - name: "Create pvs"
     command: "oc create -f /tmp/pvs/"

@@ -1,7 +1,7 @@
 ---
 - name: Create inventory
   gather_facts: no
-  hosts: all
+  hosts: localhost
   vars_files:
   - vars/guests.yml
   tasks:
@@ -22,7 +22,7 @@
 
 - name: Figure out pool id from bastion subscription
   hosts: bast
-  gather_facts: False
+  gather_facts: no
   serial: 1
   tasks:
   - name: Register hosts

@@ -1,4 +1,10 @@
 ---
+- name: Create in-memory inventory
+  gather_facts: no
+  vars_files:
+  - vars/guests.yml
+  roles:
+  - inmemory_inventory
 - name: Create password for cluster admin
   hosts: master01
   gather_facts: false
@@ -9,18 +15,6 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Add bastion to dynamic host
-    add_host:
-      name: bastion
-      group: bast
-      ansible_ssh_user: cloud-user
-  - name: Add other hosts to nodes group
-    add_host:
-      name: "{{item.name}}"
-      group: nodes
-      ansible_ssh_user: cloud-user
-    when: item.name != 'bastion'
-    with_items: "{{guests}}"
   - name: Add user
     command: "htpasswd -b /etc/origin/master/htpasswd admin {{admin_pwd}}"
   - name: Add privileges
@@ -40,21 +34,26 @@
   gather_facts: false
   tasks:
   - name: Create raw image
-    command: "qemu-img create -f raw /var/lib/libvirt/images/docker-registry.img 100G"
-  - name: Add new disk to node01 as vdc
-    command: virsh attach-disk infranode01 --source /var/lib/libvirt/images/docker-registry.img --persistent --target vdc
+    command: "qemu-img create -f raw /var/lib/libvirt/images/docker-registry-2.img 100G"
+    args:
+      creates: "/var/lib/libvirt/images/docker-registry-2.img"
+    register: docker_registry_disk
+  - name: Add new disk to infranode01 as vdc
+    command: virsh attach-disk infranode01 --source /var/lib/libvirt/images/docker-registry-2.img --persistent --target vdc
+    when: docker_registry_disk.changed
 - name: Prepare infranode for hostpath
   hosts: infranode01
   tasks:
-  - name: Makefs
-    command: mkfs.ext4 /dev/vdc
+  - name: Makefs for docker registry
+    filesystem:
+      fstype: xfs
+      dev: /dev/vdc
   - name: Mount new disk to mount point
-    lineinfile:
-      path: /etc/fstab
-      state: present
-      line: "/dev/vdc  /var/hostpath/registry  ext4    defaults    0 0"
-  - name: Refresh mounts
-    command: mount -a
+    mount:
+      path: /var/hostpath/registry
+      src: /dev/vdc
+      fstype: xfs
+      state: mounted
   - name: Create mount point
     file:
       path: "/var/hostpath/registry"

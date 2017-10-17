@@ -22,3 +22,7 @@ rhel_image: rhel-kvm.qcow2
 volume_group: vg0
 default_password: password
 remote_user: cloud-user
+hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
+hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
+hostpath_dir: /var/hostpath
+hostpath_size: 200G

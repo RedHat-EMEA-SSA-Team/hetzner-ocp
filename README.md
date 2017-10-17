@@ -77,6 +77,8 @@ From these information, the following ones are import to note:
 * Memory
 * Cores
 
+Guest VM setup uses hypervizor vg0 af volume group for guest. So leave as much as possible free space on vg0.
+
 `installimage` tool is used to install CentOS. It takes instructions from a text file.
 
 Create new `config.txt` file
@@ -105,7 +107,9 @@ LV vg0   home   /home   ext4      40G
 IMAGE /root/.oldroot/nfs/install/../images/CentOS-74-64-minimal.tar.gz
 ```
 
+
 There are some things that you will probably have to changes
+* Do not allocated all vg0 space to `/ swap /tmp` and `/home`.
 * If you have a single disk remove line `DRIVE2` and lines `SWRAID*`
 * If you have more than two disks add `DRIVE3`...
 * If you dont need raid just change `SWRAID` to `0`
@@ -249,7 +253,7 @@ When installation is done you can create new admin user and add hostpath persist
 Exit from bastion and execute following on **hypervizor**.
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory hetzner-ocp/playbooks/post.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook hetzner-ocp/playbooks/post.yml
 ```
 
 ## Login to Openshift
