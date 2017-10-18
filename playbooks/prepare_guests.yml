@@ -39,7 +39,7 @@
       username: "{{ hostvars['localhost']['user'] }}"
       password: "{{ hostvars['localhost']['pwd'] }}"
       pool: "{{ hostvars['bastion']['poolid'] }}"
-      force_register: yes
+      #force_register: yes
     register: subscribe
     retries: 5
     delay: 5
