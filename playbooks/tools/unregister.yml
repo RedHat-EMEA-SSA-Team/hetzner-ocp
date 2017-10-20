@@ -3,7 +3,7 @@
   gather_facts: no
   hosts: localhost
   vars_files:
-  - vars/guests.yml
+  - ../vars/guests.yml
   roles:
   - inmemory_inventory
 
