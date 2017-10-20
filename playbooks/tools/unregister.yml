@@ -3,9 +3,9 @@
   gather_facts: no
   hosts: localhost
   vars_files:
-  - vars/guests.yml
+  - ../vars/guests.yml
   roles:
-  - inmemory_inventory
+  - ../roles/inmemory_inventory
 
 - name: Unregister all hosts
   gather_facts: no
