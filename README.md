@@ -134,6 +134,18 @@ You are now ready to reboot your system into the newly installed OS.
 reboot now
 ```
 
+## Firewall
+
+While server is rebootting you can modify your servers firewall rules sot that OCP traffic can get it. By default firewall allows port 22 for SSH and nothing else. Check below image how firewall setup looks. Firewall settings can be modified under your server's settings in Hetzner's web UI https://robot.your-server.de/server.
+
+![](images/firewall_start.png)
+
+You need to add ports 80, 443 and 8443 to the rules and also block 111. If you don't block that port you need to stop and disable `rpcbind.service` and `rpcbind.socket`. Add new rules so that rule listing matches below screenshot.
+
+![](images/firewall_target.png)
+
+
+
 ## Initialize tools
 
 Install ansible and git
@@ -446,4 +458,3 @@ ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 By defaults guest VMs are provisioned using defaults. If you need to modify guest options to  better suit your needs, it can be done by modifying `playbooks/vars/guests.yml`
 
 Make modifications and start installtion process. Installer will automatically use file named `guests.yml`. Remember to clean old installation with `ansible-playbook playbooks/clean.yml`
-
