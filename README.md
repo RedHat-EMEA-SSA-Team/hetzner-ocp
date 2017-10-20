@@ -287,14 +287,14 @@ Check how much disk you have left `df -h`, if you have plenty then you can chang
 
 To start hostpath setup execute following on **hypervizor**
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/hostpath.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/hostpath.yml
 ```
 
 ### NFS
 By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on **hypervizor**
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/nfs.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/nfs.yml
 ```
 
 
@@ -302,7 +302,7 @@ By default bastion host is setup for NFS servers. To created correct directories
 Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on **hypervizor**
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/tools/add_user.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/tools/add_user.yml
 ```
 
 ## Clean up everything
@@ -333,7 +333,7 @@ error: build error: Failed to push image: Get https://docker-registry.default.sv
 Then you should run this (on **hypervizor**)
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
 ```
 
 NOTE: This fix is lost if VM is restarted. To make persistent change, you need to do following on all nodes.
@@ -369,7 +369,7 @@ If you have 'permission denied' on registry logs you need to run following playb
 Playbook for fixing permissions
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory /root/hetzner-ocp/playbooks/fixes/registry_hostpath.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/fixes/registry_hostpath.yml
 ```
 
 Restart docker-registry pod
@@ -429,9 +429,9 @@ Uninstall current installation
 Prepare guests again
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_USERNAME=yourid@redhat.com
-[root@CentOS-73-64-minimal hetzner-ocp]# export RHN_PWD=yourpwd
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook -i /root/inventory playbooks/prepare_guests.yml --extra-vars "rhn_username=$RHN_USERNAME rhn_password=$RHN_PWD"
+[root@CentOS-73-64-minimal ~]# cd hetzner-ocp
+[root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/setup.yml
 ```
 
 Start installation again
