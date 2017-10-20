@@ -11,5 +11,5 @@
   gather_facts: no
   hosts: all
   tasks:
-  - name: Check Red Hat subscription
+  - name: Unregister Red Hat subscription
     command: "subscription-manager unregister"
