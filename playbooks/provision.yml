@@ -6,7 +6,7 @@
   - vars/guests.yml
   roles:
   - inmemory_inventory
-  
+
 - name: Start and ensure libvirtd is running
   hosts: localhost
   gather_facts: false

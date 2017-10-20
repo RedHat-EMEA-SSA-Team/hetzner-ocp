@@ -1,3 +1,12 @@
+---
+- name: Create in-memory inventory
+  gather_facts: no
+  hosts: localhost
+  vars_files:
+  - ../vars/guests.yml
+  roles:
+  - ../roles/inmemory_inventory
+  
 - name: Fix resolv.conf to work with services
   hosts: nodes
   gather_facts: false
