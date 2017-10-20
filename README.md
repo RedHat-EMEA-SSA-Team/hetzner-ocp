@@ -142,26 +142,10 @@ Install ansible and git
 [root@CentOS-73-64-minimal ~]# yum install -y ansible git wget
 ```
 
-Create ssh key (no passphrase)
-
-```
-[root@CentOS-73-64-minimal ~]# ssh-keygen
-```
-
-To be able to clone the configs and playbook, you need to add the newly created ssh-key to your account at Gitlab.
-
-Login to gitlab and enter your personal profile
-
-![](images/gitlab_settings.png)
-
-enter the `SSH Keys` tab and copy/paste the content of the newly created file `/root/.ssh/id_rsa.pub`
-
-![](images/upload_ssh.png)
-
 You are now ready to clone this project to your CentOS system.
 
 ```
-git clone ssh://git@gitlab.consulting.redhat.com:2222/tigers/hetzner-ocp.git
+git clone https://github.com/RedHat-EMEA-SSA-Team/hetzner-ocp.git
 ```
 We are now ready to install `libvirt`as our hypervizor, provision VMs and prepare those for OCP.
 
@@ -191,21 +175,50 @@ Check ```playbook/vars/guests.yml``` and modify it to correspond your environmen
 
 ![](images/architecture.png)
 
-Here is a sample of a minimal guest definition
+Here is a sample of a guest definition
 ```
 guests:
 - name: bastion
   cpu: 1
   mem: 1024
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40g
+  disk_data_size: 200g
 - name: master01
   cpu: 1
   mem: 8096
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40g
+  disk_data_size: 100g
 - name: infranode01
   cpu: 1
   mem: 8096
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40g
+  disk_data_size: 100g
 - name: node01
   cpu: 1
   mem: 8096
+  virt_type: kvm
+  virt_hypervisor: hvm
+  network: bridge=virbr0
+  os_type: linux
+  os_variant: rhel7.4
+  disk_os_size: 40g
+  disk_data_size: 100g
+
 ```
 
 Basically you need to change only num of VMs and/or cpu and mem values. If
@@ -432,30 +445,5 @@ ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
 
 By defaults guest VMs are provisioned using defaults. If you need to modify guest options to  better suit your needs, it can be done by modifying `playbooks/vars/guests.yml`
 
-Firts copy guests-full sample over default guests.yml
-```
-cd /root/hetzner-ocp
-cp playbooks/vars/guests-full.yml playbooks/vars/guests.yml
-```
 Make modifications and start installtion process. Installer will automatically use file named `guests.yml`. Remember to clean old installation with `ansible-playbook playbooks/clean.yml`
 
-Here is a sample of VM spesification with all bells and whisles.
-
-```
-- name: bastion
-  cpu: 1
-  mem: 1024
-  virt_type: kvm
-  virt_hypervisor: hvm
-  network: bridge=virbr0
-  os:
-    type: linux
-    variant: rhel7.3
-  disks:
-    var:
-      size: 12
-      options: format=qcow2,cache=none,io=native
-    data:
-      size: 1
-      options: format=qcow2,cache=none,io=native
-```
