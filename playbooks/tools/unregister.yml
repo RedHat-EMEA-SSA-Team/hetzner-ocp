@@ -1,0 +1,15 @@
+---
+- name: Create in-memory inventory
+  gather_facts: no
+  hosts: localhost
+  vars_files:
+  - vars/guests.yml
+  roles:
+  - inmemory_inventory
+
+- name: Unregister all hosts
+  gather_facts: no
+  hosts: all
+  tasks:
+  - name: Check Red Hat subscription
+    command: "subscription-manager unregister"
