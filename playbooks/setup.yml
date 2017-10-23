@@ -33,7 +33,7 @@
   gather_facts: no
   vars_files:
   - vars/guests.yml
-- include: prepare_libvirt.yml
+- include: prepare_host.yml
 - include: provision.yml
 - include: prepare_ssl.yml
 - include: prepare_guests.yml
