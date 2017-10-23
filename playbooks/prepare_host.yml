@@ -19,6 +19,7 @@
     - libguestfs-bash-completion
     - genisoimage
     - iptables-services
+    - iptables
   - name: Update all packages
     yum:
       name: '*'
