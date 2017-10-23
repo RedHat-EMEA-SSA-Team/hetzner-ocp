@@ -13,6 +13,7 @@
   changed_when: false
   failed_when: false
 
+
 - name: Create Docker storage configuration
   copy:
     dest: /etc/sysconfig/docker-storage-setup
@@ -23,6 +24,9 @@
       CONTAINER_ROOT_LV_NAME=dockerlv
       CONTAINER_ROOT_LV_MOUNT_PATH=/var/lib/docker
       VG=ocp
+  when: docker_storage_test.rc != 0
+- name: wipefs to present random storage setup failure
+  command: wipefs -a -f /dev/vdb
   when: docker_storage_test.rc != 0
 - name: Apply Docker storage configuration changes
   command: docker-storage-setup
