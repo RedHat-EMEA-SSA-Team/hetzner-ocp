@@ -32,14 +32,28 @@
       path: "/var/lib/libvirt/images/cloud-init-{{ item.name }}.iso"
       state: absent
     with_items: "{{ guests }}"
-  - name: delete extra diska images
+
+  - name: delete extra disk images
     file:
-      path: "/var/lib/libvirt/images/{{}}.img"
+      path: "/var/lib/libvirt/images/{{ item }}"
       state: absent
     with_items:
     - pvdata.img
     - bastion-nfs.img
     - docker-registry.img
+
+  - name: find all docker images
+    find:
+      paths: /var/lib/libvirt/images
+      patterns: "docker*.img"
+    register: find_results
+
+  - name: delete docker disk image
+    file:
+      path: "{{ item['path'] }}"
+      state: absent
+    with_items: "{{ find_results['files'] }}"
+
   - name: delete dirs for userdata
     file:
       path: "/tmp/{{ item.name }}"
