@@ -96,20 +96,7 @@
     - {src: '/root/.ssh/id_rsa', dest: '/home/cloud-user/.ssh/id_rsa'}
     - {src: '/root/.ssh/id_rsa.pub', dest: '/home/cloud-user/.ssh/id_rsa.pub'}
     - {src: '/root/.ssh/known_hosts', dest: '/home/cloud-user/.ssh/known_hosts'}
-  - name: Create exports dir
-    file:
-      path: /exports
-      state: directory
-  - name: Makefs for exports
-    filesystem:
-      fstype: xfs
-      dev: /dev/vdb
-  - name: Mount new disk to mount point
-    mount:
-      path: /exports
-      src: /dev/vdb
-      fstype: xfs
-      state: mounted
+  
 
 - name: Gather facts from localhost
   hosts: localhost
@@ -130,7 +117,7 @@
     async: 1
     poll: 0
     ignore_errors: true
-    
+
 - name: Restart all guest
   hosts: localhost
   gather_facts: no

@@ -6,7 +6,7 @@
   - vars/guests.yml
   roles:
   - inmemory_inventory
-  
+
   tasks:
   - name: Remove old known_hosts
     file:
@@ -32,7 +32,14 @@
       path: "/var/lib/libvirt/images/cloud-init-{{ item.name }}.iso"
       state: absent
     with_items: "{{ guests }}"
-
+  - name: delete extra diska images
+    file:
+      path: "/var/lib/libvirt/images/{{}}.img"
+      state: absent
+    with_items:
+    - pvdata.img
+    - bastion-nfs.img
+    - docker-registry.img
   - name: delete dirs for userdata
     file:
       path: "/tmp/{{ item.name }}"
