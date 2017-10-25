@@ -133,7 +133,7 @@
             server: {{nfshost}}
     with_together:
     - "{{nfs_pv_names}}"
-    - "{{nfs_pv_names}}"
+    - "{{nfs_pv_sizes}}"
     register: pv_files
 
   - name: "Create PVs"
