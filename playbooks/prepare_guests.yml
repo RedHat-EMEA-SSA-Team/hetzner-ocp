@@ -96,7 +96,7 @@
     - {src: '/root/.ssh/id_rsa', dest: '/home/cloud-user/.ssh/id_rsa'}
     - {src: '/root/.ssh/id_rsa.pub', dest: '/home/cloud-user/.ssh/id_rsa.pub'}
     - {src: '/root/.ssh/known_hosts', dest: '/home/cloud-user/.ssh/known_hosts'}
-  
+
 
 - name: Gather facts from localhost
   hosts: localhost
@@ -152,9 +152,9 @@
     ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
   roles:
   - { role: inventory}
-- name: Install docker
+- name: install and setup docker
   gather_facts: False
   hosts: nodes
   tasks:
   roles:
-  - { role: docker_setup, device: '/dev/vdb'}
+  - { role: docker_setup}

@@ -49,12 +49,6 @@
     lv: "{{item.name}}-a"
     size: "{{item.disk_os_size}}"
   with_items: "{{guests}}"
-- name: ensure logical volumes for virtual docker disks
-  lvol:
-    vg: "{{volume_group}}"
-    lv: "{{item.name}}-b"
-    size: "{{item.disk_data_size}}"
-  with_items: "{{guests}}"
 
 - name: install rhel for VMs
   command: qemu-img convert -O raw "/var/lib/libvirt/images/{{rhel_image}}" "/dev/vg0/{{item.name}}-a"
@@ -73,7 +67,6 @@
            --{{item.virt_hypervisor}}
            --virt-type {{item.virt_type}}
            --disk /dev/{{volume_group}}/{{item.name}}-a,device=disk,format=raw
-           --disk /dev/{{volume_group}}/{{item.name}}-b,device=disk,format=raw
            --disk /var/lib/libvirt/images/cloud-init-{{item.name}}.iso,device=cdrom
            --noautoconsole
            --autostart"
@@ -84,3 +77,6 @@
     name: "{{ item.name }}"
     state: running
   with_items: "{{guests}}"
+- name: Wait 30 secs for all VMs to get IP
+  pause:
+    seconds: 30

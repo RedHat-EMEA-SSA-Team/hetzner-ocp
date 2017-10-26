@@ -100,6 +100,6 @@
     jump: ACCEPT
     comment: Allow all DNAT FORWARD to guest network
 
-- name: Perist iptables rules
+- name: Persist iptables rules
   local_action:
     "shell iptables-save > /etc/sysconfig/iptables"

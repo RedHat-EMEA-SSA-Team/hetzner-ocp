@@ -7,6 +7,30 @@
     - container-selinux
     - atomic-openshift-docker-excluder
 
+- name: check are raw images created
+  local_action: |
+    shell ls /var/lib/libvirt/images/docker-{{ inventory_hostname}}.img
+  register: ls_results
+  changed_when: false
+  failed_when: false
+
+- name: create raw images for docker storage
+  local_action: |
+    shell qemu-img create -f raw /var/lib/libvirt/images/docker-{{ inventory_hostname}}.img {{docker_storage_size}}
+  when: ls_results.rc > 0
+
+- name: check is docker already attached
+  local_action: |
+    shell virsh dumpxml {{inventory_hostname}} | grep -q 'docker-{{inventory_hostname}}'
+  register: disk_attached
+  changed_when: false
+  failed_when: false
+
+- name: add new disk for docker as vdb
+  local_action: |
+    shell virsh attach-disk {{inventory_hostname}} --source /var/lib/libvirt/images/docker-{{inventory_hostname}}.img --persistent --target vdb
+  when: disk_attached.rc > 0
+
 - name: Detect Docker storage configuration status
   command: grep -q overlay2 /etc/sysconfig/docker-storage
   register: docker_storage_test
@@ -20,7 +44,7 @@
     content: |
       WIPE_SIGNATURES=true
       STORAGE_DRIVER=overlay2
-      DEVS={{device}}
+      DEVS={{docker_storage_device}}
       CONTAINER_ROOT_LV_NAME=dockerlv
       CONTAINER_ROOT_LV_MOUNT_PATH=/var/lib/docker
       VG=ocp

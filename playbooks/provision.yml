@@ -31,9 +31,6 @@
   vars_files:
   - vars/guests.yml
   tasks:
-  - name: Wait 30 secs for all VMs to get IP
-    pause:
-      seconds: 30
   - name: Clean up etc hosts
     lineinfile:
       path: /etc/hosts
@@ -74,7 +71,7 @@
     with_items:
     - rpcbind.socket
     - rpcbind.service
-  - name: Check that all guest are up and running before continuing.
+  - name: Check that all guest are up and running before going forward.
     local_action:
       module: wait_for
       host: "{{ item.name }}"
