@@ -1,0 +1,86 @@
+---
+- name: Create backup from iptables rules
+  local_action:
+    "shell iptables-save > /etc/sysconfig/iptables.org"
+
+- name: create http nat for infra
+  iptables:
+    table: nat
+    chain: PREROUTING
+    destination: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
+    protocol: tcp
+    match: tcp
+    destination_port: 80
+    jump: DNAT
+    to_destination: "{{infranode_ip_addr.stdout}}:80"
+    comment: Redirect http traffic to infranode
+
+- name: create https nat for infra
+  iptables:
+    table: nat
+    chain: PREROUTING
+    destination: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
+    protocol: tcp
+    match: tcp
+    destination_port: 443
+    jump: DNAT
+    to_destination: "{{infranode_ip_addr.stdout}}:443"
+    comment: Redirect https traffic to infranode
+
+- name: create https nat for master
+  iptables:
+    table: nat
+    chain: PREROUTING
+    destination: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
+    protocol: tcp
+    match: tcp
+    destination_port: 8443
+    jump: DNAT
+    to_destination: "{{master_ip_addr.stdout}}:8443"
+    comment: Redirect master https traffic to infranode
+
+- name: create https postrouting nat for master
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "{{master_ip_addr.stdout}}"
+    protocol: tcp
+    match: tcp
+    destination_port: 8443
+    jump: MASQUERADE
+    comment: Post routing rule from cluster to master
+
+- name: create http postrouting nat for infra
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "{{infranode_ip_addr.stdout}}"
+    protocol: tcp
+    match: tcp
+    destination_port: 80
+    jump: MASQUERADE
+    comment: Post routing rule from cluster to infra
+
+- name: create https postrouting nat for infra
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    destination: "{{infranode_ip_addr.stdout}}"
+    protocol: tcp
+    match: tcp
+    destination_port: 443
+    jump: MASQUERADE
+    comment: Post routing rule from cluster to infra
+
+- name: allow FORWARD for all guest network DNAT traffic
+  iptables:
+    chain: FORWARD
+    match: state
+    ctstate: NEW,RELATED,ESTABLISHED
+    destination: 192.168.122.0/24
+    jump: ACCEPT
+    comment: Allow all DNAT FORWARD to guest network
+
+- name: Perist iptables rules
+  local_action:
+    "shell iptables-save > /etc/sysconfig/iptables"
