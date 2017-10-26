@@ -50,7 +50,7 @@
       VG=ocp
   when: docker_storage_test.rc != 0
 - name: wipefs to present random storage setup failure
-  command: "wipefs -a -f {{device}}"
+  command: "wipefs -a -f {{docker_storage_device}}"
   when: docker_storage_test.rc != 0
 - name: Apply Docker storage configuration changes
   command: docker-storage-setup
