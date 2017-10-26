@@ -3,6 +3,25 @@
   local_action:
     "shell iptables-save > /etc/sysconfig/iptables.org"
 
+- name: Get master01 ip addr
+  local_action:
+    shell ip n | grep "`virsh dumpxml master01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
+  register: master_ip_addr
+
+- name:
+  debug:
+    msg: |
+      "master ip: {{master_ip_addr.stdout}}"
+
+- name: Get infranode ip addr
+  local_action:
+    shell ip n | grep "`virsh dumpxml infranode01 | grep "mac address" | sed "s/.*'\(.*\)'.*/\1/g"`" | awk '{ gsub(/[\(\)]/,"",$1); print $1"" }'
+  register: infranode_ip_addr
+
+- name:
+  debug:
+    msg: |
+      "master ip: {{infranode_ip_addr.stdout}}"
 - name: create http nat for infra
   iptables:
     table: nat
