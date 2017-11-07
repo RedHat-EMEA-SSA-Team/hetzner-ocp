@@ -77,6 +77,6 @@
     name: "{{ item.name }}"
     state: running
   with_items: "{{guests}}"
-- name: Wait 30 secs for all VMs to get IP
+- name: Wait 60 secs for all VMs to get IP
   pause:
-    seconds: 30
+    seconds: 60

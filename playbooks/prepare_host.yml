@@ -24,20 +24,12 @@
     yum:
       name: '*'
       state: latest
-  - name: Enable libvirt
+  - name: ensure libvirt started and enabled
     service:
       name: libvirtd
+      state: started
       enabled: true
     register: libvirtd
-  - name: Start libvirtd
-    service:
-      name: libvirtd
-      state: started
-  - name: Ensure iptables enabled and running
-    service:
-      name: iptables
-      state: started
-      enabled: yes
   - name: Destroy old pool, images
     command: virsh pool-destroy images
     when: libvirtd.changed
