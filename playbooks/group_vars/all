@@ -4,7 +4,6 @@ packages:
 - net-tools
 - bind-utils
 - iptables-services
-- bridge-utils
 - bash-completion
 - nfs-utils
 - kexec-tools
@@ -16,12 +15,12 @@ packages_bastion:
 repos:
 - rhel-7-server-rpms
 - rhel-7-server-extras-rpms
-- rhel-7-server-ose-3.7-rpms
+- rhel-7-server-ose-3.6-rpms
 - rhel-7-fast-datapath-rpms
 - rhel-7-server-optional-rpms
 rhel_image: rhel-kvm.qcow2
 volume_group: vg0
-default_password: R3dH4t1!
+default_password: password
 remote_user: cloud-user
 hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
 hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
