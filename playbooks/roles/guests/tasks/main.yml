@@ -51,7 +51,7 @@
   with_items: "{{guests}}"
 
 - name: install rhel for VMs
-  command: qemu-img convert -O raw "/var/lib/libvirt/images/{{rhel_image}}" "/dev/vg0/{{item.name}}-a"
+  command: qemu-img convert -O raw "/var/lib/libvirt/images/{{rhel_image}}" "/dev/{{volume_group}}/{{item.name}}-a"
   when: item.name not in virt_vms.list_vms
   with_items: "{{guests}}"
 - name: create vm
