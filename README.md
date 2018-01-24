@@ -1,4 +1,4 @@
-# Disclainer
+# Disclaimer
 This environment has been created for the sole purpose of providing an easy to deployment and consume Red Hat OpenShift Container Platform v3.x environment *as a sandpit*.
 
 This install will create a 'Minimal Viable Setup', which anyone can extend to
