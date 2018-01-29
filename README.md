@@ -77,7 +77,7 @@ From these information, the following ones are import to note:
 * Memory
 * Cores
 
-Guest VM setup uses hypervizor vg0 af volume group for guest. So leave as much as possible free space on vg0.
+Guest VM setup uses hypervisor vg0 af volume group for guest. So leave as much as possible free space on vg0.
 
 `installimage` tool is used to install CentOS. It takes instructions from a text file.
 
@@ -159,7 +159,7 @@ You are now ready to clone this project to your CentOS system.
 ```
 git clone https://github.com/RedHat-EMEA-SSA-Team/hetzner-ocp.git
 ```
-We are now ready to install `libvirt`as our hypervizor, provision VMs and prepare those for OCP.
+We are now ready to install `libvirt`as our hypervisor, provision VMs and prepare those for OCP.
 
 
 ## Download RHEL 7.4 cloud image from access.redhat.com
@@ -174,7 +174,7 @@ Downlaod image
 wget -O /root/rhel-kvm.qcow2 PASTE_URL_HERE
 ```
 
-With our hypervizor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
+With our hypervisor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
 
 ## Define, provision and prepare guest
 
@@ -275,7 +275,7 @@ Installation is done with normal OCP installation playbooks. You can start insta
 
 When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
 
-Exit from bastion and execute following on **hypervizor**.
+Exit from bastion and execute following on **hypervisor**.
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook hetzner-ocp/playbooks/post.yml
@@ -297,13 +297,13 @@ Password: p
 Note: For now this works only if you have single node :)
 Check how much disk you have left `df -h`, if you have plenty then you can change pv disk size by modifying var named size in `playbooks/hostpath.yml`. You can also increase size of PVs by modifying array values...remember to change both.
 
-To start hostpath setup execute following on **hypervizor**
+To start hostpath setup execute following on **hypervisor**
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/hostpath.yml
 ```
 
 ### NFS
-By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on **hypervizor**
+By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on **hypervisor**
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/nfs.yml
@@ -311,7 +311,7 @@ By default bastion host is setup for NFS servers. To created correct directories
 
 
 ## Add new user
-Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on **hypervizor**
+Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on **hypervisor**
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/tools/add_user.yml
@@ -319,7 +319,7 @@ Post install tasks create only admin user. If u need to create additional non-ad
 
 ## Clean up everything
 
-Execute following on **hypervizor**
+Execute following on **hypervisor**
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/clean.yml
@@ -342,7 +342,7 @@ Registry server Password: «non-empty»
 error: build error: Failed to push image: Get https://docker-registry.default.svc:5000/v1/_ping: dial tcp: lookup docker-registry.default.svc on 192.168.122.48:53: no such host
 ```
 
-Then you should run this (on **hypervizor**)
+Then you should run this (on **hypervisor**)
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/fixes/resolv_fix.yml
@@ -376,7 +376,7 @@ You can get logs from docker registry with this command from master01 host
 [root@localhost ~]# oc logs dc/docker-registry
 ```
 
-If you have 'permission denied' on registry logs you need to run following playbook on **hypervizor** and restart registry pod
+If you have 'permission denied' on registry logs you need to run following playbook on **hypervisor** and restart registry pod
 
 Playbook for fixing permissions
 
