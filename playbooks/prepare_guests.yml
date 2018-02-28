@@ -90,7 +90,7 @@
     with_items: "{{packages_bastion}}"
   - name: Copy playbooks to bastion
     synchronize:
-      src: /root/hetzner-ocp
+      src: ../
       dest: /root/
   - name: Copy SSH keys from host to bastion
     copy:
