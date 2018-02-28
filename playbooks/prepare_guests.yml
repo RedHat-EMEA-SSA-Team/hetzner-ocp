@@ -23,17 +23,23 @@
     delay: 5
     when: subs_result.changed
   - name: Get pool id
-    shell: "subscription-manager list --available --matches '*Openshift*' --pool-only | tail -n 1"
-    register: poolid
-    retries: 5
-    delay: 5
-  - debug:
-      msg: |
-        "Managed to find pool id {{poolid.stdout}}"
+    block:
+      - shell: "subscription-manager list --available --matches '*Openshift*' --pool-only | tail -n 1"
+        register: poolid
+        retries: 5
+        delay: 5
+      - set_fact:
+          poolid: "{{poolid.stdout}}"
+    when: hostvars['localhost']['poolid'] is not defined
   - set_fact:
-      poolid: "{{poolid.stdout}}"
+      poolid: "{{ hostvars['localhost']['poolid'] }}"
+    when: hostvars['localhost']['poolid'] is defined
 
-- name: Register nodes to RHN and subscribe
+  - debug:
+      msg: "Managed to find pool id {{ poolid }}"
+
+
+- name: Register nodes to RHSM and subscribe
   hosts: all
   gather_facts: true
   vars_files:
@@ -84,7 +90,7 @@
     with_items: "{{packages_bastion}}"
   - name: Copy playbooks to bastion
     synchronize:
-      src: /root/hetzner-ocp
+      src: ../
       dest: /root/
   - name: Copy SSH keys from host to bastion
     copy:

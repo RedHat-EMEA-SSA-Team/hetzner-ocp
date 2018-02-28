@@ -3,16 +3,22 @@
   hosts: localhost
   gather_facts: no
   vars_prompt:
-  - name: rhn_username
-    prompt: RHN username
+  - name: rhsm_username
+    prompt: RHSM username
     private: no
-  - name: rhn_password
-    prompt: RHN password
+  - name: rhsm_password
+    prompt: RHSM password
     private: yes
+  - name: rhsm_poolid
+    prompt: Subscription Pool ID
+    private: no
   tasks:
   - set_fact:
-      pwd: "{{rhn_password}}"
-      user: "{{rhn_username}}"
+      pwd: "{{rhsm_password}}"
+      user: "{{rhsm_username}}"
+  - set_fact:
+      poolid: "{{rhsm_poolid}}"
+    when: rhsm_poolid is defined
   - name: Create SSH key for root
     user:
       name: root

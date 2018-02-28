@@ -37,7 +37,7 @@ openshift_docker_insecure_registries=docker-registry.default.svc,docker-registry
 # Native high availability cluster method with optional load balancer.
 #openshift_master_cluster_method=native
 openshift_master_cluster_hostname=master01
-openshift_master_cluster_public_hostname=master.{{ip_addr}}.xip.io
+openshift_master_cluster_public_hostname=master.{{ip_addr}}.nip.io
 
 
 # Configure nodeIP in the node config
@@ -79,7 +79,7 @@ openshift_examples_modify_imagestreams=true
 openshift_node_kubelet_args={'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 
 # default subdomain to use for exposed routes
-openshift_master_default_subdomain=apps.{{ip_addr}}.xip.io
+openshift_master_default_subdomain=apps.{{ip_addr}}.nip.io
 
 # default project node selector
 osm_default_node_selector='purpose=work'
@@ -94,9 +94,9 @@ openshift_hosted_registry_replicas=1
 # Registry Storage Options
 
 # Metrics deployment
-openshift_hosted_metrics_deploy=false
-openshift_hosted_metrics_public_url=https://metrics.apps.{{ip_addr}}.xip.io/hawkular/metrics
-openshift_metrics_hawkular_hostname=metrics.apps.{{ip_addr}}.xip.io
+openshift_metrics_install_metrics=false
+openshift_hosted_metrics_public_url=https://metrics.apps.{{ip_addr}}.nip.io/hawkular/metrics
+openshift_metrics_hawkular_hostname=metrics.apps.{{ip_addr}}.nip.io
 openshift_metrics_cassandra_replicas=1
 openshift_metrics_cassandra_limits_memory=2Gi
 openshift_metrics_hawkular_replicas=1
@@ -108,14 +108,13 @@ openshift_metrics_hawkular_nodeselector={"region":"infra"}
 openshift_metrics_heapster_nodeselector={"region":"infra"}
 
 # Logging deployment
-openshift_hosted_logging_deploy=false
 openshift_logging_install_logging=false
-openshift_logging_kibana_hostname=logging.apps.{{ip_addr}}.xip.io
+openshift_logging_kibana_hostname=logging.apps.{{ip_addr}}.nip.io
 openshift_logging_use_ops=false
 openshift_logging_master_url=master01
-openshift_logging_public_master_url=master.{{ip_addr}}.xip.io
+openshift_logging_public_master_url=master.{{ip_addr}}.nip.io
 openshift_logging_curator_default_days=7
-openshift_logging_kibana_hostname=logging.apps.{{ip_addr}}.xip.io
+openshift_logging_kibana_hostname=logging.apps.{{ip_addr}}.nip.io
 
 openshift_logging_curator_nodeselector={"region":"infra"}
 openshift_logging_es_nodeselector={"region":"infra"}
