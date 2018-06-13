@@ -1,0 +1,32 @@
+---
+- name: Create in-memory inventory
+  gather_facts: no
+  hosts: localhost
+  vars_files:
+  - vars/guests.yml
+  roles:
+  - inmemory_inventory
+
+
+- name: Gather facts from localhost
+  hosts: localhost,nodes
+  tasks:
+  - debug: msg='Gathering facts'
+
+- name: Create inventory
+  hosts: bast
+  tasks:
+  vars_files:
+  - vars/guests.yml
+  vars:
+    ip_addr: "{{hostvars['localhost']['ansible_default_ipv4']['address']}}"
+    default_apps_dns: "apps.{{hostvars['localhost']['ansible_default_ipv4']['address']}}.xip.io"
+    default_master_dns: "master.{{hostvars['localhost']['ansible_default_ipv4']['address']}}.xip.io"
+    apps_dns: "{{app_dns | default(default_apps_dns)}}"
+    master_dns: "{{ master_dns | default(default_master_dns)}}"
+    nodes: "{{ groups['nodes'] }}"
+    cns_nodes: "{{ groups['cns'] }}"
+    number_of_cns_nodes: "{{ groups['cns'] | length }}"
+  roles:
+  - { role: inventory}
+

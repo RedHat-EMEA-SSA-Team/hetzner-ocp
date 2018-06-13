@@ -1,0 +1,41 @@
+- name: check are raw images created
+  local_action: |
+    shell ls /var/lib/libvirt/images/containers-{{ inventory_hostname}}.img
+  register: ls_results
+  changed_when: false
+  failed_when: false
+
+- name: create raw images for docker storage
+  local_action: |
+    shell qemu-img create -f raw /var/lib/libvirt/images/containers-{{ inventory_hostname}}.img {{containers_storage_size}}
+  when: ls_results.rc > 0
+
+- name: check is conteiners storage already attached
+  local_action: |
+    shell virsh dumpxml {{inventory_hostname}} | grep -q 'containers-{{inventory_hostname}}'
+  register: disk_attached
+  changed_when: false
+  failed_when: false
+
+- name: add new disk for containers storage as vdb
+  local_action: |
+    shell virsh attach-disk {{inventory_hostname}} --source /var/lib/libvirt/images/containers-{{inventory_hostname}}.img --persistent --target vdb
+  when: disk_attached.rc > 0
+
+- name: Makefs for containers storage
+  filesystem:
+    fstype: xfs
+    dev: /dev/vdb
+- name: Mount new disk to mount point
+  mount:
+    path: /var/lib/containers
+    src: /dev/vdb
+    fstype: xfs
+    state: mounted
+- name: Create mount point
+  file:
+    path: "/var/lib/containers"
+    state: directory
+
+
+
