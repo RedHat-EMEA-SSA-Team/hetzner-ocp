@@ -6,7 +6,7 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
   region: bastion
 - name: master01
@@ -16,7 +16,7 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
   cns: 'true'
   region: master
@@ -27,7 +27,7 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
   cns: 'true'
   region: infra
@@ -38,7 +38,7 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
   cns: 'true'
   region: compute
