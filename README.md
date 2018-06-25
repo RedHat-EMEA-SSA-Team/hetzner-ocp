@@ -192,14 +192,14 @@ Here is a sample of a guest definition
 guests:
 - name: bastion
   cpu: 1
-  mem: 1024
+  mem: 2048
   virt_type: kvm
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
   os_variant: rhel7.4
   disk_os_size: 40g
-  disk_data_size: 200g
+  region: bastion
 - name: master01
   cpu: 1
   mem: 8096
@@ -207,9 +207,10 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
-  disk_data_size: 100g
+  cns: 'true'
+  region: master
 - name: infranode01
   cpu: 1
   mem: 8096
@@ -217,9 +218,10 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
-  disk_data_size: 100g
+  cns: 'true'
+  region: infra
 - name: node01
   cpu: 1
   mem: 8096
@@ -227,10 +229,11 @@ guests:
   virt_hypervisor: hvm
   network: bridge=virbr0
   os_type: linux
-  os_variant: rhel7.4
+  os_variant: rhel7.5
   disk_os_size: 40g
   disk_data_size: 100g
-
+  cns: 'true'
+  region: compute
 ```
 
 Basically you need to change only num of VMs and/or cpu and mem values. If
@@ -267,10 +270,11 @@ Installation of OCP is done on bastion host. So you need to ssh to bastion
 [root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
 ```
 
-Installation is done with normal OCP installation playbooks. You can start installation on **bastion** with following command
+Installation is done with normal OCP installation playbooks. You can start installation on **bastion** with following commands
 
 ```
-[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```
 
 When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
