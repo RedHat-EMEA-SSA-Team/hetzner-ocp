@@ -6,7 +6,7 @@ masters
 nodes
 etcd
 {% if number_of_cns_nodes == '3' %}
-glusterfs
+#CNSglusterfs
 {% endif %}
 
 # Set variables common for all OSEv3 hosts
@@ -42,12 +42,12 @@ openshift_docker_insecure_registries=docker-registry.default.svc,docker-registry
 # Native high availability cluster method with optional load balancer.
 #openshift_master_cluster_method=native
 openshift_master_cluster_hostname=master01
-openshift_master_cluster_public_hostname=master.{{ip_addr}}.nip.io
-openshift_master_default_subdomain={{apps_dns}}
+openshift_master_cluster_public_hostname={{_master_dns}}
+openshift_master_default_subdomain={{_apps_dns}}
 openshift_master_overwrite_named_certificates=True
 
-openshift_master_named_certificates=[{"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}]
-openshift_hosted_router_certificate={"certfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}
+#openshift_master_named_certificates=[{"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}]
+#openshift_hosted_router_certificate={"certfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}
 
 # Configure nodeIP in the node config
 # This is needed in cases where node traffic is desired to go over an
@@ -75,6 +75,8 @@ openshift_master_audit_config={"enabled": false}
 # Install the openshift examples
 openshift_install_examples=true
 openshift_examples_modify_imagestreams=true
+oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
+openshift_examples_modify_imagestreams=true
 
 # Configure node kubelet arguments. pods-per-core is valid in OpenShift Origin 1.3 or OpenShift Container Platform 3.3 and later.
 #openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
@@ -92,25 +94,27 @@ openshift_hosted_registry_replicas=1
 
 # Registry Storage Options
 
+{% if number_of_cns_nodes == '3' %}
 # GlusterFS
 openshift_storage_glusterfs_namespace=cns
 openshift_storage_glusterfs_name=cns
 openshift_storage_glusterfs_wipe=True
-openshift_storage_glusterfs_storageclass=True
-openshift_storage_glusterfs_storageclass_default=True
-openshift_storage_glusterfs_heketi_image=rhgs3/rhgs-volmanager-rhel7
-openshift_storage_glusterfs_heketi_version=latest
+openshift_storage_glusterfs_storageclass=true
+openshift_storage_glusterfs_storageclass_default=true
+openshift_storage_glusterfs_image=registry.access.redhat.com/rhgs3/rhgs-server-rhel7
+openshift_storage_glusterfs_heketi_image=registry.access.redhat.com/rhgs3/rhgs-volmanager-rhel7
+openshift_storage_glusterfs_heketi_version=v3.9
 openshift_storage_glusterfs_block_deploy=True
-openshift_storage_glusterfs_block_host_vol_create=True
-openshift_storage_glusterfs_block_host_vol_size=50
-openshift_storage_glusterfs_block_storageclass=True
-
+openshift_storage_glusterfs_block_host_vol_create=true
+openshift_storage_glusterfs_block_host_vol_size=20
+openshift_storage_glusterfs_block_storageclass=true
+{% endif %}
 
 # Metrics deployment
-openshift_master_metrics_public_url=https://metrics.{{apps_dns}}
+openshift_master_metrics_public_url=https://metrics.{{_apps_dns}}
 openshift_metrics_install_metrics=false
-openshift_metrics_hawkular_hostname=metrics.{{apps_dns}}
-openshift_metrics_cassandra_pvc_size=10Gi
+openshift_metrics_hawkular_hostname=metrics.{{_apps_dns}}
+openshift_metrics_cassandra_pvc_size=2Gi
 openshift_metrics_cassandra_storage_type=dynamic
 
 openshift_metrics_cassandra_nodeselector={"region":"infra"}
@@ -118,11 +122,11 @@ openshift_metrics_hawkular_nodeselector={"region":"infra"}
 openshift_metrics_heapster_nodeselector={"region":"infra"}
 
 # Logging deployment
-openshift_master_logging_public_url=https://logging.{{apps_dns}}
+openshift_master_logging_public_url=https://logging.{{_apps_dns}}
 openshift_logging_use_ops=false
 openshift_logging_namespace=logging
 openshift_logging_install_logging=false
-openshift_logging_kibana_hostname=logging.{{apps_dns}}
+openshift_logging_kibana_hostname=logging.{{_apps_dns}}
 openshift_logging_es_pvc_size=10Gi
 openshift_logging_es_pvc_dynamic=false
 openshift_logging_es_pvc_storage_class_name=glusterfs-cns
@@ -193,10 +197,10 @@ openshift_generate_no_proxy_hosts=true
 {% endfor %}
 
 {% if number_of_cns_nodes == '3' %}
-[glusterfs]
+#CNS[glusterfs]
 {% for host in guests %}
 {% if host.cns is defined and host.cns %}
-{{host.name}} glusterfs_ip={{hostvars[host.name]['ansible_default_ipv4']['address']}} glusterfs_devices='["/dev/{{ cns_storage_device }}"]'
+#CNS{{host.name}} glusterfs_ip={{hostvars[host.name]['ansible_default_ipv4']['address']}} glusterfs_devices='["/dev/{{ cns_storage_device }}"]'
 {% endif %}
 {% endfor %}
 {% endif %}

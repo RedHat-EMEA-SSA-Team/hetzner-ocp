@@ -28,12 +28,12 @@ hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10'
 hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
 hostpath_dir: /var/hostpath
 hostpath_size: 200G
-nfs_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
-nfs_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
-nfs_dir: /exports
-nfs_size: 200G
-docker_storage_device: /dev/vdb
-docker_storage_size: 100G
+#nfs_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
+#nfs_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
+#nfs_dir: /exports
+#nfs_size: 200G
+#docker_storage_device: /dev/vdb
+#docker_storage_size: 100G
 containers_storage_size: 100G
 cns_storage_size: 100G
 cns_storage_device: vdc
