@@ -52,8 +52,8 @@
     - "{{hostpath_pv_names}}"
     - "{{hostpath_dir}}"
 
-  - name: SELinux svirt_sandbox_file_t
-    command: "chcon -Rt svirt_sandbox_file_t {{hostpath_dir}}/pv{{item}}"
+  - name: SELinux container_file_t
+    command: "chcon -Rt container_file_t {{hostpath_dir}}/pv{{item}}"
     with_items:
     - "{{hostpath_pv_names}}"
     - "{{hostpath_dir}}"

@@ -45,7 +45,7 @@
   - name: find all docker images
     find:
       paths: /var/lib/libvirt/images
-      patterns: "docker*.img"
+      patterns: "containers*.img"
     register: find_results
 
   - name: delete docker disk image
@@ -53,6 +53,19 @@
       path: "{{ item['path'] }}"
       state: absent
     with_items: "{{ find_results['files'] }}"
+
+  - name: find all cns images
+    find:
+      paths: /var/lib/libvirt/images
+      patterns: "cns*.img"
+    register: find_results_cns
+
+  - name: delete cns disk image
+    file:
+      path: "{{ item['path'] }}"
+      state: absent
+    with_items: "{{ find_results_cns['files'] }}"
+
 
   - name: delete dirs for userdata
     file:

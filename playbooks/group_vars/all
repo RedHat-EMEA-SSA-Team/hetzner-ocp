@@ -1,4 +1,4 @@
-ocp_version: 3.7
+ocp_version: 3.9
 packages:
 - wget
 - git
@@ -19,6 +19,7 @@ repos:
 - "rhel-7-server-ose-{{ocp_version}}-rpms"
 - rhel-7-fast-datapath-rpms
 - rhel-7-server-optional-rpms
+- rhel-7-server-ansible-2.4-rpms
 rhel_image: rhel-kvm.qcow2
 volume_group: vg0
 default_password: password
@@ -27,9 +28,16 @@ hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10'
 hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
 hostpath_dir: /var/hostpath
 hostpath_size: 200G
-nfs_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
-nfs_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
-nfs_dir: /exports
-nfs_size: 200G
-docker_storage_device: /dev/vdb
-docker_storage_size: 100G
+#nfs_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
+#nfs_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
+#nfs_dir: /exports
+#nfs_size: 200G
+#docker_storage_device: /dev/vdb
+#docker_storage_size: 100G
+containers_storage_size: 100G
+cns_storage_size: 100G
+cns_storage_device: vdc
+registry_storage_device: vdd
+registry_storage_size: 100G
+apps_dns: apps.ocp.ninja
+master_dns: master.ocp.ninja
