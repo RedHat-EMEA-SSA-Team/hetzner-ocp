@@ -71,11 +71,10 @@
     with_items: "{{repos}}"
   - name: Ensure that required packages are present on target hosts
     yum:
-      name: "{{item}}"
+      name: "{{packages}}"
       state: latest
     retries: 5
     delay: 5
-    with_items: "{{packages}}"
 
 - name: Prepare bastion for OCP install
   gather_facts: False

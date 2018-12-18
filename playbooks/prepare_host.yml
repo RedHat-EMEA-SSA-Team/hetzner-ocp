@@ -5,21 +5,8 @@
   tasks:
   - name: Install packages
     yum:
-      name: "{{item}}"
+      name: "{{host_packages}}"
       state: present
-    with_items:
-    - bridge-utils
-    - qemu-kvm
-    - qemu-img
-    - libvirt
-    - libvirt-python
-    - libvirt-client
-    - virt-install
-    - libguestfs-tools
-    - libguestfs-bash-completion
-    - genisoimage
-    - iptables-services
-    - iptables
   - name: Update all packages
     yum:
       name: '*'

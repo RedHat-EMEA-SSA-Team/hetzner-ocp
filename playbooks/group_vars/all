@@ -17,8 +17,7 @@ packages:
 - sos
 - psacct
 packages_bastion:
-- atomic-openshift-utils
-- atomic-openshift-clients
+- openshift-ansible
 repos:
 - rhel-7-server-rpms
 - rhel-7-server-extras-rpms
@@ -28,6 +27,7 @@ repos:
 rhel_image: rhel-kvm.qcow2
 default_password: password
 remote_user: cloud-user
+volume_group: vg0
 hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
 hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
 hostpath_dir: /var/hostpath
@@ -52,8 +52,16 @@ cert_router_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
 cert_master_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
 cert_master_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
 cert_master_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
-
-
-
-#openshift_master_named_certificates=[{"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}]
-#openshift_hosted_router_certificate={"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}
+host_packages:
+- bridge-utils
+- qemu-kvm
+- qemu-img
+- libvirt
+- libvirt-python
+- libvirt-client
+- virt-install
+- libguestfs-tools
+- libguestfs-bash-completion
+- genisoimage
+- iptables-services
+- iptables
