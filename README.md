@@ -209,7 +209,7 @@ guests:
   os_type: linux
   os_variant: rhel7.5
   disk_os_size: 40g
-  cns: 'true'
+  ocs: 'true'
   region: master
 - name: infranode01
   cpu: 1
@@ -220,7 +220,7 @@ guests:
   os_type: linux
   os_variant: rhel7.5
   disk_os_size: 40g
-  cns: 'true'
+  ocs: 'true'
   region: infra
 - name: node01
   cpu: 1
@@ -232,7 +232,7 @@ guests:
   os_variant: rhel7.5
   disk_os_size: 40g
   disk_data_size: 100g
-  cns: 'true'
+  ocs: 'true'
   region: compute
 ```
 

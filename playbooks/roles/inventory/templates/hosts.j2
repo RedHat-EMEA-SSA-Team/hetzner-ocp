@@ -5,8 +5,8 @@
 masters
 nodes
 etcd
-{% if number_of_cns_nodes == '3' %}
-#CNSglusterfs
+{% if number_of_ocs_nodes >= '3' %}
+glusterfs
 {% endif %}
 
 # Set variables common for all OSEv3 hosts
@@ -17,8 +17,13 @@ ansible_become=yes
 # https://github.com/openshift/openshift-ansible/blob/master/DEPLOYMENT_TYPES.md
 deployment_type=openshift-enterprise
 containerized=false
-openshift_use_crio=true
-openshift_crio_enable_docker_gc=true
+openshift_use_crio={% if container_runtime == "crio" %}true{% else %}false{% endif %}
+openshift_use_crio_only=false
+openshift_crio_enable_docker_gc=false
+oreg_url=registry.redhat.io/openshift3/ose-${component}:${version}
+oreg_auth_user={{registry_username}}
+oreg_auth_password={{registry_password}}
+
 
 # Skip env validation
 openshift_disable_check=disk_availability,memory_availability
@@ -26,7 +31,7 @@ openshift_enable_unsupported_configurations=True
 
 # Configure usage of openshift_clock role.
 openshift_clock_enabled=true
-	
+
 # Set upgrade restart mode for full system restarts
 openshift_rolling_restart_mode=system
 
@@ -35,7 +40,7 @@ osm_use_cockpit=false
 osm_cockpit_plugins=['cockpit-kubernetes', 'cockpit-pcp', 'setroubleshoot-server']
 
 # Docker / Registry Configuration
-openshift_docker_disable_push_dockerhub=True
+openshift_docker_disable_push_dockerhub=true
 openshift_docker_options="--log-driver=journald --log-level=warn --ipv6=false"
 openshift_docker_insecure_registries=docker-registry.default.svc,docker-registry.default.svc.cluster.local
 
@@ -44,10 +49,14 @@ openshift_docker_insecure_registries=docker-registry.default.svc,docker-registry
 openshift_master_cluster_hostname=master01
 openshift_master_cluster_public_hostname={{_master_dns}}
 openshift_master_default_subdomain={{_apps_dns}}
-openshift_master_overwrite_named_certificates=True
+openshift_master_overwrite_named_certificates=true
 
-#openshift_master_named_certificates=[{"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}]
-#openshift_hosted_router_certificate={"certfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}
+{% if cert_master_certfile is defined %}
+openshift_master_named_certificates=[{"certfile": "{{cert_master_certfile}}", "keyfile": "{{cert_master_keyfile}}", "cafile": "{{cert_master_cafile}}"}]
+{% endif %}
+{% if cert_router_certfile is defined %}
+openshift_hosted_router_certificate={"certfile": "{{cert_router_certfile}}", "keyfile": "cert_router_keyfile", "cafile": "{{cert_router_cafile}}"}
+{% endif %}
 
 # Configure nodeIP in the node config
 # This is needed in cases where node traffic is desired to go over an
@@ -65,117 +74,90 @@ openshift_portal_net=172.30.0.0/16
 osm_host_subnet_length=8
 
 # htpasswd auth
-openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider']
 
 
 # Enable API service auditing, available as of 3.2
-openshift_master_audit_config={"enabled": false}
+#openshift_master_audit_config={"enabled": false}
 
 
 # Install the openshift examples
 openshift_install_examples=true
-openshift_examples_modify_imagestreams=true
-oreg_url=registry.access.redhat.com/openshift3/ose-${component}:${version}
 openshift_examples_modify_imagestreams=true
 
 # Configure node kubelet arguments. pods-per-core is valid in OpenShift Origin 1.3 or OpenShift Container Platform 3.3 and later.
 #openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 openshift_node_kubelet_args={'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 
-# default project node selector
-osm_default_node_selector='region=compute'
 
-# OpenShift Router Options
-openshift_hosted_router_selector='region=infra'
-
-# Openshift Registry Options
-openshift_hosted_registry_selector='region=infra'
 openshift_hosted_registry_replicas=1
-
+{% if number_of_ocs_nodes >= '3' %}
+openshift_hosted_registry_storage_kind=glusterfs
+{% endif %}
 # Registry Storage Options
 
-{% if number_of_cns_nodes == '3' %}
+{% if number_of_ocs_nodes >= '3' %}
 # GlusterFS
-openshift_storage_glusterfs_namespace=cns
-openshift_storage_glusterfs_name=cns
-openshift_storage_glusterfs_wipe=True
+openshift_storage_glusterfs_namespace=ocs
+openshift_storage_glusterfs_name=ocs
+openshift_storage_glusterfs_wipe=true
 openshift_storage_glusterfs_storageclass=true
 openshift_storage_glusterfs_storageclass_default=true
 openshift_storage_glusterfs_image=registry.access.redhat.com/rhgs3/rhgs-server-rhel7
 openshift_storage_glusterfs_heketi_image=registry.access.redhat.com/rhgs3/rhgs-volmanager-rhel7
-openshift_storage_glusterfs_heketi_version=v3.9
-openshift_storage_glusterfs_block_deploy=True
+openshift_storage_glusterfs_block_deploy=true
 openshift_storage_glusterfs_block_host_vol_create=true
 openshift_storage_glusterfs_block_host_vol_size=20
 openshift_storage_glusterfs_block_storageclass=true
 {% endif %}
 
 # Metrics deployment
-openshift_master_metrics_public_url=https://metrics.{{_apps_dns}}
-openshift_metrics_install_metrics=false
+openshift_metrics_install_metrics={% if metrics_install == "true" %}true{% else %}false{% endif %}
 openshift_metrics_hawkular_hostname=metrics.{{_apps_dns}}
+openshift_metrics_cassandra_nodeselector={"node-role.kubernetes.io/infra": "true"}
+openshift_metrics_hawkular_nodeselector={"node-role.kubernetes.io/infra": "true"}
+openshift_metrics_heapster_nodeselector={"node-role.kubernetes.io/infra": "true"}
+
+{% if number_of_ocs_nodes >= '3' %}
 openshift_metrics_cassandra_pvc_size=2Gi
 openshift_metrics_cassandra_storage_type=dynamic
-
-openshift_metrics_cassandra_nodeselector={"region":"infra"}
-openshift_metrics_hawkular_nodeselector={"region":"infra"}
-openshift_metrics_heapster_nodeselector={"region":"infra"}
+{% endif %}
 
 # Logging deployment
-openshift_master_logging_public_url=https://logging.{{_apps_dns}}
 openshift_logging_use_ops=false
-openshift_logging_namespace=logging
-openshift_logging_install_logging=false
+openshift_logging_install_logging={% if metrics_install == "true" %}true{% else %}false{% endif %}
 openshift_logging_kibana_hostname=logging.{{_apps_dns}}
+openshift_logging_curator_nodeselector={"node-role.kubernetes.io/infra": "true"}
+openshift_logging_es_nodeselector={"node-role.kubernetes.io/infra": "true"}
+openshift_logging_kibana_nodeselector={"node-role.kubernetes.io/infra": "true"}
+{% if number_of_ocs_nodes >= '3' %}
 openshift_logging_es_pvc_size=10Gi
 openshift_logging_es_pvc_dynamic=false
-openshift_logging_es_pvc_storage_class_name=glusterfs-cns
+openshift_logging_es_pvc_storage_class_name=glusterfs-ocs
+{% endif %}
 
-openshift_logging_curator_nodeselector={"region":"infra"}
-openshift_logging_es_nodeselector={"region":"infra"}
-openshift_logging_fluentd_nodeselector={"fluentd":"true"}
-openshift_logging_kibana_nodeselector={"region":"infra"}
 
 # Prometheus
-openshift_hosted_prometheus_deploy=false
-openshift_prometheus_namespace=openshift-metrics
-openshift_prometheus_node_selector={"region":"infra"}
-openshift_prometheus_storage_kind=dynamic
-openshift_prometheus_storage_volume_name=prometheus
-openshift_prometheus_storage_volume_size=10Gi
-openshift_prometheus_storage_type='pvc'
-openshift_prometheus_alertmanager_storage_kind=dynamic
-openshift_prometheus_alertmanager_storage_volume_name=prometheus-alertmanager
-openshift_prometheus_alertmanager_storage_volume_size=1Gi
-openshift_prometheus_alertmanager_storage_type='pvc'
-openshift_prometheus_alertbuffer_storage_kind=dynamic
-openshift_prometheus_alertbuffer_storage_volume_name=prometheus-alertbuffer
-openshift_prometheus_alertbuffer_storage_volume_size=1Gi
-openshift_prometheus_alertbuffer_storage_type='pvc'
+openshift_cluster_monitoring_operator_install={% if monitoring_install == "true" %}true{% else %}false{% endif %}
+openshift_cluster_monitoring_operator_node_selector={"node-role.kubernetes.io/infra":"true"}
+{% if number_of_ocs_nodes >= '3' %}
+openshift_cluster_monitoring_operator_alertmanager_storage_enabled=true
+openshift_cluster_monitoring_operator_alertmanager_storage_capacity=1Gi
+openshift_cluster_monitoring_operator_alertmanager_storage_class_name=glusterfs-ocs
+openshift_cluster_monitoring_operator_prometheus_storage_enabled=true
+openshift_cluster_monitoring_operator_prometheus_storage_capacity=5Gi
+openshift_cluster_monitoring_operator_prometheus_storage_class_name=glusterfs-ocs
+{% else %}
+openshift_cluster_monitoring_operator_alertmanager_storage_enabled=false
+openshift_cluster_monitoring_operator_prometheus_storage_enabled=false
+{% endif %}
 
-# Service catalog
-openshift_enable_service_catalog=false
-ansible_service_broker_install=false
-template_service_broker_install=false
-dynamic_volumes_check=false
-openshift_storageclass_name=glusterfs-cns
-openshift_service_catalog_image_version=latest
-ansible_service_broker_image_prefix=registry.access.redhat.com/openshift3/ose-
-ansible_service_broker_registry_url="registry.access.redhat.com"
-openshift_service_catalog_image_prefix=registry.access.redhat.com/openshift3/ose-
-template_service_broker_selector={"region":"infra"}
-openshift_template_service_broker_namespaces=['openshift']
-openshift_hosted_etcd_storage_kind=dynamic
-openshift_hosted_etcd_storage_volume_name=etcd-vol
-openshift_hosted_etcd_storage_access_modes=["ReadWriteOnce"]
-openshift_hosted_etcd_storage_volume_size=1Gi
-openshift_hosted_etcd_storage_labels={'storage': 'etcd'}
 
 openshift_generate_no_proxy_hosts=true
 
 [masters]
 {% for host in guests %}
-{% if host.region == 'master' %}
+{% if host.node_group == 'node-config-master' %}
 {{host.name}}
 {% endif %}
 {% endfor %}
@@ -183,7 +165,7 @@ openshift_generate_no_proxy_hosts=true
 
 [etcd]
 {% for host in guests %}
-{% if host.region == 'master' %}
+{% if host.node_group == 'node-config-master' %}
 {{host.name}}
 {% endif %}
 {% endfor %}
@@ -192,16 +174,15 @@ openshift_generate_no_proxy_hosts=true
 [nodes]
 {% for host in guests %}
 {% if host.name != 'bastion' %}
-{{host.name}} openshift_node_labels="{'region':'{{host.region}}', 'runtime':'cri-o'}"
+{{host.name}} openshift_node_group_name='{{host.node_group}}'
 {% endif %}
 {% endfor %}
 
-{% if number_of_cns_nodes == '3' %}
-#CNS[glusterfs]
+{% if number_of_ocs_nodes >= '3' %}
+[glusterfs]
 {% for host in guests %}
-{% if host.cns is defined and host.cns %}
-#CNS{{host.name}} glusterfs_ip={{hostvars[host.name]['ansible_default_ipv4']['address']}} glusterfs_devices='["/dev/{{ cns_storage_device }}"]'
+{% if host.ocs_host is defined and host.ocs_host %}
+{{host.name}} glusterfs_ip={{hostvars[host.name]['ansible_default_ipv4']['address']}} glusterfs_devices='["/dev/{{ ocs_storage_device }}"]'
 {% endif %}
 {% endfor %}
 {% endif %}
-

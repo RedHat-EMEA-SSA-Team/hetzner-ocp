@@ -170,8 +170,8 @@
     _apps_dns: "{{apps_dns | default(default_apps_dns)}}"
     _master_dns: "{{ master_dns | default(default_master_dns)}}"
     nodes: "{{ groups['nodes'] }}"
-    cns_nodes: "{{ groups['cns'] }}"
-    number_of_cns_nodes: "{{ groups['cns'] | length }}"
+    ocs_nodes: "{{ groups['ocs'] }}"
+    number_of_ocs_nodes: "{{ groups['ocs'] | length }}"
   roles:
   - { role: inventory}
 
@@ -183,9 +183,9 @@
   roles:
   - { role: crio_setup}
 
-- name: prepare storage for cns
+- name: prepare storage for ocs
   gather_facts: False
-  hosts: cns
+  hosts: ocs
   tasks:
   roles:
-  - { role: cns_setup}
+  - { role: ocs_setup}
