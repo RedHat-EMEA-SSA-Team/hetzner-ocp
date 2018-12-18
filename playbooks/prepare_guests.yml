@@ -111,7 +111,7 @@
   tasks:
   - debug: msg='Gathering facts'
 
-- name: Update 7.4 to latest
+- name: Update 7.6 to latest
   hosts: all
   remote_user: "{{remote_user}}"
   gather_facts: false
@@ -176,12 +176,12 @@
   - { role: inventory}
 
 
-- name: prepare storage for crio
+- name: prepare container storage
   gather_facts: False
   hosts: nodes
   tasks:
   roles:
-  - { role: crio_setup}
+  - { role: container_storage_setup}
 
 - name: prepare storage for ocs
   gather_facts: False

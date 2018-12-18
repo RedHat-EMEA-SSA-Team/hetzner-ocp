@@ -46,3 +46,14 @@ registry_storage_device: vdd
 registry_storage_size: 100G
 apps_dns: apps.ocp.ninja
 master_dns: master.ocp.ninja
+cert_router_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
+cert_router_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
+cert_router_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
+cert_master_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
+cert_master_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
+cert_master_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
+
+
+
+#openshift_master_named_certificates=[{"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}]
+#openshift_hosted_router_certificate={"certfile": "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer", "keyfile": "/root/.acme.sh/master.ocp.ninja/master.ocp.ninja.key", "cafile": "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"}

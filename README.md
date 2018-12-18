@@ -94,7 +94,7 @@ DRIVE2 /dev/sdb
 SWRAID 1
 SWRAIDLEVEL 1
 BOOTLOADER grub
-HOSTNAME CentOS-74-64-minimal
+HOSTNAME CentOS-75-64-minimal
 PART /boot ext3     512M
 PART lvm   vg0       all
 
@@ -104,7 +104,7 @@ LV vg0   tmp    /tmp    ext4      10G
 LV vg0   home   /home   ext4      40G
 
 
-IMAGE /root/.oldroot/nfs/install/../images/CentOS-74-64-minimal.tar.gz
+IMAGE /root/.oldroot/nfs/install/../images/CentOS-75-64-minimal.tar.gz
 ```
 
 
@@ -162,10 +162,10 @@ git clone https://github.com/RedHat-EMEA-SSA-Team/hetzner-ocp.git
 We are now ready to install `libvirt`as our hypervisor, provision VMs and prepare those for OCP.
 
 
-## Download RHEL 7.4 cloud image from access.redhat.com
+## Download RHEL 7.6 cloud image from access.redhat.com
 
-1. Go to RHEL downloads page https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.4/x86_64/product-software
-2. Copy download link from image Red Hat Enterprise Linux 7.4 KVM Guest Image to your clipboard
+1. Go to RHEL downloads page https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.6/x86_64/product-software
+2. Copy download link from image Red Hat Enterprise Linux 7.6 KVM Guest Image to your clipboard
 
  ![](images/cloud-image-download.png)
 

@@ -12,6 +12,12 @@
   - name: rhsm_poolid
     prompt: Subscription Pool ID
     private: no
+  - name: registry_username
+    prompt: RH registry username (RHN pwd or token https://docs.openshift.com/container-platform/3.11/install_config/configuring_red_hat_registry.html)
+    private: no
+  - name: registry_password
+    prompt: RH registry password
+    private: yes
   tasks:
   - set_fact:
       pwd: "{{rhsm_password}}"

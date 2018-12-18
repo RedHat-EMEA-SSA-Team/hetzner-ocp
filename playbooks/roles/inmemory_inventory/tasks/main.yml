@@ -18,5 +18,5 @@
     group: ocs
     ansible_ssh_user: cloud-user
     ansible_become: yes
-  when: item.ocs is defined and item.ocs
+  when: item.ocs_host is defined and item.ocs_host
   with_items: "{{guests}}"
