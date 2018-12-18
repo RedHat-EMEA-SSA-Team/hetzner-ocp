@@ -1,5 +1,6 @@
-apps_dns: apps.ocp.ninja
-master_dns: master.ocp.ninja
+# default to master.IP.xip.io and apps.IP.xip.op
+#apps_dns: apps.ocp.ninja
+#master_dns: master.ocp.ninja
 logging_install: 'false'
 metrics_install: 'false'
 monitoring_install: 'true'
@@ -44,14 +45,12 @@ ocs_storage_size: 100G
 ocs_storage_device: vdc
 registry_storage_device: vdd
 registry_storage_size: 100G
-apps_dns: apps.ocp.ninja
-master_dns: master.ocp.ninja
-cert_router_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
-cert_router_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
-cert_router_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
-cert_master_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
-cert_master_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
-cert_master_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
+#cert_router_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
+#cert_router_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
+#cert_router_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
+#cert_master_certfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.cer"
+#cert_master_keyfile: "/home/cloud-user/.acme.sh/master.ocp.ninja/master.ocp.ninja.key"
+#cert_master_cafile: "/home/cloud-user/.acme.sh/master.ocp.ninja/ca.cer"
 host_packages:
 - bridge-utils
 - qemu-kvm
