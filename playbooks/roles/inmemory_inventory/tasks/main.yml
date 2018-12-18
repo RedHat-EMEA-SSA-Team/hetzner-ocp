@@ -12,11 +12,11 @@
     ansible_become: yes
   when: item.name != 'bastion'
   with_items: "{{guests}}"
-- name: Add other hosts to cns group
+- name: Add other hosts to ocs group
   add_host:
     name: "{{item.name}}"
-    group: cns
+    group: ocs
     ansible_ssh_user: cloud-user
     ansible_become: yes
-  when: item.cns is defined and item.cns
+  when: item.ocs_host is defined and item.ocs_host == 'true'
   with_items: "{{guests}}"

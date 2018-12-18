@@ -54,17 +54,17 @@
       state: absent
     with_items: "{{ find_results['files'] }}"
 
-  - name: find all cns images
+  - name: find all ocs images
     find:
       paths: /var/lib/libvirt/images
-      patterns: "cns*.img"
-    register: find_results_cns
+      patterns: "ocs*.img"
+    register: find_results_ocs
 
-  - name: delete cns disk image
+  - name: delete ocs disk image
     file:
       path: "{{ item['path'] }}"
       state: absent
-    with_items: "{{ find_results_cns['files'] }}"
+    with_items: "{{ find_results_ocs['files'] }}"
 
 
   - name: delete dirs for userdata

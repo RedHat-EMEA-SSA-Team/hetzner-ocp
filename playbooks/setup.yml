@@ -12,10 +12,18 @@
   - name: rhsm_poolid
     prompt: Subscription Pool ID
     private: no
+  - name: registry_username
+    prompt: RH registry username (RHN pwd or token https://docs.openshift.com/container-platform/3.11/install_config/configuring_red_hat_registry.html)
+    private: no
+  - name: registry_password
+    prompt: RH registry password
+    private: yes
   tasks:
   - set_fact:
       pwd: "{{rhsm_password}}"
       user: "{{rhsm_username}}"
+      oreg_auth_user: "{{registry_password}}"
+      oreg_auth_password: "{{registry_username}}"
   - set_fact:
       poolid: "{{rhsm_poolid}}"
     when: rhsm_poolid is defined
@@ -39,7 +47,7 @@
   gather_facts: no
   vars_files:
   - vars/guests.yml
-- include: prepare_host.yml
-- include: provision.yml
-- include: prepare_ssl.yml
-- include: prepare_guests.yml
+- import_playbook: prepare_host.yml
+- import_playbook: provision.yml
+- import_playbook: prepare_ssl.yml
+- import_playbook: prepare_guests.yml

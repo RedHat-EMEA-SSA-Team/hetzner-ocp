@@ -1,0 +1,23 @@
+- name: check are raw images created
+  local_action: |
+    shell ls /var/lib/libvirt/images/ocs-{{ inventory_hostname}}.img
+  register: ls_results
+  changed_when: false
+  failed_when: false
+
+- name: create raw images for ocs
+  local_action: |
+    shell qemu-img create -f raw /var/lib/libvirt/images/ocs-{{ inventory_hostname}}.img {{ocs_storage_size}}
+  when: ls_results.rc > 0
+
+- name: check is ocs storage already attached
+  local_action: |
+    shell virsh dumpxml {{inventory_hostname}} | grep -q 'ocs-{{inventory_hostname}}'
+  register: disk_attached
+  changed_when: false
+  failed_when: false
+
+- name: add new disk for ocs disk as {{ocs_storage_device}}
+  local_action: |
+    shell virsh attach-disk {{inventory_hostname}} --source /var/lib/libvirt/images/ocs-{{inventory_hostname}}.img --persistent --target {{ocs_storage_device}}
+  when: disk_attached.rc > 0

@@ -71,11 +71,10 @@
     with_items: "{{repos}}"
   - name: Ensure that required packages are present on target hosts
     yum:
-      name: "{{item}}"
+      name: "{{packages}}"
       state: latest
     retries: 5
     delay: 5
-    with_items: "{{packages}}"
 
 - name: Prepare bastion for OCP install
   gather_facts: False
@@ -83,11 +82,10 @@
   tasks:
   - name: Ensure that required packages are present on bastion host
     yum:
-      name: "{{item}}"
+      name: "{{packages_bastion}}"
       state: latest
     retries: 5
     delay: 5
-    with_items: "{{packages_bastion}}"
   - name: Copy playbooks to bastion
     copy:
       src: /root/hetzner-ocp/playbooks
@@ -111,7 +109,7 @@
   tasks:
   - debug: msg='Gathering facts'
 
-- name: Update 7.4 to latest
+- name: Update 7.6 to latest
   hosts: all
   remote_user: "{{remote_user}}"
   gather_facts: false
@@ -170,22 +168,23 @@
     _apps_dns: "{{apps_dns | default(default_apps_dns)}}"
     _master_dns: "{{ master_dns | default(default_master_dns)}}"
     nodes: "{{ groups['nodes'] }}"
-    cns_nodes: "{{ groups['cns'] }}"
-    number_of_cns_nodes: "{{ groups['cns'] | length }}"
+    ocs_nodes: "{{ groups['ocs'] }}"
+    number_of_ocs_nodes: "{{ groups['ocs'] | length }}"
+
   roles:
   - { role: inventory}
 
 
-- name: prepare storage for crio
+- name: prepare container storage
   gather_facts: False
   hosts: nodes
   tasks:
   roles:
-  - { role: crio_setup}
+  - { role: container_storage_setup}
 
-- name: prepare storage for cns
+- name: prepare storage for ocs
   gather_facts: False
-  hosts: cns
+  hosts: ocs
   tasks:
   roles:
-  - { role: cns_setup}
+  - { role: ocs_setup}
