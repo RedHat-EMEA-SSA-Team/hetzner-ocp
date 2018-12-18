@@ -4,6 +4,7 @@
 logging_install: 'false'
 metrics_install: 'false'
 monitoring_install: 'true'
+# crio|docker
 container_runtime: 'docker'
 ocp_version: 3.11
 packages:
