@@ -170,6 +170,7 @@
     nodes: "{{ groups['nodes'] }}"
     ocs_nodes: "{{ groups['ocs'] }}"
     number_of_ocs_nodes: "{{ groups['ocs'] | length }}"
+
   roles:
   - { role: inventory}
 

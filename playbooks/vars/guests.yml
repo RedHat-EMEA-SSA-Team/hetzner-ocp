@@ -8,7 +8,7 @@ guests:
   os_type: linux
   os_variant: rhel7.6
   disk_os_size: 40g
-  region: bastion
+  node_group: bastion
 - name: master01
   cpu: 2
   mem: 18384

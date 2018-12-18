@@ -19,7 +19,7 @@
 
 - name: add new disk for containers storage as vdb
   local_action: |
-    shell virsh attach-disk {{inventory_hostname}} --source /var/lib/libvirt/images/containers-{{inventory_hostname}}.img --persistent --target {{container_storage_size}}
+    shell virsh attach-disk {{inventory_hostname}} --source /var/lib/libvirt/images/containers-{{inventory_hostname}}.img --persistent --target {{container_storage_device}}
   when: disk_attached.rc > 0
 
 - name: Makefs for containers storage
@@ -29,7 +29,7 @@
 - name: Mount new disk to mount point
   mount:
     path: /var/lib/containers
-    src: "/dev/{{container_storage_size}}"
+    src: "/dev/{{container_storage_device}}"
     fstype: xfs
     state: mounted
 - name: Create mount point
