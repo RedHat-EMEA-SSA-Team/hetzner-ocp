@@ -22,8 +22,8 @@
   - set_fact:
       pwd: "{{rhsm_password}}"
       user: "{{rhsm_username}}"
-      oreg_auth_user: "{{registry_password}}"
-      oreg_auth_password: "{{registry_username}}"
+      oreg_auth_user: "{{registry_username}}"
+      oreg_auth_password: "{{registry_password}}"
   - set_fact:
       poolid: "{{rhsm_poolid}}"
     when: rhsm_poolid is defined
