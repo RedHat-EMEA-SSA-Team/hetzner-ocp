@@ -302,14 +302,14 @@ Check how much disk you have left `df -h`, if you have plenty then you can chang
 
 To start hostpath setup execute following on **hypervisor**
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/hostpath.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/utils/hostpath.yml
 ```
 
 ### NFS
 By default bastion host is setup for NFS servers. To created correct directories and pv objects, execute following playbook on **hypervisor**
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/nfs.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/utils/nfs.yml
 ```
 
 
@@ -317,7 +317,7 @@ By default bastion host is setup for NFS servers. To created correct directories
 Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on **hypervisor**
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook /root/hetzner-ocp/playbooks/tools/add_user.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/utils/add_user.yml
 ```
 
 ## Clean up everything
