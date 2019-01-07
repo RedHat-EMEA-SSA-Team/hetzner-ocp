@@ -55,7 +55,7 @@ openshift_master_overwrite_named_certificates=true
 openshift_master_named_certificates=[{"certfile": "{{cert_master_certfile}}", "keyfile": "{{cert_master_keyfile}}", "cafile": "{{cert_master_cafile}}"}]
 {% endif %}
 {% if cert_router_certfile is defined %}
-openshift_hosted_router_certificate={"certfile": "{{cert_router_certfile}}", "keyfile": "cert_router_keyfile", "cafile": "{{cert_router_cafile}}"}
+openshift_hosted_router_certificate={"certfile": "{{cert_router_certfile}}", "keyfile": "{{cert_router_keyfile}}", "cafile": "{{cert_router_cafile}}"}
 {% endif %}
 
 # Configure nodeIP in the node config
