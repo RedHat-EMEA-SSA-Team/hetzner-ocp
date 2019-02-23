@@ -151,7 +151,7 @@ You need to add ports 80, 443 and 8443 to the rules and also block 111. If you d
 Install ansible and git
 
 ```
-[root@CentOS-73-64-minimal ~]# yum install -y ansible git wget
+[root@CentOS-73-64-minimal ~]# yum install -y ansible git wget screen
 ```
 
 You are now ready to clone this project to your CentOS system.

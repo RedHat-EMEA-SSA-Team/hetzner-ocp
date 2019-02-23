@@ -1,7 +1,7 @@
 guests:
 - name: bastion
   cpu: 1
-  mem: 2048
+  mem: 4096
   virt_type: kvm
   virt_hypervisor: hvm
   network: bridge=virbr0
