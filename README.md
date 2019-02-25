@@ -268,12 +268,15 @@ Installation of OCP is done on **bastion** host. So you need to ssh to bastion
 Its is done with normal OCP installation playbooks. You start installation
 on **bastion** with following commands:
 
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion -l cloud-user
-[cloud-user@bastion ~]$ sudo su -
-[root@bastion ~]#
-[root@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
-[root@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
+chmod is for enabling cloud-user to write a retry-file.
+
+Additionally check the versions gluster-fs according to  https://access.redhat.com/solutions/3617551
+in File playbooks/roles/inventory/templates/hosts.j2
+
+```[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion -l cloud-user
+[cloud-user@bastion ~]# chmod 777 /usr/share/ansible/openshift-ansible/playbooks   
+[cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+[cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```
 
 When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
