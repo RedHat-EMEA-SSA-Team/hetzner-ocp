@@ -89,7 +89,7 @@ openshift_examples_modify_imagestreams=true
 #openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['250'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 #openshift_node_kubelet_args={'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
 
-openshgift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true', 'node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['b20']}]}]
+openshgift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true', 'node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
 
 openshift_hosted_registry_replicas=1
 {% if number_of_ocs_nodes >= '3' %}
@@ -110,6 +110,13 @@ openshift_storage_glusterfs_block_deploy=true
 openshift_storage_glusterfs_block_host_vol_create=true
 openshift_storage_glusterfs_block_host_vol_size=20
 openshift_storage_glusterfs_block_storageclass=true
+
+#check https://access.redhat.com/solutions/3617551
+openshift_storage_glusterfs_version=v3.11.1-15
+openshift_storage_glusterfs_block_version=v3.11.1-11
+openshift_storage_glusterfs_s3_version=v3.11.1-4
+openshift_storage_glusterfs_heketi_version=v3.11.1-7
+
 {% endif %}
 
 # Metrics deployment
