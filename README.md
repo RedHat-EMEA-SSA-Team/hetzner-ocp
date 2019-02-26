@@ -274,7 +274,7 @@ Additionally check the versions gluster-fs according to  https://access.redhat.c
 in File playbooks/roles/inventory/templates/hosts.j2
 
 ```[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion -l cloud-user
-[cloud-user@bastion ~]# chmod 777 /usr/share/ansible/openshift-ansible/playbooks   
+[cloud-user@bastion ~]# sudo chmod 777 /usr/share/ansible/openshift-ansible/playbooks   
 [cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
 [cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```

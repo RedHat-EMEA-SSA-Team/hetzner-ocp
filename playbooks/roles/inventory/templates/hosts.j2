@@ -104,14 +104,16 @@ openshift_storage_glusterfs_name=ocs
 openshift_storage_glusterfs_wipe=true
 openshift_storage_glusterfs_storageclass=true
 openshift_storage_glusterfs_storageclass_default=true
-openshift_storage_glusterfs_image=registry.access.redhat.com/rhgs3/rhgs-server-rhel7
-openshift_storage_glusterfs_heketi_image=registry.access.redhat.com/rhgs3/rhgs-volmanager-rhel7
+
+# Adding concrete version Numbers for gs-server and heketi  :-(
+openshift_storage_glusterfs_image=registry.access.redhat.com/rhgs3/rhgs-server-rhel7:3.11.1
+openshift_storage_glusterfs_heketi_image=registry.access.redhat.com/rhgs3/rhgs-volmanager-rhel7:3.11.1
 openshift_storage_glusterfs_block_deploy=true
 openshift_storage_glusterfs_block_host_vol_create=true
 openshift_storage_glusterfs_block_host_vol_size=20
 openshift_storage_glusterfs_block_storageclass=true
 
-#check https://access.redhat.com/solutions/3617551
+# check https://access.redhat.com/solutions/3617551
 openshift_storage_glusterfs_version=v3.11.1-15
 openshift_storage_glusterfs_block_version=v3.11.1-11
 openshift_storage_glusterfs_s3_version=v3.11.1-4
