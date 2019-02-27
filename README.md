@@ -174,6 +174,17 @@ Downlaod image
 wget -O /root/rhel-kvm.qcow2 "PASTE_URL_HERE"
 ```
 
+or
+
+```
+#download image onto your Notebook
+cat rhel-server-7.6-x86_64-kvm.qcow2 | ssh  <Hetzner-server> -l root "cat >rhel-server-7.6-x86_64-kvm.qcow2"
+
+# then on <Hetzer-Server>:
+ln -s rhel-server-7.6-x86_64-kvm.qcow2 rhel-kvm.qcow2
+```
+
+
 With our hypervisor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
 
 ## Define, provision and prepare guest
