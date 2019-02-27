@@ -107,6 +107,7 @@ openshift_storage_glusterfs_storageclass_default=true
 
 # Adding concrete version Numbers for gs-server and heketi  :-(
 # check https://access.redhat.com/solutions/3617551
+# check /usr/share/ansible/openshift-ansible/roles/openshift_storage_glusterfs/defaults/main.yml
 
 openshift_storage_glusterfs_image=registry.redhat.io/rhgs3/rhgs-server-rhel7:v3.11.1
 openshift_storage_glusterfs_block_image=registry.redhat.io/rhgs3/rhgs-gluster-block-prov-rhel7:v3.11.1
@@ -121,6 +122,7 @@ openshift_storage_glusterfs_block_storageclass=true
 # check https://access.redhat.com/solutions/3617551
 # however looking into the ansible-sripts on bastion, there is
 # no evidence, that these verison-variables will take effect.
+# see above
 openshift_storage_glusterfs_version=v3.11.1
 openshift_storage_glusterfs_block_version=v3.11.1
 openshift_storage_glusterfs_s3_version=v3.11.1
