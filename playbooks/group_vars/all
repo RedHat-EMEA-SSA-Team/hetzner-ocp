@@ -7,6 +7,7 @@ monitoring_install: 'true'
 # crio|docker
 container_runtime: 'docker'
 ocp_version: 3.11
+ocs_version_tag: v3.11
 packages:
 - wget
 - git
