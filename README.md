@@ -178,10 +178,7 @@ or
 
 ```
 #download image onto your Notebook
-cat rhel-server-7.6-x86_64-kvm.qcow2 | ssh  <Hetzner-server> -l root "cat >rhel-server-7.6-x86_64-kvm.qcow2"
-
-# then on <Hetzer-Server>:
-ln -s rhel-server-7.6-x86_64-kvm.qcow2 rhel-kvm.qcow2
+cp rhel-server-7.6-x86_64-kvm.qcow2 root@5.9.77.247:/root/rhel-kvm.qcow2
 ```
 
 
