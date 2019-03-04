@@ -19,6 +19,13 @@
     prompt: RH registry password
     private: yes
   tasks:
+  - assert:
+    that:
+      - rhsm_username != ""
+      - rhsm_password != "
+      - rhsm_poolid != ""
+      - registry_username != ""
+      - registry_password != ""
   - set_fact:
       pwd: "{{rhsm_password}}"
       user: "{{rhsm_username}}"

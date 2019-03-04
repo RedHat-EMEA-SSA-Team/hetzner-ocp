@@ -94,7 +94,7 @@ DRIVE2 /dev/sdb
 SWRAID 1
 SWRAIDLEVEL 1
 BOOTLOADER grub
-HOSTNAME CentOS-75-64-minimal
+HOSTNAME CentOS-76-64-minimal
 PART /boot ext3     512M
 PART lvm   vg0       all
 
@@ -104,7 +104,7 @@ LV vg0   tmp    /tmp    ext4      10G
 LV vg0   home   /home   ext4      40G
 
 
-IMAGE /root/.oldroot/nfs/install/../images/CentOS-75-64-minimal.tar.gz
+IMAGE /root/.oldroot/nfs/install/../images/CentOS-76-64-minimal.tar.gz
 ```
 
 
@@ -151,7 +151,7 @@ You need to add ports 80, 443 and 8443 to the rules and also block 111. If you d
 Install ansible and git
 
 ```
-[root@CentOS-73-64-minimal ~]# yum install -y ansible git wget
+[root@CentOS-73-64-minimal ~]# yum install -y ansible git wget screen
 ```
 
 You are now ready to clone this project to your CentOS system.
@@ -174,6 +174,14 @@ Downlaod image
 wget -O /root/rhel-kvm.qcow2 "PASTE_URL_HERE"
 ```
 
+or
+
+```
+#download image onto your Notebook
+cp rhel-server-7.6-x86_64-kvm.qcow2 root@5.9.77.247:/root/rhel-kvm.qcow2
+```
+
+
 With our hypervisor installed and ready, we can now proceed with the creation of the VMs, which will then host our OpenShift installation.
 
 ## Define, provision and prepare guest
@@ -187,7 +195,7 @@ Check ```playbook/vars/guests.yml``` and modify it to correspond your environmen
 
 ![](images/architecture.png)
 
-Here is a sample of a guest definition
+Here is a sample of a guest definition, which perfectly fits for a 64Gb Setup.
 ```
 guests:
 - name: bastion
@@ -235,15 +243,15 @@ guests:
   node_group: node-config-compute
 ```
 
-Basically you need to change only num of VMs and/or cpu and mem values. If
+Basically you need to change only num of VMs and/or cpu and mem values.
 
 Provision VMs and prepare them for OCP. Password for all hosts is `p`.
 
+Be careful with picking the right subscription-pool-id, you have to check if there are enough RHEL-entilements left in this pool.
 
 ```
 [root@CentOS-73-64-minimal ~]# cd hetzner-ocp
-[root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/setup.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook playbooks/setup.yml
 ```
 
 Provisioning of the hosts take a while and they are in running state until provisioning and preparations is finnished. Maybe time for another cup of coffee?
@@ -264,16 +272,19 @@ When playbook is finished successfully you should have 4 VMs running.
 
 ## Install OCP
 
-Installation of OCP is done on bastion host. So you need to ssh to bastion
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
-```
+Installation of OCP is done on **bastion** host. So you need to ssh to bastion
+Its is done with normal OCP installation playbooks. You start installation
+on **bastion** with following commands:
 
-Installation is done with normal OCP installation playbooks. You can start installation on **bastion** with following commands
+chmod is for enabling cloud-user to write a retry-file.
 
-```
-[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
-[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
+Additionally check the versions gluster-fs according to  https://access.redhat.com/solutions/3617551
+in File playbooks/roles/inventory/templates/hosts.j2
+
+```[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion -l cloud-user
+[cloud-user@bastion ~]# sudo chmod 777 /usr/share/ansible/openshift-ansible/playbooks   
+[cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+[cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```
 
 When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
