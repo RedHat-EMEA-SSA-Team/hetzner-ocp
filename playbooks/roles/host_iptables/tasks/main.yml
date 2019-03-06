@@ -32,7 +32,7 @@
     destination_port: 80
     jump: DNAT
     to_destination: "{{infranode_ip_addr.stdout}}:80"
-    comment: Redirect http traffic to infranode
+    comment: OCP - Redirect http traffic to infranode
 
 - name: create https nat for infra
   iptables:
@@ -44,7 +44,7 @@
     destination_port: 443
     jump: DNAT
     to_destination: "{{infranode_ip_addr.stdout}}:443"
-    comment: Redirect https traffic to infranode
+    comment: OCP - Redirect https traffic to infranode
 
 - name: create https nat for master
   iptables:
@@ -56,7 +56,7 @@
     destination_port: 8443
     jump: DNAT
     to_destination: "{{master_ip_addr.stdout}}:8443"
-    comment: Redirect master https traffic to infranode
+    comment: OCP - Redirect master https traffic to infranode
 
 - name: create https postrouting nat for master
   iptables:
@@ -67,7 +67,7 @@
     match: tcp
     destination_port: 8443
     jump: MASQUERADE
-    comment: Post routing rule from cluster to master
+    comment: OCP - Post routing rule from cluster to master
 
 - name: create http postrouting nat for infra
   iptables:
@@ -78,7 +78,7 @@
     match: tcp
     destination_port: 80
     jump: MASQUERADE
-    comment: Post routing rule from cluster to infra
+    comment: OCP - Post routing rule from cluster to infra
 
 - name: create https postrouting nat for infra
   iptables:
@@ -89,7 +89,7 @@
     match: tcp
     destination_port: 443
     jump: MASQUERADE
-    comment: Post routing rule from cluster to infra
+    comment: OCP - Post routing rule from cluster to infra
 
 - name: allow FORWARD for all guest network DNAT traffic
   iptables:
@@ -98,7 +98,7 @@
     ctstate: NEW,RELATED,ESTABLISHED
     destination: 192.168.122.0/24
     jump: ACCEPT
-    comment: Allow all DNAT FORWARD to guest network
+    comment: OCP - Allow all DNAT FORWARD to guest network
 
 - name: allow FORWARD for all guest network DNAT traffic
   iptables:
@@ -107,7 +107,7 @@
     ctstate: NEW,RELATED,ESTABLISHED
     destination: 192.168.122.0/24
     jump: ACCEPT
-    comment: Allow all DNAT FORWARD to guest network
+    comment: OCP - Allow all DNAT FORWARD to guest network
 - name: remove in virbr0 reject
   iptables:
     chain: FORWARD
