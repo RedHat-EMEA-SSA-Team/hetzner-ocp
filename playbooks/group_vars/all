@@ -28,19 +28,14 @@ repos:
 - rhel-7-server-optional-rpms
 - rhel-7-server-ansible-2.6-rpms
 rhel_image: rhel-kvm.qcow2
+guest_virt_type: kvm
+guest_virt_hypervisor: hvm
+guest_network: bridge=virbr0
+guest_os_type: linux
+guest_os_variant: rhel7.6
 default_password: password
 remote_user: cloud-user
 volume_group: vg0
-hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
-hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
-hostpath_dir: /var/hostpath
-hostpath_size: 200G
-nfs_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
-nfs_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
-nfs_dir: /exports
-nfs_size: 200G
-docker_storage_device: /dev/vdb
-docker_storage_size: 100G
 container_storage_size: 100G
 container_storage_device: vdb
 ocs_storage_size: 100G
@@ -66,3 +61,12 @@ host_packages:
 - genisoimage
 - iptables-services
 - iptables
+hostpath_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15' ]
+hostpath_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi' ,'10Gi' ]
+hostpath_dir: /var/hostpath
+hostpath_size: 200G
+nfs_pv_names:  [ '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14' ,'15', '16','17','18','19','20']
+nfs_pv_sizes:  [ '1Gi', '1Gi', '1Gi', '1Gi', '5Gi', '5Gi', '5Gi', '5Gi', '10Gi', '10Gi', '10Gi', '10Gi', '25Gi', '25Gi', '25Gi', '25Gi', '50Gi', '50Gi' ,'50Gi','50Gi' ]
+nfs_dir: /exports
+nfs_size: 200G
+

@@ -61,11 +61,11 @@
            --ram {{item.mem}}
            --vcpus {{item.cpu}}
            --cpu host
-           --os-type {{item.os_type}}
-           --os-variant {{item.os_variant}}
-           --network {{item.network}}
-           --{{item.virt_hypervisor}}
-           --virt-type {{item.virt_type}}
+           --os-type {{guest_os_type}}
+           --os-variant {{guest_os_variant}}
+           --network {{guest_network}}
+           --{{guest_virt_hypervisor}}
+           --virt-type {{guest_virt_type}}
            --disk /dev/{{volume_group}}/{{item.name}}-a,device=disk,format=raw
            --disk /var/lib/libvirt/images/cloud-init-{{item.name}}.iso,device=cdrom
            --noautoconsole

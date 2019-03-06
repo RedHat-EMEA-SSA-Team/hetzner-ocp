@@ -7,18 +7,18 @@ guests:
 - name: master01
   cpu: 2
   mem: 18384
-  disk_os_size: 40g
+  disk_os_size: 400g
   ocs_host: 'true'
   node_group: node-config-master
 - name: infranode01
   cpu: 2
   mem: 18384
-  disk_os_size: 40g
+  disk_os_size: 400g
   ocs_host: 'true'
   node_group: node-config-infra
 - name: node01
   cpu: 2
   mem: 18384
-  disk_os_size: 40g
+  disk_os_size: 400g
   ocs_host: 'true'
   node_group: node-config-compute
