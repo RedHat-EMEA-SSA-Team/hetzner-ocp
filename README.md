@@ -201,43 +201,23 @@ guests:
 - name: bastion
   cpu: 1
   mem: 2048
-  virt_type: kvm
-  virt_hypervisor: hvm
-  network: bridge=virbr0
-  os_type: linux
-  os_variant: rhel7.6
   disk_os_size: 40g
-  region: bastion
+  node_group: bastion
 - name: master01
   cpu: 2
   mem: 18384
-  virt_type: kvm
-  virt_hypervisor: hvm
-  network: bridge=virbr0
-  os_type: linux
-  os_variant: rhel7.6
   disk_os_size: 40g
   ocs_host: 'true'
   node_group: node-config-master
 - name: infranode01
   cpu: 2
   mem: 18384
-  virt_type: kvm
-  virt_hypervisor: hvm
-  network: bridge=virbr0
-  os_type: linux
-  os_variant: rhel7.6
   disk_os_size: 40g
   ocs_host: 'true'
   node_group: node-config-infra
 - name: node01
   cpu: 2
   mem: 18384
-  virt_type: kvm
-  virt_hypervisor: hvm
-  network: bridge=virbr0
-  os_type: linux
-  os_variant: rhel7.6
   disk_os_size: 40g
   ocs_host: 'true'
   node_group: node-config-compute

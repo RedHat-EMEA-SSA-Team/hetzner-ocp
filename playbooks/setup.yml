@@ -20,9 +20,9 @@
     private: yes
   tasks:
   - assert:
-    that:
+      that:
       - rhsm_username != ""
-      - rhsm_password != "
+      - rhsm_password != ""
       - rhsm_poolid != ""
       - registry_username != ""
       - registry_password != ""
