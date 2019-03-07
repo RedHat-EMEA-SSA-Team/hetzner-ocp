@@ -261,31 +261,50 @@ chmod is for enabling cloud-user to write a retry-file.
 Additionally check the versions gluster-fs according to  https://access.redhat.com/solutions/3617551
 in File playbooks/roles/inventory/templates/hosts.j2
 
-```[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion -l cloud-user
+NOTE: If you want to use valid TLS certificates issue certificates before installation. Check section Adding valid certificates from Let's Encrypt
+
+```
+[root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion -l cloud-user
 [cloud-user@bastion ~]# sudo chmod 777 /usr/share/ansible/openshift-ansible/playbooks   
 [cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
 [cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```
 
-When installation is done you can create new admin user and add hostpath persistent storage to registry with post install playbook.
+After installation there are now users in Openshift. You can use following playbooks on **hypervisor** to create users
 
-Exit from bastion and execute following on **hypervisor**.
+Create normal user
 
 ```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook hetzner-ocp/playbooks/post.yml
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook hetzner-ocp/playbooks/utils/add_user.yml
+```
+
+Create cluster admin user
+
+```
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook hetzner-ocp/playbooks/utils/add_cluster_admin.yml
+```
+
+## Add storage for registry
+
+If you are NOT using OCS you need to provide some kind of persistent storage for registry. Use following playbook to add hostpath volume to registry. Playbook assumes that you have single infranode named infranode01, if you have several, you have to use node selector to deploy registry to correct node.
+
+```
+[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook hetzner-ocp/playbooks/utils/registry_hostpath.yml
 ```
 
 ## Login to Openshift
-After successful installation of Openshift, you will be able to login via. Password is the one the you entered during previous playbook (post.yml) execution.
+After successful installation of Openshift, you will be able to login via. Password is the one that you entered when you added new user(s).
 
 ```
 URL: https://master.<your hypervisors IP>.xip.io:8443
-User: admin
-Password: p
+User: <username>
+Password: <password>
 ```
 
 
 ## Add persistent storage with hostpath or NFS
+
+If you have installed OCP, your dont need to add any other storage.
 
 ### Hostpath
 Note: For now this works only if you have single node :)
@@ -303,14 +322,6 @@ By default bastion host is setup for NFS servers. To created correct directories
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/utils/nfs.yml
 ```
 
-
-## Add new user
-Post install tasks create only admin user. If u need to create additional non-admin users, execute following playbook on **hypervisor**
-
-```
-[root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/utils/add_user.yml
-```
-
 ## Clean up everything
 
 Execute following on **hypervisor**
@@ -318,6 +329,99 @@ Execute following on **hypervisor**
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ansible-playbook playbooks/clean.yml
 ```
+
+Clean up will also remove iptable rules
+
+
+## Customizing guest VMs
+
+By defaults guest VMs are provisioned using defaults. If you need to modify guest options to  better suit your needs, it can be done by modifying `playbooks/vars/guests.yml`
+
+Make modifications and start installtion process. Installer will automatically use file named `guests.yml`. Remember to clean old installation with `ansible-playbook playbooks/clean.yml`
+
+## Adding valid certificates from Let's Encrypt
+
+Let's Encrypt can provide free TLS certificates for API and apps traffic. In this example domain is registered to Amazon Route 53 and acme.sh (https://github.com/Neilpang/acme.sh) is used to issue certificates. If you use other DNS provider, follow documentation at acme.sh repo.
+
+Certificate is issued on root machine.
+
+Install socat
+
+```
+yum install -y socat
+```
+
+Install acme.sh
+
+```
+curl https://get.acme.sh | sh
+```
+
+Create public zone for your domain. You need three A records; master, apps wildcard and apps, that point to your machine public ip. In this example I use my ocp.ninja domain.
+
+Add your AWS API key and secret to env. If you don't have those follow this documentation https://github.com/Neilpang/acme.sh/wiki/How-to-use-Amazon-Route53-API
+
+```
+export  AWS_ACCESS_KEY_ID=...
+export  AWS_SECRET_ACCESS_KEY=....
+```
+
+Issue certificate
+
+```
+cd .acme.sh/
+./acme.sh --issue -d master.ocp.ninja -d apps.ocp.ninja -d *.apps.ocp.ninja --dns dns_aws --debug
+```
+
+After issue process is done you have your certificate files in /root/.acme.sh/DOMAIN directory (/root/.acme.sh/master.ocp.ninja/)
+
+```
+ls -la /root/.acme.sh/master.ocp.ninja
+total 36
+drwxr-xr-x 2 root root 4096 Mar  7 11:22 .
+drwx------ 6 root root 4096 Mar  7 11:21 ..
+-rw-r--r-- 1 root root 1648 Mar  7 11:22 ca.cer
+-rw-r--r-- 1 root root 3608 Mar  7 11:22 fullchain.cer
+-rw-r--r-- 1 root root 1960 Mar  7 11:22 master.ocp.ninja.cer
+-rw-r--r-- 1 root root  761 Mar  7 11:22 master.ocp.ninja.conf
+-rw-r--r-- 1 root root 1025 Mar  7 11:21 master.ocp.ninja.csr
+-rw-r--r-- 1 root root  251 Mar  7 11:21 master.ocp.ninja.csr.conf
+-rw-r--r-- 1 root root 1675 Mar  7 11:21 master.ocp.ninja.key
+```
+
+Copy cert files to bastion
+
+```
+[root@...]# scp -r /root/.acme.sh/master.ocp.ninja cloud-user@bastion:/home/cloud-user
+```
+
+Modify `playbook/group_vars/all` so that installer finds certificates and uses proper domain.
+
+```
+[root@C...]# vi /root/hetzner-ocp/playbooks/group_vars/all
+```
+
+Uncomment vars `apps_dns` and `master_dns` (remove #) and change value to match your domain.
+
+```
+apps_dns: apps.ocp.ninja
+master_dns: master.ocp.ninja
+```
+
+Uncomment cert file locations and change them to match your cert files
+
+```
+cert_router_certfile: "/home/cloud-user/master.ocp.ninja/master.ocp.ninja.cer"
+cert_router_keyfile: "/home/cloud-user/master.ocp.ninja/master.ocp.ninja.key"
+cert_router_cafile: "/home/cloud-user/master.ocp.ninja/ca.cer"
+cert_master_certfile: "/home/cloud-user/master.ocp.ninja/master.ocp.ninja.cer"
+cert_master_keyfile: "/home/cloud-user/master.ocp.ninja/master.ocp.ninja.key"
+cert_master_cafile: "/home/cloud-user/master.ocp.ninja/ca.cer"
+```
+
+File locations point to bastion file system.
+
+Save and exit.
 
 ## Known issues
 
@@ -425,12 +529,17 @@ STDOUT:
 
 Solution is to uninstall current installation from **bastion** host prepare guests again and reinstall.
 
-Uninstall current installation
+Uninstall current current installation.
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
+[root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/openshift_glusterfs/uninstall.yml
 [root@localhost ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/adhoc/uninstall.yml
 ```
+
+You can also clean up everything with `playbooks/clean.yml`, if you want real fresh start. clean.yml playbook is executed in **hypervisor**
+
+
 
 Prepare guests again
 
@@ -444,11 +553,7 @@ Start installation again
 
 ```
 [root@CentOS-73-64-minimal hetzner-ocp]# ssh bastion
-ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/prerequirement.yml
+ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```
 
-## Customizing guest VMs
-
-By defaults guest VMs are provisioned using defaults. If you need to modify guest options to  better suit your needs, it can be done by modifying `playbooks/vars/guests.yml`
-
-Make modifications and start installtion process. Installer will automatically use file named `guests.yml`. Remember to clean old installation with `ansible-playbook playbooks/clean.yml`

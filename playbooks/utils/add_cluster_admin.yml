@@ -1,0 +1,24 @@
+---
+- name: Create in-memory inventory
+  gather_facts: no
+  hosts: localhost
+  vars_files:
+  - ../vars/guests.yml
+  roles:
+  - ../roles/inmemory_inventory
+
+- name: Create new cluster admin user
+  hosts: master01
+  gather_facts: false
+  vars_prompt:
+  - name: username
+    prompt: Username
+    private: false
+  - name: password
+    prompt: Password
+    private: true
+  tasks:
+  - name: Add user
+    command: "htpasswd -b /etc/origin/master/htpasswd {{username}} {{password}}"
+  - name: Add privileges
+    command: "oc adm policy add-cluster-role-to-user cluster-admin {{username}}"
