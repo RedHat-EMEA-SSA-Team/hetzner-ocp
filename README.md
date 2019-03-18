@@ -186,7 +186,7 @@ With our hypervisor installed and ready, we can now proceed with the creation of
 
 ## Define, provision and prepare guest
 
-Check ```playbook/vars/guests.yml``` and modify it to correspond your environment. By default following VMs are installed:
+Check ```playbooks/vars/guests.yml``` and modify it to correspond your environment. By default following VMs are installed:
 
 * bastion
 * master01
@@ -395,7 +395,7 @@ Copy cert files to bastion
 [root@...]# scp -r /root/.acme.sh/master.ocp.ninja cloud-user@bastion:/home/cloud-user
 ```
 
-Modify `playbook/group_vars/all` so that installer finds certificates and uses proper domain.
+Modify `playbooks/group_vars/all` so that installer finds certificates and uses proper domain.
 
 ```
 [root@C...]# vi /root/hetzner-ocp/playbooks/group_vars/all
