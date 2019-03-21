@@ -178,7 +178,7 @@ or
 
 ```
 #download image onto your Notebook
-cp rhel-server-7.6-x86_64-kvm.qcow2 root@5.9.77.247:/root/rhel-kvm.qcow2
+scp rhel-server-7.6-x86_64-kvm.qcow2 root@5.9.77.247:/root/rhel-kvm.qcow2
 ```
 
 
