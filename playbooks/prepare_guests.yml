@@ -58,13 +58,16 @@
   - debug:
       msg: "{{subscribe}}"
   - name: Disable all repos
-    shell: |
-      subscription-manager repos --disable=*
+    rhsm_repository:
+      name: '*'
+      state: disabled
     retries: 5
     delay: 5
     when: subscribe.changed
   - name: Enable correct repos
-    command: "subscription-manager repos --enable={{item}}"
+    rhsm_repository:
+      name: "{{item}}"
+      state: enabled
     when: subscribe.changed
     retries: 5
     delay: 5
