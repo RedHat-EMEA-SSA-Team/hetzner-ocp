@@ -31,7 +31,7 @@ NOTE: If your system is not in rescue mode anymore, you can activate it from htt
 ![](images/set_to_rescue.png)
 
 This will delete whatever you had on your system earlier and will bring the machine into it's rescue mode.
-Please do not your new root password.
+Please do not forget your new root password.
 
 ![](images/root_password.png)
 
