@@ -31,7 +31,7 @@ NOTE: If your system is not in rescue mode anymore, you can activate it from htt
 ![](images/set_to_rescue.png)
 
 This will delete whatever you had on your system earlier and will bring the machine into it's rescue mode.
-Please do not your new root password.
+Please do not forget your new root password.
 
 ![](images/root_password.png)
 
@@ -136,7 +136,7 @@ reboot now
 
 ## Firewall
 
-While server is rebootting you can modify your servers firewall rules sot that OCP traffic can get it. By default firewall allows port 22 for SSH and nothing else. Check below image how firewall setup looks. Firewall settings can be modified under your server's settings in Hetzner's web UI https://robot.your-server.de/server.
+While server is rebootting you can modify your servers firewall rules so that OCP traffic can get it. By default firewall allows port 22 for SSH and nothing else. Check below image how firewall setup looks. Firewall settings can be modified under your server's settings in Hetzner's web UI https://robot.your-server.de/server.
 
 ![](images/firewall_start.png)
 
@@ -270,7 +270,7 @@ NOTE: If you want to use valid TLS certificates issue certificates before instal
 [cloud-user@bastion ~]# ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
 ```
 
-After installation there are now users in Openshift. You can use following playbooks on **hypervisor** to create users
+After installation there are no users in Openshift. You can use following playbooks on **hypervisor** to create users
 
 Create normal user
 

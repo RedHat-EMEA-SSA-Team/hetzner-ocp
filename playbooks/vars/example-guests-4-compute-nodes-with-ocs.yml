@@ -16,7 +16,7 @@ guests:
   disk_os_size: 40g
   ocs_host: 'false'
   node_group: node-config-infra
-- name: node04
+- name: infranode02
   cpu: 2
   mem: 20000
   disk_os_size: 40g
