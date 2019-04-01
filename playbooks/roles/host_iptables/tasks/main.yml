@@ -32,7 +32,7 @@
     destination_port: 80
     jump: DNAT
     to_destination: "{{infranode_ip_addr.stdout}}:80"
-    comment: OCP - Redirect http traffic to infranode
+    comment: OCP - Redirect app http traffic to infranode
 
 - name: create https nat for infra
   iptables:
@@ -44,7 +44,7 @@
     destination_port: 443
     jump: DNAT
     to_destination: "{{infranode_ip_addr.stdout}}:443"
-    comment: OCP - Redirect https traffic to infranode
+    comment: OCP - Redirect app https traffic to infranode
 
 - name: create https nat for master
   iptables:
@@ -56,7 +56,7 @@
     destination_port: 8443
     jump: DNAT
     to_destination: "{{master_ip_addr.stdout}}:8443"
-    comment: OCP - Redirect master https traffic to infranode
+    comment: OCP - Redirect console https traffic to master
 
 - name: create https postrouting nat for master
   iptables:
